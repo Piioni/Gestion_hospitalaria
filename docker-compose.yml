@@ -26,7 +26,7 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
     volumes:
-      - "NombreDelVolumen":/var/lib/mysql
+      - hospital_db:/var/lib/mysql
     networks:
       - app-network
 
@@ -43,7 +43,7 @@ services:
       - app-network
 
 volumes:
-  "NombreDelVolumen":
+  hospital_db:
 
 networks:
   app-network:
