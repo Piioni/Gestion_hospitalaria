@@ -4,17 +4,17 @@ namespace model\entity;
 
 class Hospital
 {
-    private int $id;
+    private int $id_hospital;
     private string $name;
 
-    public function getId(): int
+    public function getIdHospital(): int
     {
-        return $this->id;
+        return $this->id_hospital;
     }
 
-    public function setId(int $id): void
+    public function setIdHospital(int $id_hospital): void
     {
-        $this->id = $id;
+        $this->id_hospital = $id_hospital;
     }
 
     public function getName(): string
