@@ -1,108 +1,88 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Referencias a los elementos del formulario
     const hospitalSelect = document.getElementById('hospital');
     const plantaSelect = document.getElementById('planta');
     const botiquinSelect = document.getElementById('botiquin');
-    const rolesSelect = document.getElementById('roles');
-    
-    // Función para cargar las plantas basadas en el hospital seleccionado
-    function loadPlantas(hospitalId) {
-        // Reiniciar selectores de planta y botiquín
-        plantaSelect.innerHTML = '<option value="">Seleccione una planta</option>';
+
+    // Evento para cuando se cambia de hospital
+    hospitalSelect.addEventListener('change', function() {
+        const selectedHospitalId = this.value;
+
+        // Limpiar y deshabilitar el selector de botiquín
         botiquinSelect.innerHTML = '<option value="">Seleccione un botiquín</option>';
-        
-        // Deshabilitar selectores
-        plantaSelect.disabled = hospitalId === '';
         botiquinSelect.disabled = true;
-        
-        if (hospitalId !== '') {
-            // Solicitud AJAX para obtener plantas
-            fetch(`/api.php?route=plantas&hospital_id=${hospitalId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Llenar el selector de plantas con los datos recibidos
-                    data.forEach(planta => {
-                        const option = document.createElement('option');
-                        option.value = planta.id;
-                        option.textContent = planta.name;
-                        plantaSelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error al cargar plantas:', error);
-                });
+
+        // Limpiar el selector de plantas
+        plantaSelect.innerHTML = '<option value="">Seleccione una planta</option>';
+
+        // Si no hay hospital seleccionado, deshabilitar el selector de plantas
+        if (!selectedHospitalId) {
+            plantaSelect.disabled = true;
+            return;
         }
-    }
-    
-    // Función para cargar los botiquines basados en la planta seleccionada
-    function loadBotiquines(plantaId) {
-        // Reiniciar selector de botiquín
-        botiquinSelect.innerHTML = '<option value="">Seleccione un botiquín</option>';
-        
-        // Deshabilitar selector
-        botiquinSelect.disabled = plantaId === '';
-        
-        if (plantaId !== '') {
-            // Solicitud AJAX para obtener botiquines
-            fetch(`/api.php?route=botiquines&planta_id=${plantaId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Llenar el selector de botiquines con los datos recibidos
-                    data.forEach(botiquin => {
-                        const option = document.createElement('option');
-                        option.value = botiquin.id;
-                        option.textContent = botiquin.name;
-                        botiquinSelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error al cargar botiquines:', error);
-                });
-        }
-    }
-    
-    // Función para cargar los roles disponibles
-    function loadRoles() {
-        fetch('/api.php?route=roles')
-            .then(response => response.json())
-            .then(data => {
-                // Llenar el selector de roles
-                data.forEach(role => {
-                    const option = document.createElement('option');
-                    option.value = role.id;
-                    option.textContent = role.name;
-                    rolesSelect.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Error al cargar roles:', error);
+
+        // Filtrar las plantas por el hospital seleccionado
+        const plantasDelHospital = allPlantas.filter(planta =>
+            planta.id_hospital == selectedHospitalId
+        );
+
+        // Habilitar el selector de plantas si hay plantas disponibles
+        if (plantasDelHospital.length > 0) {
+            plantaSelect.disabled = false;
+
+            // Agregar las plantas filtradas al selector
+            plantasDelHospital.forEach(planta => {
+                const option = document.createElement('option');
+                option.value = planta.id_planta;
+                option.textContent = planta.nombre;
+                plantaSelect.appendChild(option);
             });
-    }
-    
-    // Eventos para los selectores
-    if (hospitalSelect) {
-        hospitalSelect.addEventListener('change', function() {
-            loadPlantas(this.value);
-        });
-    }
-    
-    if (plantaSelect) {
-        plantaSelect.addEventListener('change', function() {
-            loadBotiquines(this.value);
-        });
-    }
-    
-    // Cargar roles al iniciar
-    if (rolesSelect) {
-        loadRoles();
-    }
-    
-    // Si el hospital ya tiene un valor seleccionado al cargar la página
-    if (hospitalSelect && hospitalSelect.value) {
-        loadPlantas(hospitalSelect.value);
-        
-        // Si la planta ya tiene un valor seleccionado al cargar la página
-        if (plantaSelect && plantaSelect.value) {
-            loadBotiquines(plantaSelect.value);
+        } else {
+            plantaSelect.disabled = true;
+        }
+    });
+
+    // Evento para cuando se cambia de planta
+    plantaSelect.addEventListener('change', function() {
+        const selectedPlantaId = this.value;
+
+        // Limpiar el selector de botiquines
+        botiquinSelect.innerHTML = '<option value="">Seleccione un botiquín</option>';
+
+        // Si no hay planta seleccionada, deshabilitar el selector de botiquines
+        if (!selectedPlantaId) {
+            botiquinSelect.disabled = true;
+            return;
+        }
+
+        // Filtrar los botiquines por la planta seleccionada
+        const botiquinesDeLaPlanta = allBotiquines.filter(botiquin =>
+            botiquin.id_planta == selectedPlantaId
+        );
+
+        // Habilitar el selector de botiquines si hay botiquines disponibles
+        if (botiquinesDeLaPlanta.length > 0) {
+            botiquinSelect.disabled = false;
+
+            // Agregar los botiquines filtrados al selector
+            botiquinesDeLaPlanta.forEach(botiquin => {
+                const option = document.createElement('option');
+                option.value = botiquin.id_botiquin;
+                option.textContent = botiquin.nombre;
+                botiquinSelect.appendChild(option);
+            });
+        } else {
+            botiquinSelect.disabled = true;
+        }
+    });
+
+    // Inicializar los selectores si hay valores preseleccionados
+    if (hospitalSelect.value) {
+        hospitalSelect.dispatchEvent(new Event('change'));
+
+        // Si hay una planta preseleccionada en el formulario
+        if (plantaSelect.querySelector(`option[value="${plantaSelect.value}"]`)) {
+            plantaSelect.dispatchEvent(new Event('change'));
         }
     }
 });

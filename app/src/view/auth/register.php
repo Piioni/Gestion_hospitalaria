@@ -4,10 +4,14 @@ include(__DIR__ . '/../../../config/bootstrap.php');
 use model\service\AuthService;
 use model\service\HospitalService;
 use model\service\RoleService;
+use model\service\PlantaService;
+use model\service\BotiquinService;
 
 $auth = new AuthService();
 $hospitalService = new HospitalService();
 $roleService = new RoleService();
+$plantaService = new PlantaService();
+$botiquinService = new BotiquinService();
 
 $errors = [];
 $input = [];
@@ -20,6 +24,29 @@ if ($auth->isAuthenticated()) {
 
 // Obtener los hospitales para el selector
 $hospitals = $hospitalService->getAllHospitals();
+
+// Obtener todas las plantas para el procesamiento en JavaScript
+$plantas = $plantaService->getAllPlantas();
+
+// Obtener todos los botiquines para el procesamiento en JavaScript
+$botiquines = $botiquinService->getAllBotiquines();
+
+//// Convertir plantas y botiquines a arrays para JSON
+//$plantasArray = array_map(function($planta) {
+//    return [
+//        'id_planta' => $planta->getIdPlanta(),
+//        'id_hospital' => $planta->getIdHospital(),
+//        'nombre' => $planta->getNombre()
+//    ];
+//}, $plantas);
+//
+//$botiquinesArray = array_map(function($botiquin) {
+//    return [
+//        'id_botiquin' => $botiquin->getIdBotiquin(),
+//        'id_planta' => $botiquin->getIdPlanta(),
+//        'nombre' => $botiquin->getNombre()
+//    ];
+//}, $botiquines);
 
 // Procesar el envío del formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -103,9 +130,9 @@ include(__DIR__ . '/../layouts/_header.php');
                     <select id="hospital" name="hospital" class="form-control">
                         <option value="">Seleccione un hospital</option>
                         <?php foreach ($hospitals as $hospital): ?>
-                            <option value="<?= htmlspecialchars($hospital['id']) ?>"
-                                <?= ($hospital['id'] == ($input['hospital'] ?? '')) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($hospital['name']) ?>
+                            <option value="<?= htmlspecialchars($hospital->getIdHospital()) ?>"
+                                <?= ($hospital->getIdHospital() == ($input['hospital'] ?? '')) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($hospital->getNombre()) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -154,5 +181,13 @@ include(__DIR__ . '/../layouts/_header.php');
     </div>
 </div>
 
+<!-- Script con los datos para filtrado local -->
+<script>
+    console.log('Plantas:', <?= json_encode($plantas) ?>);
+    console.log('Botiquines:', <?= json_encode($botiquines) ?>);
+    // Pasar los datos desde PHP a JavaScript como arrays simples
+    const allPlantas = <?= json_encode($plantas) ?>;
+    const allBotiquines = <?= json_encode($botiquines) ?>;
+</script>
 
 <?php include(__DIR__ . '/../layouts/_footer.php'); ?>
