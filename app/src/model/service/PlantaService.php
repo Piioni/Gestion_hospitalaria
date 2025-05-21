@@ -14,6 +14,11 @@ class PlantaService
         $this->plantaRepository = new PlantaRepository();
     }
 
+    public function getAllArray(): array
+    {
+        return $this->plantaRepository->getAllArray();
+    }
+
     public function getAllPlantas(): array
     {
         return $this->plantaRepository->getAll();
