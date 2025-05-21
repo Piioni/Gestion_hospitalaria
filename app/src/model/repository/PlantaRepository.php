@@ -20,14 +20,14 @@ class PlantaRepository
 
     public function getByHospitalId($hospitalId): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM plantas WHERE hospital_id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM plantas WHERE id_hospital = ?");
         $stmt->execute([$hospitalId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getPlantaById($id): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM plantas WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM plantas WHERE id_planta = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }

@@ -16,19 +16,19 @@ class HospitalRepository
 
     public function create($name, $address, $phone, $email): bool
     {
-        $stmt = $this->pdo->prepare("INSERT INTO hospitals (name, address, phone, email) VALUES (?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO hospitales (name, address, phone, email) VALUES (?, ?, ?, ?)");
         return $stmt->execute([$name, $address, $phone, $email]);
     }
 
     public function getAll(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM hospitals");
+        $stmt = $this->pdo->query("SELECT * FROM hospitales");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getHospitalById($id): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM hospitals WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM hospitales WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }

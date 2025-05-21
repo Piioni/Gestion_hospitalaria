@@ -18,7 +18,7 @@ class UserRepository
     public function insertUser($name, $email, $password, $rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
     {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->pdo->prepare("INSERT INTO users (name, email, password, rol, hospital_id, planta_id, botiquin_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO users (name, email, password, rol, id_hospital, id_planta, id_botiquin) VALUES (?, ?, ?, ?, ?, ?, ?)");
         return $stmt->execute([$name, $email, $passwordHash, $rol, $hospitalId, $plantaId, $botiquinId]);
     }
 
@@ -30,7 +30,7 @@ class UserRepository
 
     public function getUserById($id): ?User
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id_usuario = ?");
         $stmt->execute([$id]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         return $userData ? $this->createUserFromData($userData) : null;

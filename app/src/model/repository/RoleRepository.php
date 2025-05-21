@@ -22,7 +22,7 @@ class RoleRepository
     
     public function getRoleById($id): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM roles WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM roles WHERE id_rol = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
