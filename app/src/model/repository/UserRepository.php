@@ -42,7 +42,7 @@ class UserRepository
         return $userData ? $this->createUserFromData($userData) : null;
     }
 
-    public function getUserByEmail($email)
+    public function getUserByEmail($email): ?User
     {
         $stmt = $this->pdo->prepare("
             SELECT * 
