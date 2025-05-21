@@ -2,6 +2,7 @@
 
 namespace model\service;
 
+use model\entity\User;
 use model\repository\UserRepository;
 
 class UserService
@@ -14,12 +15,12 @@ class UserService
         $this->userRepository = new UserRepository();
     }
 
-    public function addUser($name, $email, $password, $rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
+    public function addUser($nombre, $email, $password, $rol, $id_hospital = null, $id_planta = null, $id_botiquin = null): bool
     {
-        return $this->userRepository->insertUser($name, $email, $password, $rol, $hospitalId, $plantaId, $botiquinId);
+        return $this->userRepository->insertUser($nombre, $email, $password, $rol, $id_hospital, $id_planta, $id_botiquin);
     }
 
-    public function getUserByEmail($email)
+    public function getUserByEmail($email): ?User
     {
         return $this->userRepository->getUserByEmail($email);
     }

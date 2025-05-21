@@ -2,6 +2,7 @@
 
 namespace model\service;
 
+use http\Exception\InvalidArgumentException;
 use JetBrains\PhpStorm\NoReturn;
 
 class AuthService
@@ -31,9 +32,28 @@ class AuthService
         return false;
     }
 
-    public function register($name, $email, $password, $rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
+    public function register($nombre, $email, $password, $rol, $id_hospital = null, $id_planta = null, $id_botiquin = null): bool
     {
-        return $this->userService->addUser($name, $email, $password, $rol, $hospitalId, $plantaId, $botiquinId);
+        if (empty($nombre) || empty($email) || empty($password)) {
+            throw new InvalidArgumentException("Todos los campos son obligatorios."); // All fields are required
+        }
+
+        if ($this->userService->getUserByEmail($email)) {
+            throw new InvalidArgumentException("Ya existe un usuario con ese email."); // User already exists
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException("El email no es válido."); // Invalid email
+        }
+
+        if (strlen($password) < 6) {
+            throw new InvalidArgumentException("La contraseña debe tener al menos 6 caracteres."); // Password must be at least 6 characters
+        }
+
+        // Hash the password before saving
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+        return $this->userService->addUser($nombre, $email, $passwordHash, $rol, $id_hospital, $id_planta, $id_botiquin);
     }
 
     #[NoReturn]
