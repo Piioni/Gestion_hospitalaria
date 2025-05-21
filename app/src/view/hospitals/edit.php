@@ -19,7 +19,7 @@ if (empty($hospitalData)) {
     exit;
 }
 
-$title = "Edición de Hospital";
+$title = "Editar Hospital";
 include __DIR__ . "/../layouts/_header.php";
 
 // Inicializar variables y mensajes
@@ -50,40 +50,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div class="container">
-    <h1 class="mt-4">Editar Hospital</h1>
+<div class="page-section">
+    <div class="container">
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Editar Hospital</h1>
+                <p class="page-description">
+                    Modifique la información del hospital "<?= htmlspecialchars($hospital['name']) ?>".
+                </p>
+            </div>
+        </div>
 
-    <?php if (!empty($errors)): ?>
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                <?php foreach ($errors as $error): ?>
-                    <li><?= $error ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
+        <?php if (!empty($errors)): ?>
+            <div class="alert alert-danger">
+                <ul class="error-list">
+                    <?php foreach ($errors as $error): ?>
+                        <li><?= $error ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
-    <?php if ($success): ?>
-        <div class="alert alert-success">
-            Hospital actualizado correctamente.
-        </div>
-    <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="alert alert-success">
+                Hospital actualizado correctamente.
+            </div>
+        <?php endif; ?>
 
-    <form method="POST" action="">
-        <input type="hidden" name="id" value="<?= htmlspecialchars($hospital['id']) ?>">
-        <div class="mb-3">
-            <label for="name" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="name" name="name"
-                   value="<?= htmlspecialchars($hospital['name']) ?>" required>
+        <div class="card">
+            <div class="card-content">
+                <form method="POST" action="" class="form">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($hospital['id']) ?>">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nombre del Hospital</label>
+                        <div class="form-field">
+                            <input type="text" id="name" name="name" class="form-input"
+                                value="<?= htmlspecialchars($hospital['name']) ?>" 
+                                placeholder="Ingrese el nombre del hospital" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="form-label">Dirección</label>
+                        <div class="form-field">
+                            <input type="text" id="address" name="address" class="form-input"
+                                value="<?= htmlspecialchars($hospital['address']) ?>" 
+                                placeholder="Ingrese la dirección del hospital" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Actualizar Hospital</button>
+                        <a href="/hospitals/list" class="btn btn-secondary">Volver</a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="address" class="form-label">Dirección</label>
-            <input type="text" class="form-control" id="address" name="address"
-                   value="<?= htmlspecialchars($hospital['address']) ?>" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a href="/hospitals/list" class="btn btn-secondary">Volver</a>
-    </form>
+    </div>
 </div>
 
 <?php include __DIR__ . "/../layouts/_footer.php"; ?>

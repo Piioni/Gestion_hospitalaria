@@ -17,7 +17,6 @@ $navTitle = "Stock Hospitalario";
 //
 ?>
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -25,11 +24,29 @@ $navTitle = "Stock Hospitalario";
     <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
 </head>
 <body>
-<header>
+<header class="header">
+    <div class="container">
+        <a href="/" class="logo">
+            <span class="logo-icon">🏥</span>
+            <span class="logo-text"><?= htmlspecialchars($navTitle) ?></span>
+        </a>
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link">Inicio</a></li>
+                <li><a href="/hospitals/list" class="nav-link">Hospitales</a></li>
+                <li><a href="/plants/list" class="nav-link">Plantas</a></li>
+                <li><a href="/stock/list" class="nav-link">Stock</a></li>
+            </ul>
+        </nav>
+    </div>
 </header>
-</body>
 
-<?php include __DIR__ . '/../partials/_alerts.php'; ?>
+<?php if (file_exists(__DIR__ . '/../partials/_alerts.php')): ?>
+<div class="alerts-container">
+    <?php include __DIR__ . '/../partials/_alerts.php'; ?>
+</div>
+<?php endif; ?>

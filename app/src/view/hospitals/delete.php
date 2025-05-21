@@ -51,28 +51,42 @@ try {
 }
 ?>
 
-<div class="container mt-4">
-    <h1>Confirmar Eliminación de Hospital</h1>
-    
-    <div class="alert alert-warning">
-        <p><strong>¡Atención!</strong> El hospital "<?= htmlspecialchars($hospital['nombre']) ?>" tiene plantas asociadas:</p>
+<div class="page-section">
+    <div class="container">
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Confirmar Eliminación</h1>
+                <p class="page-description">
+                    Se requiere su confirmación para eliminar este hospital.
+                </p>
+            </div>
+        </div>
         
-        <ul>
-            <?php foreach ($relatedPlants as $plant): ?>
-                <li><?= htmlspecialchars($plant['nombre']) ?> (ID: <?= htmlspecialchars($plant['id_planta']) ?>)</li>
-            <?php endforeach; ?>
-        </ul>
-        
-        <p class="mb-0">Si elimina este hospital, estas relaciones podrían quedar afectadas.</p>
-    </div>
-    
-    <div class="mt-4">
-        <form action="" method="get" class="d-inline">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($hospital_id) ?>">
-            <input type="hidden" name="force" value="1">
-            <button type="submit" class="btn btn-danger">Eliminar de todos modos</button>
-        </form>
-        <a href="/hospitals/list" class="btn btn-secondary ms-2">Cancelar</a>
+        <div class="card">
+            <div class="card-content">
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">¡Atención! Se encontraron dependencias</h4>
+                    <p>El hospital "<strong><?= htmlspecialchars($hospital['nombre']) ?></strong>" tiene plantas asociadas:</p>
+                    
+                    <ul class="dependencies-list">
+                        <?php foreach ($relatedPlants as $plant): ?>
+                            <li><?= htmlspecialchars($plant['nombre']) ?> (ID: <?= htmlspecialchars($plant['id_planta']) ?>)</li>
+                        <?php endforeach; ?>
+                    </ul>
+                    
+                    <p>Si elimina este hospital, las plantas asociadas podrían quedar sin referencia, afectando la integridad de los datos.</p>
+                </div>
+                
+                <div class="form-actions">
+                    <form action="" method="get" class="confirmation-form">
+                        <input type="hidden" name="id" value="<?= htmlspecialchars($hospital_id) ?>">
+                        <input type="hidden" name="force" value="1">
+                        <button type="submit" class="btn btn-danger">Eliminar de todos modos</button>
+                    </form>
+                    <a href="/hospitals/list" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

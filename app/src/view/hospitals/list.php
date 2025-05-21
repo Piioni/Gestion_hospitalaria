@@ -9,75 +9,85 @@ $hospitalService = new HospitalService();
 $hospitals = $hospitalService->getAllHospitals();
 
 $title = "Listado de Hospitales";
-include __DIR__ . '/../layouts/_header.php'; ?>
+include __DIR__ . '/../layouts/_header.php'; 
+?>
 
-<div class="container mt-4">
-    <div class="row mb-3">
-        <div class="col-md-8">
-            <h1>Hospitales</h1>
+<div class="page-section">
+    <div class="container">
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Hospitales</h1>
+                <p class="page-description">
+                    Administre aquí todos los hospitales registrados en el sistema.
+                </p>
+                <a href="/hospitals/create" class="btn btn-primary">
+                    <span>Crear Hospital</span>
+                </a>
+            </div>
         </div>
-        <div class="col-md-4 text-end">
-            <a href="/hospitals/create" class="btn btn-primary">Crear Hospital</a>
-        </div>
-    </div>
 
-    <?php if ($success === 'created'): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Hospital creado exitosamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php elseif ($success === 'deleted'): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Hospital eliminado exitosamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
+        <?php if ($success === 'created'): ?>
+            <div class="alert alert-success" role="alert">
+                Hospital creado exitosamente.
+            </div>
+        <?php elseif ($success === 'deleted'): ?>
+            <div class="alert alert-success" role="alert">
+                Hospital eliminado exitosamente.
+            </div>
+        <?php endif; ?>
 
-    <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?php
-            echo match ($error) {
-                'id_invalid' => 'ID de hospital inválido.',
-                'delete_failed' => 'No se pudo eliminar el hospital.',
-                'unexpected' => 'Ocurrió un error inesperado.',
-                default => htmlspecialchars($error),
-            };
-            ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php
+                echo match ($error) {
+                    'id_invalid' => 'ID de hospital inválido.',
+                    'delete_failed' => 'No se pudo eliminar el hospital.',
+                    'unexpected' => 'Ocurrió un error inesperado.',
+                    default => htmlspecialchars($error),
+                };
+                ?>
+            </div>
+        <?php endif; ?>
 
-    <div class="card">
-        <div class="card-body">
-            <?php if (empty($hospitals)): ?>
-                <p class="text-muted">No hay hospitales registrados.</p>
-            <?php else: ?>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Ubicación</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($hospitals as $hospital): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($hospital->getIdHospital()) ?></td>
-                            <td><?= htmlspecialchars($hospital->getNombre()) ?></td>
-                            <td><?= htmlspecialchars($hospital->getUbicacion()) ?></td>
-                            <td>
-                                <a href="/hospitals/edit?id=<?= $hospital->getIdHospital() ?>"
-                                   class="btn btn-sm btn-info">Editar</a>
-                                <a href="/hospitals/delete?id=<?= $hospital->getIdHospital() ?>"
-                                   class="btn btn-sm btn-danger">Eliminar</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
+        <div class="card">
+            <div class="card-content">
+                <?php if (empty($hospitals)): ?>
+                    <div class="empty-state">
+                        <p>No hay hospitales registrados en el sistema.</p>
+                        <a href="/hospitals/create" class="btn btn-primary">Crear el primer hospital</a>
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Ubicación</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($hospitals as $hospital): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($hospital->getIdHospital()) ?></td>
+                                    <td><?= htmlspecialchars($hospital->getNombre()) ?></td>
+                                    <td><?= htmlspecialchars($hospital->getUbicacion()) ?></td>
+                                    <td class="actions-column">
+                                        <a href="/hospitals/edit?id=<?= $hospital->getIdHospital() ?>" class="btn btn-sm btn-secondary">
+                                           Editar
+                                        </a>
+                                        <a href="/hospitals/delete?id=<?= $hospital->getIdHospital() ?>" class="btn btn-sm btn-danger">
+                                           Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
