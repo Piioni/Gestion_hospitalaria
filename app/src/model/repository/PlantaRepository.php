@@ -1,8 +1,12 @@
 <?php
 
 namespace model\repository;
+
 use model\Database;
+use model\entity\Planta;
 use PDO;
+use PDOException;
+
 class PlantaRepository
 {
     private PDO $pdo;
@@ -12,43 +16,85 @@ class PlantaRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function create($id_hospital, $nombre) : bool
+    public function createPlantaFromData(array $data): Planta
     {
-        $stmt = $this->pdo->prepare("
-            INSERT INTO plantas (id_hospital, nombre) 
-            VALUES (?, ?)"
+        return new Planta(
+            (int)$data['id_planta'],
+            (int)$data['id_hospital'],
+            $data['nombre'],
+            $data['especialidad'] ?? null
         );
-        return $stmt->execute([$id_hospital, $nombre]);
+    }
+
+    public function create($id_hospital, $nombre, $especialidad = null): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO plantas (id_hospital, nombre, especialidad) 
+                VALUES (?, ?, ?)"
+            );
+            return $stmt->execute([$id_hospital, $nombre, $especialidad]);
+        } catch (PDOException $e) {
+            error_log("Error al crear planta: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getAll(): array
     {
-        $stmt = $this->pdo->query("
-            SELECT * 
-            FROM plantas"
-        );
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->query("
+                SELECT * 
+                FROM plantas
+                ORDER BY nombre"
+            );
+            
+            $plantasObjects = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $plantasObjects[] = $this->createPlantaFromData($row);
+            }
+            return $plantasObjects;
+        } catch (PDOException $e) {
+            error_log("Error al obtener todas las plantas: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getByHospitalId($hospitalId): array
     {
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM plantas 
-            WHERE id_hospital = ?"
-        );
-        $stmt->execute([$hospitalId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM plantas 
+                WHERE id_hospital = ?
+                ORDER BY nombre"
+            );
+            $stmt->execute([$hospitalId]);
+            
+            $plantasObjects = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $plantasObjects[] = $this->createPlantaFromData($row);
+            }
+            return $plantasObjects;
+        } catch (PDOException $e) {
+            error_log("Error al obtener plantas por hospital: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getPlantaById($id): array
     {
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM plantas 
-            WHERE id_planta = ?"
-        );
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM plantas 
+                WHERE id_planta = ?"
+            );
+            $stmt->execute([$id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        } catch (PDOException $e) {
+            error_log("Error al obtener planta por ID: " . $e->getMessage());
+            throw $e;
+        }
     }
 }

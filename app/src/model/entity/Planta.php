@@ -5,14 +5,21 @@ namespace model\entity;
 class Planta
 {
     private int $id_planta;
-    private string $id_hospital;
+    private int $id_hospital;
     private string $nombre;
+    private ?string $especialidad;
 
-    public function __construct(int $id_planta, string $id_hospital, string $nombre)
+    public function __construct(int $id_planta, int $id_hospital, string $nombre, ?string $especialidad = null)
     {
         $this->id_planta = $id_planta;
         $this->id_hospital = $id_hospital;
         $this->nombre = $nombre;
+        $this->especialidad = $especialidad;
+    }
+
+    public function getId(): int
+    {
+        return $this->id_planta;
     }
 
     public function getIdPlanta(): int
@@ -25,12 +32,12 @@ class Planta
         $this->id_planta = $id_planta;
     }
 
-    public function getIdHospital(): string
+    public function getIdHospital(): int
     {
         return $this->id_hospital;
     }
 
-    public function setIdHospital(string $id_hospital): void
+    public function setIdHospital(int $id_hospital): void
     {
         $this->id_hospital = $id_hospital;
     }
@@ -45,7 +52,13 @@ class Planta
         $this->nombre = $nombre;
     }
 
+    public function getEspecialidad(): ?string
+    {
+        return $this->especialidad;
+    }
 
-
-
+    public function setEspecialidad(?string $especialidad): void
+    {
+        $this->especialidad = $especialidad;
+    }
 }
