@@ -21,6 +21,8 @@ if ($auth->isAuthenticated()) {
     header('Location: /');
     exit();
 }
+// Obtener los roles para el selector
+$roles = $roleService->getAllRoles();
 
 // Obtener los hospitales para el selector
 $hospitals = $hospitalService->getAllHospitals();
@@ -110,12 +112,19 @@ include(__DIR__ . '/../layouts/_header.php');
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Rol Selector -->
             <div class="form-group">
                 <label for="roles">Rol</label>
                 <div class="input-wrapper">
                     <select id="roles" name="role" class="form-control" required>
                         <option value="">Seleccione un rol</option>
-                        <!-- Se llenará dinámicamente con JavaScript -->
+                        <?php foreach ($roles as $rol): ?>
+                            <option value="<?= htmlspecialchars($rol->getIdRol()) ?>"
+                                <?= ($rol->getIdRol() == ($input['role'] ?? '')) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($rol->getNombre()) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                     <?php if (!empty($errors['role'])): ?>
                         <div class="error-message"><?= htmlspecialchars($errors['role']) ?></div>

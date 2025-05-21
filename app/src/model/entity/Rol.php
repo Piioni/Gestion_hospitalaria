@@ -1,20 +1,20 @@
 <?php
 
 namespace model\entity;
-class Roles
+class Rol
 {
-    private int $id;
+    private int $id_rol;
     private string $nombre;
 
     public function __construct(int $id, string $nombre)
     {
-        $this->id = $id;
+        $this->id_rol = $id;
         $this->nombre = $nombre;
     }
 
-    public function getId(): int
+    public function getIdRol(): int
     {
-        return $this->id;
+        return $this->id_rol;
     }
 
     public function getNombre(): string
