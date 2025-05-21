@@ -7,14 +7,12 @@ class Planta
     private int $id_planta;
     private int $id_hospital;
     private string $nombre;
-    private ?string $especialidad;
 
-    public function __construct(int $id_planta, int $id_hospital, string $nombre, ?string $especialidad = null)
+    public function __construct(int $id_planta, int $id_hospital, string $nombre)
     {
         $this->id_planta = $id_planta;
         $this->id_hospital = $id_hospital;
         $this->nombre = $nombre;
-        $this->especialidad = $especialidad;
     }
 
     public function getId(): int
@@ -50,15 +48,5 @@ class Planta
     public function setNombre(string $nombre): void
     {
         $this->nombre = $nombre;
-    }
-
-    public function getEspecialidad(): ?string
-    {
-        return $this->especialidad;
-    }
-
-    public function setEspecialidad(?string $especialidad): void
-    {
-        $this->especialidad = $especialidad;
     }
 }

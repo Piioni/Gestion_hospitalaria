@@ -22,18 +22,17 @@ class PlantaRepository
             (int)$data['id_planta'],
             (int)$data['id_hospital'],
             $data['nombre'],
-            $data['especialidad'] ?? null
         );
     }
 
-    public function create($id_hospital, $nombre, $especialidad = null): bool
+    public function create($id_hospital, $nombre): bool
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO plantas (id_hospital, nombre, especialidad) 
-                VALUES (?, ?, ?)"
+                INSERT INTO plantas (id_hospital, nombre) 
+                VALUES (?, ?)"
             );
-            return $stmt->execute([$id_hospital, $nombre, $especialidad]);
+            return $stmt->execute([$id_hospital, $nombre]);
         } catch (PDOException $e) {
             error_log("Error al crear planta: " . $e->getMessage());
             throw $e;
