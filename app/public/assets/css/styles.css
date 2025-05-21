@@ -267,10 +267,15 @@ a:hover {
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
+    border: 1px solid var(--primary-color);
 }
 
 .btn-primary:hover {
     background-color: var(--primary-dark);
+    color: white;
+    border: 1px solid var(--primary-dark);
+    box-shadow: 0 4px 8px rgba(69, 143, 246, 0.3);
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -280,16 +285,25 @@ a:hover {
 }
 
 .btn-secondary:hover {
-    background-color: var(--light-bg);
+    background-color: rgba(69, 143, 246, 0.1);
+    color: var(--primary-dark);
+    border: 1px solid var(--primary-dark);
+    box-shadow: 0 4px 8px rgba(69, 143, 246, 0.2);
+    transform: translateY(-2px);
 }
 
 .btn-danger {
     background-color: var(--accent-color);
     color: white;
+    border: 1px solid var(--accent-color);
 }
 
 .btn-danger:hover {
     background-color: var(--accent-dark);
+    color: white;
+    border: 1px solid var(--accent-dark);
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+    transform: translateY(-2px);
 }
 
 .btn-sm {
@@ -603,6 +617,37 @@ a:hover {
     color: var(--primary-color);
 }
 
+/* Página de error 404 */
+.error-template {
+    padding: 40px 15px;
+    text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
+.error-template h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.error-template h2 {
+    font-size: 2rem;
+    color: var(--dark-text);
+    margin-bottom: 2rem;
+}
+
+.error-details {
+    font-size: 1.2rem;
+    color: var(--light-text);
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .hero-container {
@@ -643,6 +688,14 @@ a:hover {
     
     :root {
         --section-spacing: 3rem;
+    }
+    
+    .error-template h1 {
+        font-size: 2.5rem;
+    }
+    
+    .error-template h2 {
+        font-size: 1.75rem;
     }
 }
 
