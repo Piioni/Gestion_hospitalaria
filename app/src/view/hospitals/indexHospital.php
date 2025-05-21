@@ -57,8 +57,7 @@ include __DIR__ . "/../layouts/_header.php";
                     <?php foreach ($hospitals as $index => $hospital): ?>
                         <div class="hospital-card card">
                             <div class="card-header">
-                                <h3 class="hospital-name"><?= htmlspecialchars($hospital->getNombre()) ?> -
-                                    <?= htmlspecialchars($hospital->getUbicacion()) ?></h3>
+                                <h3 class="hospital-name"><?= htmlspecialchars($hospital->getNombre()) ?>
                             </div>
 
                             <div class="card-body">

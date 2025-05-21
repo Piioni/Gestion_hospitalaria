@@ -17,24 +17,24 @@ return[
         '/logout' => 'auth/logout.php',
 
         // User pages
-        '/users' => 'users/index.php',
-        '/users/create' => 'users/create.php',
-        '/users/edit' => 'users/edit.php',
-        '/users/delete' => 'users/delete.php',
-        '/users/list' => 'users/list.php',
+        '/users' => 'users/indexUser.php',
+        '/users/create' => 'users/createUser.php',
+        '/users/edit' => 'users/editUser.php',
+        '/users/delete' => 'users/deleteUser.php',
+        '/users/list' => 'users/listUser.php',
 
         // Hospital pages
-        '/hospitals' => 'hospitals/index.php',
-        '/hospitals/create' => 'hospitals/create.php',
-        '/hospitals/edit' => 'hospitals/edit.php',
-        '/hospitals/delete' => 'hospitals/delete.php',
-        '/hospitals/list' => 'hospitals/list.php',
+        '/hospitals' => 'hospitals/indexHospital.php',
+        '/hospitals/create' => 'hospitals/createHospital.php',
+        '/hospitals/edit' => 'hospitals/editHospital.php',
+        '/hospitals/delete' => 'hospitals/deleteHospital.php',
+        '/hospitals/list' => 'hospitals/listHospital.php',
 
         // Planta pages
-        '/plantas' => 'plantas/index.php',
-        '/plantas/create' => 'plantas/create.php',
-        '/plantas/edit' => 'plantas/edit.php',
-        '/plantas/delete' => 'plantas/delete.php',
-        '/plantas/list' => 'plantas/list.php',
+        '/plantas' => 'plantas/indexPlanta.php',
+        '/plantas/create' => 'plantas/createPlanta.php',
+        '/plantas/edit' => 'plantas/editPlanta.php',
+        '/plantas/delete' => 'plantas/deletePlanta.php',
+        '/plantas/list' => 'plantas/listPlanta.php',
     ]
 ];
