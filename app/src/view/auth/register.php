@@ -16,30 +16,46 @@ $botiquinService = new BotiquinService();
 $errors = [];
 $input = [];
 
-// Check if the user is already authenticated
-if ($auth->isAuthenticated()) {
-    header('Location: /');
-    exit();
-}
-// Obtener los roles para el selector
+// Obtener los valores de option de los selects
 $roles = $roleService->getAllRoles();
-
-// Obtener los hospitales para el selector
 $hospitals = $hospitalService->getAllHospitals();
-
-// Obtener todas las plantas para el procesamiento en JavaScript
 $plantas = $plantaService->getAllArray();
-
-// Obtener todos los botiquines para el procesamiento en JavaScript
 $botiquines = $botiquinService->getAllBotiquines();
 
 // Procesar el envío del formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // tal
+    $input['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
+    $input['email'] = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $input['password'] = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+    $input['confirm_password'] = filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_SPECIAL_CHARS);
+    $input['role'] = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_NUMBER_INT);
+    $input['hospital'] = filter_input(INPUT_POST, 'hospital', FILTER_SANITIZE_NUMBER_INT);
+    $input['planta'] = filter_input(INPUT_POST, 'planta', FILTER_SANITIZE_NUMBER_INT);
+    $input['botiquin'] = filter_input(INPUT_POST, 'botiquin', FILTER_SANITIZE_NUMBER_INT);
 
+    if ($input['password'] !== $input['confirm_password']) {
+        $errors['confirm_password'] = "Las contraseñas no coinciden.";
+    }
+
+    // Validar los datos de entrada
     if (empty($errors)) {
-        header('Location: /login');
-        exit();
+        try {
+            $auth->register(
+                $input['nombre'],
+                $input['email'],
+                $input['password'],
+                $input['role'],
+                $input['hospital'],
+                $input['planta'],
+                $input['botiquin']
+            );
+        } catch (InvalidArgumentException $e) {
+            // Capturar errores de validación
+            $errors['general'] = $e->getMessage();
+        } catch (Exception $e) {
+            // Capturar otros errores
+            $errors['general'] = "Error al registrar el usuario: " . $e->getMessage();
+        }
     }
 }
 

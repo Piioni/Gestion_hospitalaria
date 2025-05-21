@@ -15,13 +15,14 @@ class UserRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function insertUser($nombre, $email, $password, $id_rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
+    public function insertUser($nombre, $email, $password, $id_rol, $id_hospital = null, $id_planta = null, $id_botiquin = null): bool
     {
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $this->pdo->prepare("
             INSERT INTO users (nombre, email, password, id_rol, id_hospital, id_planta, id_botiquin) 
             VALUES (?, ?, ?, ?, ?, ?, ?)");
-        return $stmt->execute([$nombre, $email, $passwordHash, $id_rol, $hospitalId, $plantaId, $botiquinId]);
+
+
+        return $stmt->execute([$nombre, $email, $password, $id_rol, $id_hospital, $id_planta, $id_botiquin]);
     }
 
     public function getAllUsers(): array

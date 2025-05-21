@@ -18,37 +18,57 @@ $title = 'Login';
 include(__DIR__ . '/../layouts/_header.php');
 ?>
 
-<div class="container">
-    <h1>Iniciar sesión</h1>
-    <form method="POST" action="/login">
-        <div class="form-group">
-            <label for="identifier">Email</label>
-            <input type="text" name="identifier" id="identifier" class="form-control"
-                   value="<?= htmlspecialchars($input['identifier'] ?? '') ?>" required>
-            <?php if (!empty($errors['identifier'])) : ?>
-                <div class="error-message">
-                    <?= htmlspecialchars($errors['identifier']) ?>
+<div class="auth-page">
+    <div class="container">
+        <div class="auth-header">
+            <h1 class="auth-title">Iniciar sesión</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="auth-card card">
+            <?php if (!empty($errors['general'])) : ?>
+                <div class="alert alert-danger">
+                    <?= htmlspecialchars($errors['general']) ?>
                 </div>
             <?php endif; ?>
-        </div>
-        <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input type="password" name="password" id="password" class="form-control" required>
-            <?php if (!empty($errors['password'])) : ?>
-                <div class="error-message">
-                    <?= htmlspecialchars($errors['password']) ?>
+
+            <form method="POST" action="/login" class="form">
+                <div class="form-group">
+                    <label for="identifier" class="form-label">Email</label>
+                    <div class="form-field">
+                        <input type="text" name="identifier" id="identifier" class="form-input"
+                              value="<?= htmlspecialchars($input['identifier'] ?? '') ?>" required>
+                        <?php if (!empty($errors['identifier'])) : ?>
+                            <div class="form-error">
+                                <?= htmlspecialchars($errors['identifier']) ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            <?php endif; ?>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="form-field">
+                        <input type="password" name="password" id="password" class="form-input" required>
+                        <?php if (!empty($errors['password'])) : ?>
+                            <div class="form-error">
+                                <?= htmlspecialchars($errors['password']) ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+                </div>
+
+                <div class="form-footer">
+                    <p>¿No tienes una cuenta? <a href="/register" class="auth-link">Regístrate aquí</a></p>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-        </div>
-        <div class="form-group">
-            <p>¿No tienes una cuenta? <a href="/register">Regístrate aquí</a></p>
-        </div>
-    </form>
+    </div>
 </div>
 
 <?php include(__DIR__ . '/../layouts/_footer.php'); ?>
-
-
