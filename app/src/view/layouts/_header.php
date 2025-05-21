@@ -25,7 +25,7 @@ $navTitle = "Stock Hospitalario";
     <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>>"></script>
+    <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
 </head>
 <body>
 <header>
