@@ -15,10 +15,10 @@ class HospitalRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function create($name, $address, $phone, $email): bool
+    public function create($name, $address): bool
     {
-        $stmt = $this->pdo->prepare("INSERT INTO hospitales (name, address, phone, email) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$name, $address, $phone, $email]);
+        $stmt = $this->pdo->prepare("INSERT INTO hospitales (name, address) VALUES (?, ?)");
+        return $stmt->execute([$name, $address]);
     }
 
     public function getAll(): array
@@ -31,10 +31,10 @@ class HospitalRepository
         }
         return $hospitalObjects;
     }
-    
+
     public function getHospitalById($id): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM hospitales WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM hospitales WHERE id_hospital = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }

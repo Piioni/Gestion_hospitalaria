@@ -15,11 +15,11 @@ class UserRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function insertUser($name, $email, $password, $rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
+    public function insertUser($nombre, $email, $password, $id_rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
     {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->pdo->prepare("INSERT INTO users (name, email, password, rol, id_hospital, id_planta, id_botiquin) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        return $stmt->execute([$name, $email, $passwordHash, $rol, $hospitalId, $plantaId, $botiquinId]);
+        $stmt = $this->pdo->prepare("INSERT INTO users (nombre, email, password, id_rol, id_hospital, id_planta, id_botiquin) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        return $stmt->execute([$nombre, $email, $passwordHash, $id_rol, $hospitalId, $plantaId, $botiquinId]);
     }
 
     public function getAllUsers(): array
@@ -47,21 +47,21 @@ class UserRepository
     public function createUserFromData($userData): User
     {
         $user = new User();
-        $user->setId($userData['id']);
-        $user->setNombre($userData['name']);
+        $user->setId($userData['id_usuario']);
+        $user->setNombre($userData['nombre']);
         $user->setEmail($userData['email']);
         $user->setPassword($userData['password']);
-        $user->setRol($userData['rol']);
+        $user->setRol($userData['id_rol']);
 
         // Configurar campos opcionales si existen
-        if (isset($userData['hospital_id'])) {
-            $user->setHospitalId($userData['hospital_id']);
+        if (isset($userData['id_hospital'])) {
+            $user->setHospitalId($userData['id_hospital']);
         }
-        if (isset($userData['planta_id'])) {
-            $user->setPlantaId($userData['planta_id']);
+        if (isset($userData['id_planta'])) {
+            $user->setPlantaId($userData['id_planta']);
         }
-        if (isset($userData['botiquin_id'])) {
-            $user->setBotiquinId($userData['botiquin_id']);
+        if (isset($userData['id_botiquin'])) {
+            $user->setBotiquinId($userData['id_botiquin']);
         }
 
         return $user;

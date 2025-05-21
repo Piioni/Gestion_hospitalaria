@@ -14,6 +14,12 @@ class BotiquinRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
+    public function create($id_planta, $nombre): bool
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO botiquines (id_planta, nombre) VALUES (?, ?)");
+        return $stmt->execute([$id_planta, $nombre]);
+    }
+
     public function getAll(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM botiquines");

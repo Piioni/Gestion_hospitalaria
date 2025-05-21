@@ -13,9 +13,9 @@ class HospitalService
         $this->hospitalRepository = new HospitalRepository();
     }
 
-    public function createHospital($name, $address, $phone, $email): bool
+    public function createHospital($name, $address): bool
     {
-        return $this->hospitalRepository->create($name, $address, $phone, $email);
+        return $this->hospitalRepository->create($name, $address);
     }
     
     public function getAllHospitals(): array

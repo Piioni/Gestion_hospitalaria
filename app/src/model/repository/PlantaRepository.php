@@ -18,6 +18,12 @@ class PlantaRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function create($id_hospital, $nombre) : bool
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO plantas (id_hospital, nombre) VALUES (?, ?)");
+        return $stmt->execute([$id_hospital, $nombre]);
+    }
+
     public function getByHospitalId($hospitalId): array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM plantas WHERE id_hospital = ?");
