@@ -34,11 +34,11 @@ $plantas = $plantaService->getAllPlantas();
 $botiquines = $botiquinService->getAllBotiquines();
 
 //// Convertir plantas y botiquines a arrays para JSON
-//$plantasArray = array_map(function($planta) {
+//$plantasArray = array_map(function($plantas) {
 //    return [
-//        'id_planta' => $planta->getIdPlanta(),
-//        'id_hospital' => $planta->getIdHospital(),
-//        'nombre' => $planta->getNombre()
+//        'id_planta' => $plantas->getIdPlanta(),
+//        'id_hospital' => $plantas->getIdHospital(),
+//        'nombre' => $plantas->getNombre()
 //    ];
 //}, $plantas);
 //
@@ -159,8 +159,8 @@ include(__DIR__ . '/../layouts/_header.php');
                         <option value="">Seleccione una planta</option>
                         <!-- Se llenará dinámicamente con JavaScript -->
                     </select>
-                    <?php if (!empty($errors['planta'])): ?>
-                        <div class="error-message"><?= htmlspecialchars($errors['planta']) ?></div>
+                    <?php if (!empty($errors['plantas'])): ?>
+                        <div class="error-message"><?= htmlspecialchars($errors['plantas']) ?></div>
                     <?php endif; ?>
                 </div>
             </div>
