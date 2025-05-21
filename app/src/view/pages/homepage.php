@@ -6,9 +6,6 @@ include(__DIR__ . '/../layouts/_header.php');
 
 <div class="hero-section">
     <div class="container hero-container">
-        <div class="hero-background">
-            <img src="/assets/img/dots.svg" alt="" class="dots-image">
-        </div>
         <div class="hero-content">
             <h1 class="hero-title">Sistema de Gestión de Stock Hospitalario</h1>
             <p class="hero-description">
@@ -21,7 +18,7 @@ include(__DIR__ . '/../layouts/_header.php');
             </div>
         </div>
         <div class="hero-image">
-            <img src="/assets/img/hospital.svg" alt="Hospital" class="hospital-image">
+            <img src="/assets/img/hospital.avif" alt="Hospital" class="hospital-image">
         </div>
     </div>
 </div>

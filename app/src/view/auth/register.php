@@ -62,30 +62,30 @@ include(__DIR__ . '/../layouts/_header.php');
                     <?= htmlspecialchars($errors['general']) ?>
                 </div>
             <?php endif; ?>
-            
+
             <form method="POST" action="/register" class="form">
                 <div class="form-group">
                     <label for="nombre" class="form-label">Nombre</label>
                     <div class="form-field">
                         <input type="text" id="nombre" name="nombre" class="form-input"
-                                value="<?= htmlspecialchars($input['nombre'] ?? '') ?>" required>
+                               value="<?= htmlspecialchars($input['nombre'] ?? '') ?>" required>
                         <?php if (!empty($errors['nombre'])): ?>
                             <div class="form-error"><?= htmlspecialchars($errors['nombre']) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
                     <div class="form-field">
                         <input type="text" id="email" name="email" class="form-input"
-                                value="<?= htmlspecialchars($input['email'] ?? '') ?>" required>
+                               value="<?= htmlspecialchars($input['email'] ?? '') ?>" required>
                         <?php if (!empty($errors['email'])): ?>
                             <div class="form-error"><?= htmlspecialchars($errors['email']) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password" class="form-label">Contraseña</label>
                     <div class="form-field">
@@ -95,11 +95,12 @@ include(__DIR__ . '/../layouts/_header.php');
                         <?php endif; ?>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="confirm_password" class="form-label">Confirmar</label>
                     <div class="form-field">
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-input" required>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+                               required>
                         <?php if (!empty($errors['confirm_password'])): ?>
                             <div class="form-error"><?= htmlspecialchars($errors['confirm_password']) ?></div>
                         <?php endif; ?>
