@@ -3,6 +3,7 @@
 namespace model\repository;
 
 use model\Database;
+use model\entity\Hospital;
 use PDO;
 
 class HospitalRepository
@@ -23,7 +24,12 @@ class HospitalRepository
     public function getAll(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM hospitales");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $hospitals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $hospitalObjects = [];
+        foreach ($hospitals as $hospitalData) {
+            $hospitalObjects[] = $this->createHospitalFromData($hospitalData);
+        }
+        return $hospitalObjects;
     }
     
     public function getHospitalById($id): array
@@ -31,5 +37,10 @@ class HospitalRepository
         $stmt = $this->pdo->prepare("SELECT * FROM hospitales WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function createHospitalFromData($hospitalData): Hospital
+    {
+        return new Hospital($hospitalData['id_hospital'], $hospitalData['nombre'], $hospitalData['ubicacion']);
     }
 }

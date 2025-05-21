@@ -5,7 +5,15 @@ namespace model\entity;
 class Hospital
 {
     private int $id_hospital;
-    private string $name;
+    private string $nombre;
+    private string $ubicacion;
+
+    public function __construct(int $id_hospital, string $nombre, string $ubicacion)
+    {
+        $this->id_hospital = $id_hospital;
+        $this->nombre = $nombre;
+        $this->ubicacion = $ubicacion;
+    }
 
     public function getIdHospital(): int
     {
@@ -17,15 +25,26 @@ class Hospital
         $this->id_hospital = $id_hospital;
     }
 
-    public function getName(): string
+    public function getNombre(): string
     {
-        return $this->name;
+        return $this->nombre;
     }
 
-    public function setName(string $name): void
+    public function setNombre(string $nombre): void
     {
-        $this->name = $name;
+        $this->nombre = $nombre;
     }
+
+    public function getUbicacion(): string
+    {
+        return $this->ubicacion;
+    }
+
+    public function setUbicacion(string $ubicacion): void
+    {
+        $this->ubicacion = $ubicacion;
+    }
+
 
 
 
