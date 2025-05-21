@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 $routeConfig = require __DIR__ . '/../config/routes.php';
 
 function loadView(string $path): void
