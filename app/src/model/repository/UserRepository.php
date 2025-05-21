@@ -18,7 +18,9 @@ class UserRepository
     public function insertUser($nombre, $email, $password, $id_rol, $hospitalId = null, $plantaId = null, $botiquinId = null): bool
     {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->pdo->prepare("INSERT INTO users (nombre, email, password, id_rol, id_hospital, id_planta, id_botiquin) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("
+            INSERT INTO users (nombre, email, password, id_rol, id_hospital, id_planta, id_botiquin) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
         return $stmt->execute([$nombre, $email, $passwordHash, $id_rol, $hospitalId, $plantaId, $botiquinId]);
     }
 
@@ -30,7 +32,11 @@ class UserRepository
 
     public function getUserById($id): ?User
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id_usuario = ?");
+        $stmt = $this->pdo->prepare("
+            SELECT * 
+            FROM users 
+            WHERE id_usuario = ?"
+        );
         $stmt->execute([$id]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         return $userData ? $this->createUserFromData($userData) : null;
@@ -38,7 +44,11 @@ class UserRepository
 
     public function getUserByEmail($email)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt = $this->pdo->prepare("
+            SELECT * 
+            FROM users 
+            WHERE email = ?"
+        );
         $stmt->execute([$email]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         return $userData ? $this->createUserFromData($userData) : null;

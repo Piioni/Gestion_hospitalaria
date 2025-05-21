@@ -16,6 +16,16 @@ class HospitalRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
+    /**
+     * Crea un objeto Hospital a partir de los datos obtenidos de la base de datos
+     * @param array $hospitalData Datos del hospital
+     * @return Hospital Objeto Hospital
+     */
+    public function createHospitalFromData(array $hospitalData): Hospital
+    {
+        return new Hospital($hospitalData['id_hospital'], $hospitalData['nombre'], $hospitalData['ubicacion']);
+    }
+
     public function create($nombre, $ubicacion): bool
     {
         try {
@@ -31,22 +41,38 @@ class HospitalRepository
         }
     }
 
-    /**
-     * Crea un objeto Hospital a partir de los datos obtenidos de la base de datos
-     * @param array $hospitalData Datos del hospital
-     * @return Hospital Objeto Hospital
-     */
-    public function createHospitalFromData(array $hospitalData): Hospital
+    public function update($id, $nombre, $ubicacion): bool
     {
-        return new Hospital($hospitalData['id_hospital'], $hospitalData['nombre'], $hospitalData['ubicacion']);
+        try {
+            $stmt = $this->pdo->prepare("
+                UPDATE hospitales 
+                SET nombre = ?, ubicacion = ? 
+                WHERE id_hospital = ?"
+            );
+            return $stmt->execute([$nombre, $ubicacion, $id]);
+        } catch (PDOException $e) {
+            error_log("Error al actualizar hospital: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function delete($id): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                DELETE FROM hospitales 
+                WHERE id_hospital = ?"
+            );
+            return $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            error_log("Error al eliminar hospital: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getAll(): array
     {
-        $stmt = $this->pdo->query("
-            SELECT * 
-            FROM hospitales"
-        );
+        $stmt = $this->pdo->query("SELECT * FROM hospitales");
         $hospitals = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $hospitalObjects = [];
         foreach ($hospitals as $hospitalData) {
@@ -65,7 +91,7 @@ class HospitalRepository
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
-    
+
     public function existsByName($nombre): bool
     {
         $stmt = $this->pdo->prepare("
@@ -76,7 +102,7 @@ class HospitalRepository
         $stmt->execute([$nombre]);
         return (int)$stmt->fetchColumn() > 0;
     }
-    
+
     public function existsByAddress($ubicacion): bool
     {
         $stmt = $this->pdo->prepare("
@@ -87,22 +113,7 @@ class HospitalRepository
         $stmt->execute([$ubicacion]);
         return (int)$stmt->fetchColumn() > 0;
     }
-    
-    public function update($id, $nombre, $ubicacion): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                UPDATE hospitales 
-                SET nombre = ?, ubicacion = ? 
-                WHERE id_hospital = ?"
-            );
-            return $stmt->execute([$nombre, $ubicacion, $id]);
-        } catch (PDOException $e) {
-            error_log("Error al actualizar hospital: " . $e->getMessage());
-            throw $e;
-        }
-    }
-    
+
     public function existsByNameExceptId($nombre, $id): bool
     {
         $stmt = $this->pdo->prepare("
@@ -112,7 +123,7 @@ class HospitalRepository
         $stmt->execute([$nombre, $id]);
         return (int)$stmt->fetchColumn() > 0;
     }
-    
+
     public function existsByAddressExceptId($ubicacion, $id): bool
     {
         $stmt = $this->pdo->prepare("
@@ -122,20 +133,6 @@ class HospitalRepository
         );
         $stmt->execute([$ubicacion, $id]);
         return (int)$stmt->fetchColumn() > 0;
-    }
-
-    public function delete($id): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                DELETE FROM hospitales 
-                WHERE id_hospital = ?"
-            );
-            return $stmt->execute([$id]);
-        } catch (PDOException $e) {
-            error_log("Error al eliminar hospital: " . $e->getMessage());
-            throw $e;
-        }
     }
 
     /**
