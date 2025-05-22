@@ -1,38 +1,3 @@
-/* Estilos base del header y navegación */
-.header {
-    background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #333;
-}
-
-.logo-icon {
-    font-size: 1.8rem;
-    margin-right: 0.5rem;
-}
-
-.logo-text {
-    font-weight: 600;
-    font-size: 1.2rem;
-}
-
 /* Estilos del menú principal */
 .main-nav {
     position: relative;
@@ -55,7 +20,7 @@
     font-weight: 500;
 }
 
-.nav-link:hover, 
+.nav-link:hover,
 .nav-link.active {
     color: #0056b3;
 }
@@ -252,8 +217,14 @@
 
 /* Animación para los menús */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Media queries para responsive */
@@ -262,13 +233,13 @@
         flex-direction: column;
         padding: 1rem;
     }
-    
+
     .mega-dropdown-section {
         border-right: none;
         border-bottom: 1px solid #eaeaea;
         padding: 1rem 0;
     }
-    
+
     .mega-dropdown-section:last-child {
         border-bottom: none;
     }
@@ -278,7 +249,7 @@
     .mobile-menu-toggle {
         display: block;
     }
-    
+
     .main-nav {
         position: absolute;
         top: 100%;
@@ -290,23 +261,23 @@
         overflow: hidden;
         transition: max-height 0.3s ease;
     }
-    
+
     .main-nav.show {
         max-height: 80vh;
         overflow-y: auto;
     }
-    
+
     .nav-links {
         flex-direction: column;
         align-items: flex-start;
         padding: 1rem;
     }
-    
+
     .dropdown, .mega-dropdown {
         position: relative;
         width: 100%;
     }
-    
+
     .dropdown-menu, .mega-dropdown-content {
         position: static;
         box-shadow: none;
@@ -317,16 +288,16 @@
         overflow: hidden;
         transition: max-height 0.3s ease;
     }
-    
+
     .dropdown.show .dropdown-menu,
     .mega-dropdown.show .mega-dropdown-content {
         max-height: 1000px;
     }
-    
+
     .mega-dropdown-section {
         padding: 0.5rem 0;
     }
-    
+
     .user-dropdown {
         margin-left: 0;
     }

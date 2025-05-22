@@ -1,0 +1,64 @@
+/* ===========================================
+   LAYOUT
+   Estructura de páginas y secciones
+   =========================================== */
+
+/* Secciones generales */
+.page-section,
+.services-section,
+.features-section {
+    padding: 4rem 0;
+    margin-bottom: var(--section-spacing);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+}
+
+/* Grids */
+.services-grid,
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.services-cta {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* Secciones específicas */
+.overview-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hospitals-section {
+    margin-top: 4rem;
+}
+
+/* Estados vacíos */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: var(--light-bg);
+    border-radius: 12px;
+    color: var(--light-text);
+    margin: 2rem 0;
+}
+
+.empty-plants {
+    padding: 1.5rem;
+    text-align: center;
+    background-color: var(--light-bg);
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}

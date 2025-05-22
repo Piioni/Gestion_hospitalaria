@@ -1,0 +1,58 @@
+/* ===========================================
+   FOOTER
+   Estilos del pie de página
+   =========================================== */
+
+.footer {
+    background-color: var(--dark-text);
+    color: white;
+    padding: 3rem 0 2rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.footer-description {
+    color: var(--muted-text);
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+}
+
+.footer-copyright {
+    color: var(--muted-text);
+    font-size: 0.875rem;
+}
+
+.footer-title {
+    color: white;
+    margin-bottom: 1.25rem;
+    font-size: 1.1rem;
+}
+
+.footer-menu {
+    list-style: none;
+}
+
+.footer-menu li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-link {
+    color: var(--muted-text);
+    transition: color 0.3s;
+}
+
+.footer-link:hover {
+    color: white;
+}

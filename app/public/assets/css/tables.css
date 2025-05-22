@@ -1,0 +1,42 @@
+/* ===========================================
+   TABLAS
+   Estilos para tablas de datos
+   =========================================== */
+
+.table-responsive {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.table tr:hover td {
+    background-color: rgba(69, 143, 246, 0.05);
+}
+
+/* Columna de acciones */
+.actions-column {
+    white-space: nowrap;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actions-column.gap-3 {
+    gap: 1rem !important;
+}
