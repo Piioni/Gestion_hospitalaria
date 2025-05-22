@@ -24,14 +24,14 @@ return[
         '/users/list' => 'entity/users/list_user.php',
 
         // Hospital pages
-        '/hospitals' => 'entity/hospitals/index_hospital.php',
+        '/hospitals' => 'entity/hospitals/dashboard_hospital.php',
         '/hospitals/create' => 'entity/hospitals/create_hospital.php',
         '/hospitals/edit' => 'entity/hospitals/edit_hospital.php',
         '/hospitals/delete' => 'entity/hospitals/delete_hospital.php',
         '/hospitals/list' => 'entity/hospitals/list_hospital.php',
 
         // Planta pages
-        '/plantas' => 'entity/plantas/index_planta.php',
+        '/plantas' => 'entity/plantas/dashboard_planta.php',
         '/plantas/create' => 'entity/plantas/create_planta.php',
         '/plantas/edit' => 'entity/plantas/edit_planta.php',
         '/plantas/delete' => 'entity/plantas/delete_planta.php',
@@ -42,7 +42,7 @@ return[
         '/almacenes/create' => 'entity/almacenes/create_almacen.php',
         '/almacenes/edit' => 'entity/almacenes/edit_almacen.php',
         '/almacenes/delete' => 'entity/almacenes/delete_almacen.php',
-        '/almacenes/list' => 'entity/almacenes/list_almacen.php',
+        '/almacenes/list' => 'entity/almacenes/dashboard_almacen.php',
 
         // Producto pages
         '/productos' => 'entity/productos/indexProducto.php',

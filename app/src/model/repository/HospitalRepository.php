@@ -3,6 +3,7 @@
 namespace model\repository;
 
 use model\Database;
+use model\entity\Almacen;
 use model\entity\Hospital;
 use PDO;
 use PDOException;
@@ -95,6 +96,22 @@ class HospitalRepository
         }
         return null;
     }
+
+    public function getAlmacenGeneral($id): ?Almacen
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT id_almacen, nombre
+            FROM almacenes 
+            WHERE id_hospital = ? AND tipo = 'general'
+            ");
+        $stmt->execute([$id]);
+        $almacenData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($almacenData) {
+            return new Almacen($almacenData['id_almacen'], $almacenData['nombre']);
+        }
+        return null;
+    }
+
 
     public function existsByName($nombre): bool
     {
