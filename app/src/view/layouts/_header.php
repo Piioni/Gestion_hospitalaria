@@ -23,9 +23,11 @@ $navTitle = "Stock Hospitalario";
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/nav.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
+    <script src="/assets/js/nav.js" defer></script>
 </head>
 <body>
 <header class="header">
@@ -34,12 +36,132 @@ $navTitle = "Stock Hospitalario";
             <span class="logo-icon">🏥</span>
             <span class="logo-text"><?= htmlspecialchars($navTitle) ?></span>
         </a>
+        
+        <button class="mobile-menu-toggle" aria-label="Abrir menú">
+            <span class="hamburger"></span>
+        </button>
+        
         <nav class="main-nav">
             <ul class="nav-links">
                 <li><a href="/" class="nav-link">Inicio</a></li>
-                <li><a href="/hospitals/" class="nav-link">Hospitales</a></li>
-                <li><a href="/plantas/" class="nav-link">Plantas</a></li>
-                <li><a href="/stock/" class="nav-link">Stock</a></li>
+
+                <!-- Categoría: Gestión de Infraestructura -->
+                <li class="dropdown mega-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Infraestructura</a>
+                    <div class="mega-dropdown-content">
+                        <div class="mega-dropdown-section">
+                            <h3>Hospitales</h3>
+                            <ul>
+                                <li><a href="/hospitals">Dashboard</a></li>
+                                <li><a href="/hospitals/list">Listar todos</a></li>
+                                <li><a href="/hospitals/create">Crear nuevo</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mega-dropdown-section">
+                            <h3>Plantas</h3>
+                            <ul>
+                                <li><a href="/plantas">Dashboard</a></li>
+                                <li><a href="/plantas/list">Listar todas</a></li>
+                                <li><a href="/plantas/create">Crear nueva</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mega-dropdown-section">
+                            <h3>Botiquines</h3>
+                            <ul>
+                                <li><a href="/botiquines">Dashboard</a></li>
+                                <li><a href="/botiquines/list">Listar todos</a></li>
+                                <li><a href="/botiquines/create">Crear nuevo</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                
+                <!-- Categoría: Gestión de Inventario -->
+                <li class="dropdown mega-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Inventario</a>
+                    <div class="mega-dropdown-content">
+                        <div class="mega-dropdown-section">
+                            <h3>Almacenes</h3>
+                            <ul>
+                                <li><a href="/almacenes">Dashboard</a></li>
+                                <li><a href="/almacenes/list">Listar todos</a></li>
+                                <li><a href="/almacenes/create">Crear nuevo</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mega-dropdown-section">
+                            <h3>Productos</h3>
+                            <ul>
+                                <li><a href="/productos">Dashboard</a></li>
+                                <li><a href="/productos/list">Listar todos</a></li>
+                                <li><a href="/productos/create">Crear nuevo</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mega-dropdown-section">
+                            <h3>Pactos</h3>
+                            <ul>
+                                <li><a href="/pactos">Dashboard</a></li>
+                                <li><a href="/pactos/list">Listar todos</a></li>
+                                <li><a href="/pactos/create">Crear nuevo</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                
+                <!-- Categoría: Logística -->
+                <li class="dropdown mega-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Logística</a>
+                    <div class="mega-dropdown-content">
+                        <div class="mega-dropdown-section">
+                            <h3>Reposiciones</h3>
+                            <ul>
+                                <li><a href="/reposiciones">Dashboard</a></li>
+                                <li><a href="/reposiciones/list">Listar todas</a></li>
+                                <li><a href="/reposiciones/create">Crear nueva</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mega-dropdown-section">
+                            <h3>Etiquetas</h3>
+                            <ul>
+                                <li><a href="/etiquetas">Dashboard</a></li>
+                                <li><a href="/etiquetas/list">Listar todas</a></li>
+                                <li><a href="/etiquetas/create">Crear nueva</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mega-dropdown-section">
+                            <h3>Lecturas</h3>
+                            <ul>
+                                <li><a href="/lecturas">Dashboard</a></li>
+                                <li><a href="/lecturas/list">Listar todas</a></li>
+                                <li><a href="/lecturas/create">Crear nueva</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                
+                <!-- Sección de usuario -->
+                <?php if (isset($_SESSION['user'])): ?>
+                    <li class="dropdown user-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <?= htmlspecialchars($_SESSION['user']['username'] ?? 'Usuario') ?>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <?php if (isset($_SESSION['user']['is_admin']) && $_SESSION['user']['is_admin']): ?>
+                                <li><a href="/users/list">Gestionar usuarios</a></li>
+                                <li class="dropdown-divider"></li>
+                            <?php endif; ?>
+                            <li><a href="/users/edit?id=<?= $_SESSION['user']['id'] ?>">Mi perfil</a></li>
+                            <li><a href="/logout">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                <?php else: ?>
+                    <li><a href="/login" class="nav-link">Iniciar sesión</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
     </div>
