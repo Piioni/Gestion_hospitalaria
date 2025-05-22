@@ -46,6 +46,11 @@ class AlmacenService
         return $this->almacenRepository->getById($id_almacen);
     }
 
+    public function getAlmacenByPlantaId($id_planta)
+    {
+        return $this->almacenRepository->getByPlantaId($id_planta);
+    }
+
 
 
 }
