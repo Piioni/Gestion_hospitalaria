@@ -44,7 +44,7 @@ class HospitalService
 
     public function getHospitalById($id): array
     {
-        return $this->hospitalRepository->getHospitalById($id);
+        return $this->hospitalRepository->getById($id);
     }
 
     public function updateHospital($id, $name, $address): bool
@@ -87,7 +87,7 @@ class HospitalService
         }
         
         // Verificar que el hospital existe
-        $hospital = $this->hospitalRepository->getHospitalById($id);
+        $hospital = $this->hospitalRepository->getById($id);
         if (empty($hospital)) {
             throw new InvalidArgumentException("El hospital no existe");
         }
@@ -116,7 +116,7 @@ class HospitalService
         }
         
         // Verificar que el hospital existe
-        $hospital = $this->hospitalRepository->getHospitalById($id);
+        $hospital = $this->hospitalRepository->getById($id);
         if (empty($hospital)) {
             throw new InvalidArgumentException("El hospital no existe");
         }

@@ -81,7 +81,7 @@ class HospitalRepository
         return $hospitalObjects;
     }
 
-    public function getHospitalById($id): array
+    public function getById($id): array
     {
         $stmt = $this->pdo->prepare("
             SELECT * 
