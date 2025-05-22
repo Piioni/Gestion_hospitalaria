@@ -18,10 +18,11 @@ return[
 
         // User pages
         '/users' => 'entity/users/index_user.php',
+        '/users/dashboard' => 'entity/users/dashboard_user.php',
+        '/users/locations' => 'entity/users/user_locations.php',
         '/users/create' => 'entity/users/create_user.php',
         '/users/edit' => 'entity/users/edit_user.php',
         '/users/delete' => 'entity/users/deleteUser.php',
-        '/users/list' => 'entity/users/list_user.php',
 
         // Hospital pages
         '/hospitals' => 'entity/hospitals/dashboard_hospital.php',

@@ -8,13 +8,8 @@ $title = $title ?? "Stock Hospitalario";
 $scripts = $scripts ?? "main.js";
 
 // Variable para el título de la barra de navegación
-$navTitle = "Stock Hospitalario";
+$navTitle = $navTitle ??  "Stock Hospitalario";
 
-// Sí estamos en el panel de administración, cambiar el título
-//if (str_contains($_SERVER['REQUEST_URI'], 'admin_dashboard') || isset($isAdminPage)) {
-//    $navTitle = "Panel de Administración";
-//}
-//
 ?>
 
 <!DOCTYPE html>
@@ -23,8 +18,8 @@ $navTitle = "Stock Hospitalario";
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">
-    <link rel="stylesheet" href="/assets/css/nav.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
     <script src="/assets/js/nav.js" defer></script>
@@ -43,8 +38,6 @@ $navTitle = "Stock Hospitalario";
         
         <nav class="main-nav">
             <ul class="nav-links">
-                <li><a href="/" class="nav-link">Inicio</a></li>
-
                 <!-- Categoría: Gestión de Infraestructura -->
                 <li class="dropdown mega-dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Infraestructura</a>
@@ -54,7 +47,6 @@ $navTitle = "Stock Hospitalario";
                             <ul>
                                 <li><a href="/hospitals">Dashboard</a></li>
                                 <li><a href="/hospitals/list">Listar todos</a></li>
-                                <li><a href="/hospitals/create">Crear nuevo</a></li>
                             </ul>
                         </div>
                         
@@ -62,8 +54,6 @@ $navTitle = "Stock Hospitalario";
                             <h3>Plantas</h3>
                             <ul>
                                 <li><a href="/plantas">Dashboard</a></li>
-                                <li><a href="/plantas/list">Listar todas</a></li>
-                                <li><a href="/plantas/create">Crear nueva</a></li>
                             </ul>
                         </div>
                         
@@ -143,7 +133,20 @@ $navTitle = "Stock Hospitalario";
                         </div>
                     </div>
                 </li>
-                
+                <!-- Section de gestion de Usuarios -->
+                <li class="dropdown mega-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Usuarios</a>
+                    <div class="mega-dropdown-content">
+                        <div class="mega-dropdown-section">
+                            <h3>Gestión de Usuarios</h3>
+                            <ul>
+                                <li><a href="/users/dashboard">Dashboard</a></li>
+                                <li><a href="/users/create">Crear nuevo</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+
                 <!-- Sección de usuario -->
                 <?php if (isset($_SESSION['user'])): ?>
                     <li class="dropdown user-dropdown">
@@ -154,9 +157,9 @@ $navTitle = "Stock Hospitalario";
                             <?php if (isset($_SESSION['user']['is_admin']) && $_SESSION['user']['is_admin']): ?>
                                 <li><a href="/users/list">Gestionar usuarios</a></li>
                                 <li class="dropdown-divider"></li>
+                                <li><a href="/users/edit?id=<?= $_SESSION['user']['id'] ?>">Mi perfil</a></li>
                             <?php endif; ?>
-                            <li><a href="/users/edit?id=<?= $_SESSION['user']['id'] ?>">Mi perfil</a></li>
-                            <li><a href="/logout">Cerrar sesión</a></li>
+                          <li><a href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </li>
                 <?php else: ?>

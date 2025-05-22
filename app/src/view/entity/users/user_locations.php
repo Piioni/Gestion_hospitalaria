@@ -234,7 +234,7 @@ include(__DIR__ . '/../../layouts/_header.php');
                 </div>
 
                 <div class="action-buttons mt-4">
-                    <a href="/users/list" class="btn btn-secondary">
+                    <a href="/users/dashboard" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Volver al listado
                     </a>
                     <button type="submit" name="save_locations" class="btn btn-success px-4">
