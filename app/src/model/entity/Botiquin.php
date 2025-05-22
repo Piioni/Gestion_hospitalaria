@@ -21,12 +21,12 @@ class Botiquin
     }
 
 
-    public function getIdBotiquin(): int
+    public function getId(): int
     {
         return $this->id_botiquin;
     }
 
-    public function setIdBotiquin(int $id_botiquin): void
+    public function setId(int $id_botiquin): void
     {
         $this->id_botiquin = $id_botiquin;
     }

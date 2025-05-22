@@ -5,7 +5,7 @@ use model\service\HospitalService;
 $hospitalService = new HospitalService();
 
 // Obtener el ID del hospital de la URL
-$hospital_id = $_GET["id"] ?? null;
+$hospital_id = $_GET["id_hospital"] ?? null;
 
 if (!$hospital_id || !is_numeric($hospital_id)) {
     header("Location: /hospitals/list");
@@ -24,9 +24,9 @@ include __DIR__ . "/../../layouts/_header.php";
 
 // Inicializar variables y mensajes
 $hospital = [
-    'id' => $hospitalData['id_hospital'],
-    'name' => $hospitalData['nombre'],
-    'address' => $hospitalData['ubicacion'],
+    'id' => $hospitalData->getId(),
+    'name' => $hospitalData->getNombre(),
+    'address' => $hospitalData->getUbicacion(),
 ];
 $errors = [];
 $success = false;

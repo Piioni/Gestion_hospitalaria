@@ -17,12 +17,12 @@ class Almacen
         $this->id_hospital = $id_hospital;
     }
 
-    public function getIdAlmacen(): int
+    public function getId(): int
     {
         return $this->id_almacen;
     }
 
-    public function setIdAlmacen(int $id_almacen): void
+    public function setId(int $id_almacen): void
     {
         $this->id_almacen = $id_almacen;
     }

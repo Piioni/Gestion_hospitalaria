@@ -20,12 +20,7 @@ class Planta
         return $this->id_planta;
     }
 
-    public function getIdPlanta(): int
-    {
-        return $this->id_planta;
-    }
-
-    public function setIdPlanta(int $id_planta): void
+    public function setId(int $id_planta): void
     {
         $this->id_planta = $id_planta;
     }

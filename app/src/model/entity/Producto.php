@@ -19,12 +19,12 @@ class Producto
         $this->unidad_medida = $unidad_medida;
     }
 
-    public function getIdProducto(): int
+    public function getId(): int
     {
         return $this->id_producto;
     }
 
-    public function setIdProducto(int $id_producto): void
+    public function setId(int $id_producto): void
     {
         $this->id_producto = $id_producto;
     }

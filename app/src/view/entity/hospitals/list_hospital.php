@@ -70,14 +70,14 @@ include __DIR__ . '/../../layouts/_header.php';
                             <tbody>
                             <?php foreach ($hospitals as $hospital): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($hospital->getIdHospital()) ?></td>
+                                    <td><?= htmlspecialchars($hospital->getId()) ?></td>
                                     <td><?= htmlspecialchars($hospital->getNombre()) ?></td>
                                     <td><?= htmlspecialchars($hospital->getUbicacion()) ?></td>
                                     <td class="actions-column">
-                                        <a href="/hospitals/edit?id=<?= $hospital->getIdHospital() ?>" class="btn btn-sm btn-secondary">
+                                        <a href="/hospitals/edit?id_hospital=<?= $hospital->getId() ?>" class="btn btn-sm btn-secondary">
                                            Editar
                                         </a>
-                                        <a href="/hospitals/delete?id=<?= $hospital->getIdHospital() ?>" class="btn btn-sm btn-danger">
+                                        <a href="/hospitals/delete?id_hospital=<?= $hospital->getId() ?>" class="btn btn-sm btn-danger">
                                            Eliminar
                                         </a>
                                     </td>

@@ -12,7 +12,7 @@ class Rol
         $this->nombre = $nombre;
     }
 
-    public function getIdRol(): int
+    public function getId(): int
     {
         return $this->id_rol;
     }

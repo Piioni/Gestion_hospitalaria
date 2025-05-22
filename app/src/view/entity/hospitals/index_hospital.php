@@ -63,7 +63,7 @@ include __DIR__ . "/../../layouts/_header.php";
                             <div class="card-body">
                                 <div class="hospital-details">
                                     <div class="hospital-info">
-                                        <p><strong>ID:</strong> <?= $hospital->getIdHospital() ?></p>
+                                        <p><strong>ID:</strong> <?= $hospital->getId() ?></p>
                                         <p><strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?></p>
                                         <p>
                                             <strong>Dirección:</strong> <?= htmlspecialchars($hospital->getUbicacion()) ?>
@@ -71,11 +71,11 @@ include __DIR__ . "/../../layouts/_header.php";
                                     </div>
 
                                     <div class="hospital-actions">
-                                        <a href="/hospitals/edit?id=<?= $hospital->getIdHospital() ?>"
+                                        <a href="/hospitals/edit?id=<?= $hospital->getId() ?>"
                                            class="btn btn-sm btn-secondary">
                                             Editar hospital
                                         </a>
-                                        <a href="/plantas/create?id_hospital=<?= $hospital->getIdHospital() ?>"
+                                        <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
                                            class="btn btn-sm btn-primary">
                                             Añadir planta
                                         </a>
@@ -88,13 +88,13 @@ include __DIR__ . "/../../layouts/_header.php";
 
                                 <?php
                                 try {
-                                    $plantas = $plantaService->getPlantasByHospitalId($hospital->getIdHospital());
+                                    $plantas = $plantaService->getPlantasByHospitalId($hospital->getId());
 
                                     if (empty($plantas)):
                                         ?>
                                         <div class="empty-plants">
                                             Este hospital no tiene plantas registradas.
-                                            <a href="/plantas/create?id_hospital=<?= $hospital->getIdHospital() ?>"
+                                            <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
                                                class="btn btn-sm btn-primary">
                                                 Añadir una planta
                                             </a>

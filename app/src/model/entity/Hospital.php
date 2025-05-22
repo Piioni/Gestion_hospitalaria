@@ -15,12 +15,12 @@ class Hospital
         $this->ubicacion = $ubicacion;
     }
 
-    public function getIdHospital(): int
+    public function getId(): int
     {
         return $this->id_hospital;
     }
 
-    public function setIdHospital(int $id_hospital): void
+    public function setId(int $id_hospital): void
     {
         $this->id_hospital = $id_hospital;
     }

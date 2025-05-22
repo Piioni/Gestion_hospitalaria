@@ -3,9 +3,9 @@
 use model\service\HospitalService;
 
 // Obtener el ID del hospital
-$hospital_id = $_GET["id"] ?? null;
+$id_hospital = $_GET["id_hospital"] ?? null;
 
-if (!$hospital_id || !is_numeric($hospital_id)) {
+if (!$id_hospital || !is_numeric($id_hospital)) {
     header('Location: /hospitals/list?error=id_invalid');
     exit;
 }
@@ -14,31 +14,31 @@ $force = isset($_GET["force"]) && $_GET["force"] === "1";
 
 try {
     $hospitalService = new HospitalService();
-    
+
     // Si es una solicitud de confirmación, eliminar directamente
     if ($force || isset($_GET["confirm"])) {
-        $result = $hospitalService->deleteHospital($hospital_id, $force);
+        $result = $hospitalService->deleteHospital($id_hospital, $force);
         header('Location: /hospitals/list?success=deleted');
         exit;
     }
-    
+
     // Comprobar relaciones
-    $relationInfo = $hospitalService->checkHospitalRelations($hospital_id);
-    
+    $relationInfo = $hospitalService->checkHospitalRelations($id_hospital);
+
     // Si no hay relaciones, eliminar directamente
     if ($relationInfo['canDelete']) {
-        $result = $hospitalService->deleteHospital($hospital_id);
+        $result = $hospitalService->deleteHospital($id_hospital);
         header('Location: /hospitals/list?success=deleted');
         exit;
     }
-    
+
     // Si llegamos aquí, hay relaciones y debemos mostrar la página de confirmación
     $hospital = $relationInfo['hospital'];
     $relatedPlants = $relationInfo['relatedPlants'];
-    
+
     $title = "Confirmar Eliminación";
     include __DIR__ . "/../../layouts/_header.php";
-    
+
 } catch (InvalidArgumentException $e) {
     // Error de validación
     header('Location: /hospitals/list?error=' . urlencode($e->getMessage()));
@@ -61,25 +61,29 @@ try {
                 </p>
             </div>
         </div>
-        
+
         <div class="card">
             <div class="card-content">
                 <div class="alert alert-warning">
                     <h4 class="alert-heading">¡Atención! Se encontraron dependencias</h4>
-                    <p>El hospital "<strong><?= htmlspecialchars($hospital['nombre']) ?></strong>" tiene plantas asociadas:</p>
-                    
+                    <p>El hospital "<strong><?= htmlspecialchars($hospital->getNombre()) ?></strong>" tiene plantas asociadas:
+                    </p>
+
                     <ul class="dependencies-list">
                         <?php foreach ($relatedPlants as $plant): ?>
-                            <li><?= htmlspecialchars($plant['nombre']) ?> (ID: <?= htmlspecialchars($plant['id_planta']) ?>)</li>
+                            <li><?= htmlspecialchars($plant['nombre']) ?>
+                                (ID: <?= htmlspecialchars($plant['id_planta']) ?>)
+                            </li>
                         <?php endforeach; ?>
                     </ul>
-                    
-                    <p>Si elimina este hospital, las plantas asociadas podrían quedar sin referencia, afectando la integridad de los datos.</p>
+
+                    <p>Si elimina este hospital, las plantas asociadas podrían quedar sin referencia, afectando la
+                        integridad de los datos.</p>
                 </div>
-                
+
                 <div class="form-actions">
                     <form action="" method="get" class="confirmation-form">
-                        <input type="hidden" name="id" value="<?= htmlspecialchars($hospital_id) ?>">
+                        <input type="hidden" name="id" value="<?= htmlspecialchars($id_hospital) ?>">
                         <input type="hidden" name="force" value="1">
                         <button type="submit" class="btn btn-danger">Eliminar de todos modos</button>
                     </form>

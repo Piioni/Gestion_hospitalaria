@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hospital_id = filter_input(INPUT_GET, 'id_hospital', FILTER_SANITIZE_NUMBER_INT);
     $hospital = $hospitalService->getHospitalById($hospital_id);
     if ($hospital) {
-        $planta['id_hospital'] = $hospital->getIdHospital();
+        $planta['id_hospital'] = $hospital->getId();
     } else {
         header('Location: /plantas/list?error=hospital_no_encontrado');
         exit;
@@ -98,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <select class="form-select" id="id_hospital" name="id_hospital" required>
                             <option value="">Seleccione un hospital</option>
                             <?php foreach ($hospitals as $hospital): ?>
-                                <option value="<?= htmlspecialchars($hospital->getIdHospital()) ?>"
-                                    <?= ($hospital->getIdHospital() == ($planta['id_hospital'] ?? '')) ? 'selected' : '' ?>>
+                                <option value="<?= htmlspecialchars($hospital->getId()) ?>"
+                                    <?= ($hospital->getId() == ($planta['id_hospital'] ?? '')) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($hospital->getNombre()) ?>
                                 </option>
                             <?php endforeach; ?>
