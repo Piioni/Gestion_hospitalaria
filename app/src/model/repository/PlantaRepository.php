@@ -74,7 +74,7 @@ class PlantaRepository
         }
     }
 
-    public function getByHospitalId($hospitalId): array
+    public function getPlantasByHospitalId($hospitalId): array
     {
         try {
             $stmt = $this->pdo->prepare("

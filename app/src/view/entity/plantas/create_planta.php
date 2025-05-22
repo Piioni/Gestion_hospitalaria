@@ -40,6 +40,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Capturar otros errores
         $errors[] = "Error al crear la planta: " . $e->getMessage();
     }
+} elseif (isset($_GET['id_hospital'])) {
+    // Si se pasa un ID de hospital, cargar los datos del hospital
+    $hospital_id = filter_input(INPUT_GET, 'id_hospital', FILTER_SANITIZE_NUMBER_INT);
+    $hospital = $hospitalService->getHospitalById($hospital_id);
+    if ($hospital) {
+        $planta['id_hospital'] = $hospital->getIdHospital();
+    } else {
+        header('Location: /plantas/list?error=hospital_no_encontrado');
+        exit;
+    }
 }
 
 ?>
@@ -89,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="">Seleccione un hospital</option>
                             <?php foreach ($hospitals as $hospital): ?>
                                 <option value="<?= htmlspecialchars($hospital->getIdHospital()) ?>"
-                                    <?= ($hospital->getIdHospital() == ($planta['hospital_id'] ?? '')) ? 'selected' : '' ?>>
+                                    <?= ($hospital->getIdHospital() == ($planta['id_hospital'] ?? '')) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($hospital->getNombre()) ?>
                                 </option>
                             <?php endforeach; ?>

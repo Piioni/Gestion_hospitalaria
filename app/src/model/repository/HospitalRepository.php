@@ -81,7 +81,7 @@ class HospitalRepository
         return $hospitalObjects;
     }
 
-    public function getById($id): array
+    public function getById($id): ?Hospital
     {
         $stmt = $this->pdo->prepare("
             SELECT * 
@@ -89,7 +89,11 @@ class HospitalRepository
             WHERE id_hospital = ?"
         );
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        $hospitalData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($hospitalData) {
+            return $this->createHospitalFromData($hospitalData);
+        }
+        return null;
     }
 
     public function existsByName($nombre): bool
@@ -155,7 +159,7 @@ class HospitalRepository
             throw $e;
         }
     }
-    
+
     /**
      * Cuenta el número de plantas asociadas a un hospital
      * @param int $id ID del hospital

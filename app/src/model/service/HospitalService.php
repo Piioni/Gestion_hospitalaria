@@ -2,6 +2,7 @@
 
 namespace model\service;
 
+use model\entity\Hospital;
 use model\repository\HospitalRepository;
 use InvalidArgumentException;
 
@@ -42,7 +43,7 @@ class HospitalService
         return $this->hospitalRepository->getAll();
     }
 
-    public function getHospitalById($id): array
+    public function getHospitalById($id): ?Hospital
     {
         return $this->hospitalRepository->getById($id);
     }

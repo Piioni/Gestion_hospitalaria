@@ -43,7 +43,7 @@ class PlantaService
             throw new InvalidArgumentException("El ID del hospital es inválido");
         }
 
-        return $this->plantaRepository->getByHospitalId($hospitalId);
+        return $this->plantaRepository->getPlantasByHospitalId($hospitalId);
     }
 
     public function getPlantaById($id): array
