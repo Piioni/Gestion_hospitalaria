@@ -31,7 +31,7 @@ return[
         '/hospitals/list' => 'entity/hospitals/list_hospital.php',
 
         // Planta pages
-        '/plantas' => 'entity/plantas/indexPlanta.php',
+        '/plantas' => 'entity/plantas/index_planta.php',
         '/plantas/create' => 'entity/plantas/create_planta.php',
         '/plantas/edit' => 'entity/plantas/edit_planta.php',
         '/plantas/delete' => 'entity/plantas/delete_planta.php',

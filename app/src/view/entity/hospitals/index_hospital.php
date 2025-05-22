@@ -75,7 +75,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                            class="btn btn-sm btn-secondary">
                                             Editar hospital
                                         </a>
-                                        <a href="/plants/create?hospital_id=<?= $hospital->getIdHospital() ?>"
+                                        <a href="/plantas/create?id_hospital=<?= $hospital->getIdHospital() ?>"
                                            class="btn btn-sm btn-primary">
                                             Añadir planta
                                         </a>
@@ -94,7 +94,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                         ?>
                                         <div class="empty-plants">
                                             Este hospital no tiene plantas registradas.
-                                            <a href="/plants/create?hospital_id=<?= $hospital->getIdHospital() ?>"
+                                            <a href="/plantas/create?id_hospital=<?= $hospital->getIdHospital() ?>"
                                                class="btn btn-sm btn-primary">
                                                 Añadir una planta
                                             </a>

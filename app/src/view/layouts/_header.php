@@ -37,9 +37,9 @@ $navTitle = "Stock Hospitalario";
         <nav class="main-nav">
             <ul class="nav-links">
                 <li><a href="/" class="nav-link">Inicio</a></li>
-                <li><a href="/hospitals/list" class="nav-link">Hospitales</a></li>
-                <li><a href="/plants/list" class="nav-link">Plantas</a></li>
-                <li><a href="/stock/list" class="nav-link">Stock</a></li>
+                <li><a href="/hospitals/" class="nav-link">Hospitales</a></li>
+                <li><a href="/plantas/" class="nav-link">Plantas</a></li>
+                <li><a href="/stock/" class="nav-link">Stock</a></li>
             </ul>
         </nav>
     </div>
