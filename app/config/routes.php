@@ -17,24 +17,38 @@ return[
         '/logout' => 'auth/logout.php',
 
         // User pages
-        '/users' => 'users/indexUser.php',
-        '/users/create' => 'users/createUser.php',
-        '/users/edit' => 'users/editUser.php',
-        '/users/delete' => 'users/deleteUser.php',
-        '/users/list' => 'users/listUser.php',
+        '/users' => 'entity/users/index_user.php',
+        '/users/create' => 'entity/users/create_user.php',
+        '/users/edit' => 'entity/users/edit_user.php',
+        '/users/delete' => 'entity/users/deleteUser.php',
+        '/users/list' => 'entity/users/list_user.php',
 
         // Hospital pages
-        '/hospitals' => 'hospitals/indexHospital.php',
-        '/hospitals/create' => 'hospitals/createHospital.php',
-        '/hospitals/edit' => 'hospitals/editHospital.php',
-        '/hospitals/delete' => 'hospitals/deleteHospital.php',
-        '/hospitals/list' => 'hospitals/listHospital.php',
+        '/hospitals' => 'entity/hospitals/index_hospital.php',
+        '/hospitals/create' => 'entity/hospitals/create_hospital.php',
+        '/hospitals/edit' => 'entity/hospitals/edit_hospital.php',
+        '/hospitals/delete' => 'entity/hospitals/delete_hospital.php',
+        '/hospitals/list' => 'entity/hospitals/list_hospital.php',
 
         // Planta pages
-        '/plantas' => 'plantas/indexPlanta.php',
-        '/plantas/create' => 'plantas/createPlanta.php',
-        '/plantas/edit' => 'plantas/editPlanta.php',
-        '/plantas/delete' => 'plantas/deletePlanta.php',
-        '/plantas/list' => 'plantas/listPlanta.php',
+        '/plantas' => 'entity/plantas/indexPlanta.php',
+        '/plantas/create' => 'entity/plantas/create_planta.php',
+        '/plantas/edit' => 'entity/plantas/edit_planta.php',
+        '/plantas/delete' => 'entity/plantas/delete_planta.php',
+        '/plantas/list' => 'entity/plantas/list_planta.php',
+
+        // Almacen pages
+        '/almacenes' => 'entity/almacenes/indexAlmacen.php',
+        '/almacenes/create' => 'entity/almacenes/create_almacen.php',
+        '/almacenes/edit' => 'entity/almacenes/edit_almacen.php',
+        '/almacenes/delete' => 'entity/almacenes/delete_almacen.php',
+        '/almacenes/list' => 'entity/almacenes/list_almacen.php',
+
+        // Producto pages
+        '/productos' => 'entity/productos/indexProducto.php',
+        '/productos/create' => 'entity/productos/create_producto.php',
+        '/productos/edit' => 'entity/productos/edit_producto.php',
+        '/productos/delete' => 'entity/productos/delete_producto.php',
+        '/productos/list' => 'entity/productos/list_producto.php',
     ]
 ];

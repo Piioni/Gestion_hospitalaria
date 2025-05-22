@@ -3,7 +3,7 @@ $pageTitle = "Listado de Usuarios";
 $success = $_GET['success'] ?? null;
 ?>
 
-<?php include __DIR__ . '/../layouts/header.php'; ?>
+<?php include __DIR__ . '/../../layouts/_header.php'; ?>
 
 <div class="container mt-4">
     <div class="row mb-3">
@@ -54,4 +54,4 @@ $success = $_GET['success'] ?? null;
     </div>
 </div>
 
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
+<?php include __DIR__ . '/../../layouts/_footer.php'; ?>

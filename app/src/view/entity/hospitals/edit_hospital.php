@@ -20,7 +20,7 @@ if (empty($hospitalData)) {
 }
 
 $title = "Editar Hospital";
-include __DIR__ . "/../layouts/_header.php";
+include __DIR__ . "/../../layouts/_header.php";
 
 // Inicializar variables y mensajes
 $hospital = [
@@ -107,4 +107,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
-<?php include __DIR__ . "/../layouts/_footer.php"; ?>
+<?php include __DIR__ . "/../../layouts/_footer.php"; ?>

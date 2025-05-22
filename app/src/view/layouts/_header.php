@@ -45,8 +45,6 @@ $navTitle = "Stock Hospitalario";
     </div>
 </header>
 
-<?php if (file_exists(__DIR__ . '/../partials/_alerts.php')): ?>
 <div class="alerts-container">
-    <?php include __DIR__ . '/../partials/_alerts.php'; ?>
+    <?php include __DIR__ . '/_alerts.php'; ?>
 </div>
-<?php endif; ?>

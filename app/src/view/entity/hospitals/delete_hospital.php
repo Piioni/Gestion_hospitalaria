@@ -37,7 +37,7 @@ try {
     $relatedPlants = $relationInfo['relatedPlants'];
     
     $title = "Confirmar Eliminación";
-    include __DIR__ . "/../layouts/_header.php";
+    include __DIR__ . "/../../layouts/_header.php";
     
 } catch (InvalidArgumentException $e) {
     // Error de validación
@@ -90,4 +90,4 @@ try {
     </div>
 </div>
 
-<?php include __DIR__ . "/../layouts/_footer.php"; ?>
+<?php include __DIR__ . "/../../layouts/_footer.php"; ?>

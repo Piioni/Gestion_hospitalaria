@@ -9,7 +9,7 @@ $hospitalService = new HospitalService();
 $hospitals = $hospitalService->getAllHospitals();
 
 $title = "Listado de Hospitales";
-include __DIR__ . '/../layouts/_header.php'; 
+include __DIR__ . '/../../layouts/_header.php';
 ?>
 
 <div class="page-section">
@@ -92,4 +92,4 @@ include __DIR__ . '/../layouts/_header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../layouts/_footer.php'; ?>
+<?php include __DIR__ . '/../../layouts/_footer.php'; ?>
