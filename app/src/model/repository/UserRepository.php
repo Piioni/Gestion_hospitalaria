@@ -15,20 +15,48 @@ class UserRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function insertUser($nombre, $email, $password, $id_rol, $id_hospital = null, $id_planta = null, $id_botiquin = null): bool
+    public function createUserFromData($userData): User
+    {
+        $user = new User();
+        $user->setId($userData['id_usuario']);
+        $user->setNombre($userData['nombre']);
+        $user->setEmail($userData['email']);
+        $user->setPassword($userData['password']);
+        $user->setRol($userData['id_rol']);
+
+        // Configurar campos opcionales si existen
+        if (isset($userData['id_hospital'])) {
+            $user->setHospitalId($userData['id_hospital']);
+        }
+        if (isset($userData['id_planta'])) {
+            $user->setPlantaId($userData['id_planta']);
+        }
+        if (isset($userData['id_botiquin'])) {
+            $user->setBotiquinId($userData['id_botiquin']);
+        }
+
+        return $user;
+    }
+
+    public function insertUser($nombre, $email, $password, $id_rol): bool
     {
         $stmt = $this->pdo->prepare("
-            INSERT INTO users (nombre, email, password, id_rol, id_hospital, id_planta, id_botiquin) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)");
+            INSERT INTO users (nombre, email, password, id_rol, activo) 
+            VALUES (?, ?, ?, ?, 1)");
 
 
-        return $stmt->execute([$nombre, $email, $password, $id_rol, $id_hospital, $id_planta, $id_botiquin]);
+        return $stmt->execute([$nombre, $email, $password, $id_rol]);
     }
 
     public function getAllUsers(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM users");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $usersData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $users = [];
+        foreach ($usersData as $userData) {
+            $users[] = $this->createUserFromData($userData);
+        }
+        return $users;
     }
 
     public function getUserById($id): ?User
@@ -53,28 +81,5 @@ class UserRepository
         $stmt->execute([$email]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         return $userData ? $this->createUserFromData($userData) : null;
-    }
-
-    public function createUserFromData($userData): User
-    {
-        $user = new User();
-        $user->setId($userData['id_usuario']);
-        $user->setNombre($userData['nombre']);
-        $user->setEmail($userData['email']);
-        $user->setPassword($userData['password']);
-        $user->setRol($userData['id_rol']);
-
-        // Configurar campos opcionales si existen
-        if (isset($userData['id_hospital'])) {
-            $user->setHospitalId($userData['id_hospital']);
-        }
-        if (isset($userData['id_planta'])) {
-            $user->setPlantaId($userData['id_planta']);
-        }
-        if (isset($userData['id_botiquin'])) {
-            $user->setBotiquinId($userData['id_botiquin']);
-        }
-
-        return $user;
     }
 }

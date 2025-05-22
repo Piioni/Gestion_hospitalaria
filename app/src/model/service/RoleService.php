@@ -2,6 +2,7 @@
 
 namespace model\service;
 
+use model\entity\Rol;
 use model\repository\RoleRepository;
 
 class RoleService
@@ -18,7 +19,7 @@ class RoleService
         return $this->roleRepository->getAll();
     }
     
-    public function getRoleById($id): array
+    public function getRoleById($id): ?Rol
     {
         return $this->roleRepository->getRoleById($id);
     }

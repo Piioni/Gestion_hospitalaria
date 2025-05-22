@@ -32,7 +32,7 @@ class AuthService
         return false;
     }
 
-    public function register($nombre, $email, $password, $rol, $id_hospital = null, $id_planta = null, $id_botiquin = null): bool
+    public function register($nombre, $email, $password, $rol): bool
     {
         if (empty($nombre) || empty($email) || empty($password)) {
             throw new InvalidArgumentException("Todos los campos son obligatorios."); // All fields are required
@@ -53,7 +53,7 @@ class AuthService
         // Hash the password before saving
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        return $this->userService->addUser($nombre, $email, $passwordHash, $rol, $id_hospital, $id_planta, $id_botiquin);
+        return $this->userService->addUser($nombre, $email, $passwordHash, $rol);
     }
 
     #[NoReturn]
@@ -62,6 +62,12 @@ class AuthService
         session_destroy();
         header("Location: /");
         exit();
+    }
+
+    public function getUserIdByEmail($email): ?int
+    {
+        $user = $this->userService->getUserByEmail($email);
+        return $user?->getId();
     }
 
     public function isAuthenticated() : bool

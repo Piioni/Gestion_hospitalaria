@@ -15,6 +15,11 @@ class RoleRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
+    public function createRoleFromData($roleData) : Rol
+    {
+        return new Rol($roleData['id_rol'], $roleData['nombre']);
+    }
+
     public function getAll(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM roles");
@@ -25,16 +30,15 @@ class RoleRepository
         }
         return $roleObjects;
     }
-    
-    public function getRoleById($id): array
+
+    public function getRoleById($id): ?Rol
     {
         $stmt = $this->pdo->prepare("SELECT * FROM roles WHERE id_rol = ?");
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-    }
-
-    public function createRoleFromData($roleData) : Rol
-    {
-        return new Rol($roleData['id_rol'], $roleData['nombre']);
+        $roleData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($roleData) {
+            return $this->createRoleFromData($roleData);
+        }
+        return null;
     }
 }

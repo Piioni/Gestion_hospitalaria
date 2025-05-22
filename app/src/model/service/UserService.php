@@ -20,6 +20,16 @@ class UserService
         return $this->userRepository->insertUser($nombre, $email, $password, $rol, $id_hospital, $id_planta, $id_botiquin);
     }
 
+    public function getAllUsers(): array
+    {
+        return $this->userRepository->getAllUsers();
+    }
+
+    public function getUserById($id): ?User
+    {
+        return $this->userRepository->getUserById($id);
+    }
+
     public function getUserByEmail($email): ?User
     {
         return $this->userRepository->getUserByEmail($email);
