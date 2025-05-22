@@ -6,5 +6,8 @@
       "view\\": "app/src/view/",
       "config\\": "app/config/"
     }
+  },
+  "require": {
+    "ext-pdo": "*"
   }
 }
