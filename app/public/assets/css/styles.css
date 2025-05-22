@@ -330,6 +330,9 @@ a:hover {
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
     background-color: rgba(69, 143, 246, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .card-content, .card-body {
@@ -647,6 +650,45 @@ a:hover {
     margin-top: 2rem;
     margin-bottom: 2rem;
 }
+
+/* Estilos para el desplegable de plantas */
+.collapsible-section {
+    margin-top: 1rem;
+}
+
+.collapsible-header {
+    padding: 1rem;
+    background-color: rgba(69, 143, 246, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.collapsible-header:hover {
+    background-color: rgba(69, 143, 246, 0.1);
+}
+
+.collapsible-content {
+    display: none;
+    padding: 1rem 0;
+    overflow: hidden;
+}
+
+.collapsible-content.active {
+    display: block;
+}
+
+.collapsible-icon {
+    transition: transform 0.3s;
+}
+
+.collapsible-header.active .collapsible-icon {
+    transform: rotate(180deg);
+}
+
 
 /* Responsive */
 @media (max-width: 992px) {
