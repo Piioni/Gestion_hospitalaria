@@ -8,17 +8,17 @@ class Almacen
 
     private string $nombre;
     private string $tipo;
-    private string $id_hospital;
-    private string $id_planta;
+    private int $id_hospital;
+    private ?int $id_planta;
 
     /**
      * @param int $id_almacen
      * @param string $nombre
      * @param string $tipo
-     * @param string $id_planta
-     * @param string $id_hospital
+     * @param int $id_hospital
+     * @param int|null $id_planta
      */
-    public function __construct(int $id_almacen, string $nombre, string $tipo, string $id_hospital, string $id_planta )
+    public function __construct(int $id_almacen, string $nombre, string $tipo, int $id_hospital, int $id_planta = null)
     {
         $this->id_almacen = $id_almacen;
         $this->nombre = $nombre;
@@ -27,12 +27,12 @@ class Almacen
         $this->id_planta = $id_planta;
     }
 
-    public function getIdAlmacen(): int
+    public function getId(): int
     {
         return $this->id_almacen;
     }
 
-    public function setIdAlmacen(int $id_almacen): void
+    public function setId(int $id_almacen): void
     {
         $this->id_almacen = $id_almacen;
     }
@@ -76,8 +76,4 @@ class Almacen
     {
         $this->id_hospital = $id_hospital;
     }
-
-
-
-
 }

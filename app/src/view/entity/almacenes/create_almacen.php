@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $title = "Crear Almacen";
-$scripts = "create_almacen.js";
+$scripts = "almacenes.js";
 include __DIR__ . "/../../layouts/_header.php";
 ?>
 

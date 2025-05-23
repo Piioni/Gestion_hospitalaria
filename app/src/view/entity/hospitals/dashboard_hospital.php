@@ -76,7 +76,9 @@ include __DIR__ . "/../../layouts/_header.php";
                 </div>
             <?php else: ?>
                 <div class="hospitals-list">
-                    <?php foreach ($hospitals as $index => $hospital): ?>
+                    <?php foreach ($hospitals as $index => $hospital):
+                        $almacen = $almacenService->getAlmacenByHospitalId($hospital->getId());
+                        ?>
                         <div class="hospital-card card">
                             <div class="collapsible-header hospital-header"
                                  onclick="toggleCollapsible(this, 'hospital-<?= $hospital->getId() ?>')">
@@ -99,14 +101,14 @@ include __DIR__ . "/../../layouts/_header.php";
                                             </p>
                                             <p>
                                                 <strong>
-                                                    Almacen
-                                                    General:
+                                                    Almacen General:
                                                 </strong>
                                                 <?php
-                                                if ($almacenService->getAlmacenByHospitalId($hospital->getId()) == null) {
+                                                // Check if the hospital has a general warehouse
+                                                if (!$almacen) {
                                                     echo "No asignado";
                                                 } else {
-                                                    htmlspecialchars($almacenService->getAlmacenByHospitalId($hospital->getId()->getNombre()));
+                                                    echo htmlspecialchars($almacen->getNombre());
                                                 }
                                                 ?>
                                             </p>
@@ -120,11 +122,16 @@ include __DIR__ . "/../../layouts/_header.php";
                                                class="btn btn-sm btn-primary">
                                                 Añadir planta
                                             </a>
-                                            <!-- Check if the hospital has a general warehouse already -->
-                                            <?php if (!$almacenService->getAlmacenByHospitalId($hospital->getId())): ?>
+                                            <!-- Check if the hospital has a general warehouse already to display the corresponding button -->
+                                            <?php if (!$almacen): ?>
                                                 <a href="/almacenes/create?tipo=GENERAL&id_hospital=<?= $hospital->getId() ?>"
                                                    class="btn btn-sm btn-secondary">
                                                     Añadir Almacén General
+                                                </a>
+                                            <?php else: ?>
+                                                <a href="/almacenes/edit?id_almacen=<?= $almacen->getId() ?>"
+                                                   class="btn btn-sm btn-secondary">
+                                                    Editar Almacén General
                                                 </a>
                                             <?php endif; ?>
 

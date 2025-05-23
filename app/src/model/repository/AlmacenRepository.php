@@ -15,7 +15,7 @@ class AlmacenRepository
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function createAlmacenFromData(array $data): Almacen
+    public function createAlmacenFromData(array $data): ?Almacen
     {
         return new Almacen(
             $data['id_almacen'],
