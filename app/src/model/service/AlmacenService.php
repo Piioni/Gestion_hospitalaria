@@ -27,9 +27,22 @@ class AlmacenService
         return $this->almacenRepository->create($nombre, $tipo, $id_hospital, $id_planta,);
     }
 
-    public function updateAlmacen($id_almacen, $tipo, $id_planta, $id_hospital): bool
+    public function updateAlmacen($id_almacen, $nombre, $tipo, $id_hospital, $id_planta): bool
     {
-        return $this->almacenRepository->update($id_almacen, $tipo, $id_planta, $id_hospital);
+        // Validar los parámetros de entrada
+        if (empty($tipo) || empty($id_hospital) || empty($nombre)) {
+            throw new \InvalidArgumentException("Los campos tipo, id_hospital y nombre son obligatorios.");
+        }
+
+        // Verificar que en la planta no exista ya un almacen (a menos que sea el mismo que estamos editando)
+        if ($id_planta) {
+            $existingAlmacen = $this->almacenRepository->getByPlantaId($id_planta);
+            if ($existingAlmacen && $existingAlmacen->getId() != $id_almacen) {
+                throw new \InvalidArgumentException("Ya existe un almacen en la planta seleccionada.");
+            }
+        }
+
+        return $this->almacenRepository->update($id_almacen, $nombre, $tipo, $id_hospital, $id_planta);
     }
 
     public function deleteAlmacen($id_almacen): bool
@@ -42,7 +55,7 @@ class AlmacenService
         return $this->almacenRepository->getAll();
     }
 
-    public function getAlmacenById($id_almacen)
+    public function getAlmacenById($id_almacen) : ?Almacen
     {
         return $this->almacenRepository->getById($id_almacen);
     }

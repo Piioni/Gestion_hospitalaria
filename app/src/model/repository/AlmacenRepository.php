@@ -34,14 +34,14 @@ class AlmacenRepository
         return $stmt->execute([$nombre, $tipo, $id_hospital, $id_planta]);
     }
 
-    public function update($id_almacen, $tipo, $id_hospital, $id_planta): bool
+    public function update($id_almacen, $nombre, $tipo, $id_hospital, $id_planta): bool
     {
         $stmt = $this->pdo->prepare("
             UPDATE almacenes 
-            SET tipo = ?,  id_hospital = ? , id_planta = ?
+            SET nombre = ?, tipo = ?,  id_hospital = ? , id_planta = ?
             WHERE id_almacen = ?"
         );
-        return $stmt->execute([$tipo, $id_hospital, $id_planta, $id_almacen ]);
+        return $stmt->execute([$nombre, $tipo, $id_hospital, $id_planta, $id_almacen ]);
     }
 
     public function delete($id_almacen): bool
@@ -60,7 +60,7 @@ class AlmacenRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getById($id_almacen)
+    public function getById($id_almacen) : ?Almacen
     {
         $stmt = $this->pdo->prepare("
             SELECT * 
@@ -68,7 +68,11 @@ class AlmacenRepository
             WHERE id_almacen = ?"
         );
         $stmt->execute([$id_almacen]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $almacenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($almacenData)) {
+            return null;
+        }
+        return $this->createAlmacenFromData($almacenData[0]);
     }
 
     public function getByPlantaId($id_planta) : ?Almacen

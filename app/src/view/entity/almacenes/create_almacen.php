@@ -12,7 +12,6 @@ $plantaService = new PlantaService();
 $hospitals = $hospitalService->getAllHospitals();
 $plantas = $plantaService->getAllArray();
 
-
 // Inicializar variables y mensajes
 $almacen = [
     'nombre' => '',
@@ -33,7 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Intentar crear el almacen con los datos sanitizados
-        $success = $almacenService->createAlmacen($almacen['nombre'], $almacen['tipo'], $almacen['id_hospital'], $almacen['id_planta']);
+        $success = $almacenService->createAlmacen(
+            $almacen['nombre'],
+            $almacen['tipo'],
+            $almacen['id_hospital'],
+            $almacen['id_planta']
+        );
 
         // Reiniciar el formulario después de un envío exitoso
         $almacen = [
@@ -45,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Redirigir a la lista de almacenes después de crear uno nuevo
         header("Location: /almacenes/create?success=true");
+        exit; // Importante: detener la ejecución después de la redirección
 
     } catch (InvalidArgumentException $e) {
         // Capturar errores de validación
@@ -169,7 +174,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                     <div class="form-field">
                                         <select name="id_planta" id="id_planta" class="form-select">
                                             <option value="">Seleccione una planta</option>
-                                            <!-- Se rellenara dinámicamente con javascript -->
+                                            <!-- Se rellenará dinámicamente con javascript -->
                                         </select>
                                         <div class="field-help">
                                             <i class="fas fa-info-circle"></i> Solo necesario para almacenes de tipo
@@ -205,3 +210,4 @@ include __DIR__ . "/../../layouts/_header.php";
 
 <?php
 include __DIR__ . "/../../layouts/_footer.php";
+?>

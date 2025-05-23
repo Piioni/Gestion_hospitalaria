@@ -57,23 +57,25 @@ class Almacen
         $this->tipo = $tipo;
     }
 
-    public function getIdPlanta(): string
-    {
-        return $this->id_planta;
-    }
-
-    public function setIdPlanta(string $id_planta): void
-    {
-        $this->id_planta = $id_planta;
-    }
-
-    public function getIdHospital(): string
+    public function getIdHospital(): int
     {
         return $this->id_hospital;
     }
 
-    public function setIdHospital(string $id_hospital): void
+    public function setIdHospital(int $id_hospital): void
     {
         $this->id_hospital = $id_hospital;
     }
+
+    public function getIdPlanta(): ?int
+    {
+        return $this->id_planta;
+    }
+
+    public function setIdPlanta(?int $id_planta): void
+    {
+        $this->id_planta = $id_planta;
+    }
+
+
 }
