@@ -8,7 +8,7 @@ $title = $title ?? "Stock Hospitalario";
 $scripts = $scripts ?? "main.js";
 
 // Variable para el título de la barra de navegación
-$navTitle = $navTitle ??  "Stock Hospitalario";
+$navTitle = $navTitle ??  "Pegasus Medical";
 
 ?>
 
@@ -46,7 +46,6 @@ $navTitle = $navTitle ??  "Stock Hospitalario";
                             <h3>Hospitales</h3>
                             <ul>
                                 <li><a href="/hospitals">Dashboard</a></li>
-                                <li><a href="/hospitals/list">Listar todos</a></li>
                             </ul>
                         </div>
                         

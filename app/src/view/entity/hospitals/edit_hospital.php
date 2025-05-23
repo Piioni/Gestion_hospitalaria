@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Actualizar Hospital</button>
-                        <a href="/hospitals/list" class="btn btn-secondary">Volver</a>
+                        <a href="/hospitals" class="btn btn-secondary">Volver</a>
                     </div>
                 </form>
             </div>

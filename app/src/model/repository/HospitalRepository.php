@@ -100,14 +100,20 @@ class HospitalRepository
     public function getAlmacenGeneral($id): ?Almacen
     {
         $stmt = $this->pdo->prepare("
-            SELECT id_almacen, nombre
+            SELECT *
             FROM almacenes 
             WHERE id_hospital = ? AND tipo = 'general'
             ");
         $stmt->execute([$id]);
         $almacenData = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($almacenData) {
-            return new Almacen($almacenData['id_almacen'], $almacenData['nombre']);
+            return new Almacen(
+                $almacenData['id_almacen'],
+                $almacenData['nombre'],
+                $almacenData['tipo'],
+                $almacenData['id_planta'],
+                $almacenData['id_hospital']
+            );
         }
         return null;
     }

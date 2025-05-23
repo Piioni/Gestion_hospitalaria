@@ -38,6 +38,41 @@ class HospitalService
         return $this->hospitalRepository->create($name, $address);
     }
 
+    /**
+     * Elimina un hospital si no tiene dependencias o si se fuerza la eliminación
+     * @param int $id ID del hospital
+     * @param bool $force Si es true, fuerza la eliminación incluso con dependencias
+     * @return bool Resultado de la operación
+     */
+    public function deleteHospital($id, $force = false): bool
+    {
+        // Validación del ID
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException("El ID del hospital es inválido");
+        }
+
+        // Verificar que el hospital existe
+        $hospital = $this->hospitalRepository->getById($id);
+        if (empty($hospital)) {
+            throw new InvalidArgumentException("El hospital no existe");
+        }
+
+        // Verificar si hay plantas asociadas
+        $plantCount = $this->hospitalRepository->countRelatedPlants($id);
+
+        // Si hay plantas asociadas y no se fuerza la eliminación, no permitir
+        if ($plantCount > 0 && !$force) {
+            throw new InvalidArgumentException("No se puede eliminar el hospital porque tiene $plantCount planta(s) asociada(s)");
+        }
+
+        // Eliminar el hospital
+        $result = $this->hospitalRepository->delete($id);
+        if (!$result) {
+            throw new InvalidArgumentException("No se pudo eliminar el hospital");
+        }
+        return true;
+    }
+
     public function getAllHospitals(): array
     {
         return $this->hospitalRepository->getAll();
@@ -46,6 +81,11 @@ class HospitalService
     public function getHospitalById($id): ?Hospital
     {
         return $this->hospitalRepository->getById($id);
+    }
+
+    public function getAlmcaenGeneral($id)
+    {
+        return $this->hospitalRepository->getAlmacenGeneral($id);
     }
 
     public function updateHospital($id, $name, $address): bool
@@ -86,55 +126,20 @@ class HospitalService
         if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException("El ID del hospital es inválido");
         }
-        
+
         // Verificar que el hospital existe
         $hospital = $this->hospitalRepository->getById($id);
         if (empty($hospital)) {
             throw new InvalidArgumentException("El hospital no existe");
         }
-        
+
         // Obtener plantas relacionadas
         $relatedPlants = $this->hospitalRepository->getRelatedPlants($id);
-        
+
         return [
             'hospital' => $hospital,
             'relatedPlants' => $relatedPlants,
             'canDelete' => empty($relatedPlants)
         ];
-    }
-
-    /**
-     * Elimina un hospital si no tiene dependencias o si se fuerza la eliminación
-     * @param int $id ID del hospital
-     * @param bool $force Si es true, fuerza la eliminación incluso con dependencias
-     * @return bool Resultado de la operación
-     */
-    public function deleteHospital($id, $force = false): bool
-    {
-        // Validación del ID
-        if (empty($id) || !is_numeric($id)) {
-            throw new InvalidArgumentException("El ID del hospital es inválido");
-        }
-        
-        // Verificar que el hospital existe
-        $hospital = $this->hospitalRepository->getById($id);
-        if (empty($hospital)) {
-            throw new InvalidArgumentException("El hospital no existe");
-        }
-        
-        // Verificar si hay plantas asociadas
-        $plantCount = $this->hospitalRepository->countRelatedPlants($id);
-        
-        // Si hay plantas asociadas y no se fuerza la eliminación, no permitir
-        if ($plantCount > 0 && !$force) {
-            throw new InvalidArgumentException("No se puede eliminar el hospital porque tiene $plantCount planta(s) asociada(s)");
-        }
-        
-        // Eliminar el hospital
-        $result = $this->hospitalRepository->delete($id);
-        if (!$result) {
-            throw new InvalidArgumentException("No se pudo eliminar el hospital");
-        }
-        return true;
     }
 }

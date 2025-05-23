@@ -331,6 +331,38 @@ p {
     margin-bottom: 0;
 }
 
+/* Card específico para hospitales y plantas */
+.hospital-card,
+.planta-card {
+    margin-bottom: 1.5rem;
+}
+
+.hospital-details,
+.planta-details {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+}
+
+.hospital-info,
+.planta-info {
+    flex: 2;
+    min-width: 250px;
+}
+
+.hospital-actions,
+.planta-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+    min-width: 160px;
+    align-self: flex-start;
+}
 
 /* ===========================================
    SECCIÓN HERO

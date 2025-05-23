@@ -28,7 +28,8 @@ $almacenService = new AlmacenService();
 // Crear instancia del servicio de botiquines
 $botiquinService = new BotiquinService();
 
-$title = "Sistema de Gestión de Plantas Hospitalarias";
+$title = "Plantas";
+$navTitle = "Pegasus Medical";
 include __DIR__ . "/../../layouts/_header.php";
 ?>
 

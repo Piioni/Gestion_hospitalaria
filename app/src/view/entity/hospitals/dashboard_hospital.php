@@ -9,6 +9,7 @@ $hospitals = $hospitalService->getAllHospitals();
 
 // Crear instancia del servicio de plantas
 $plantaService = new PlantaService();
+
 $title = "Sistema de Gestión Hospitalaria";
 include __DIR__ . "/../../layouts/_header.php";
 ?>
@@ -66,21 +67,47 @@ include __DIR__ . "/../../layouts/_header.php";
                                 <div class="card-body">
                                     <div class="hospital-details">
                                         <div class="hospital-info">
-                                            <p><strong>ID:</strong> <?= $hospital->getId() ?></p>
-                                            <p><strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?>
+                                            <p>
+                                                <strong>ID:</strong> <?= $hospital->getId() ?>
+                                            </p>
+                                            <p>
+                                                <strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?>
                                             </p>
                                             <p>
                                                 <strong>Dirección:</strong> <?= htmlspecialchars($hospital->getUbicacion()) ?>
                                             </p>
+                                            <p>
+                                                <strong>
+                                                    Almacen
+                                                    General:
+                                                </strong>
+                                                <?php
+                                                echo $hospitalService->getAlmcaenGeneral($hospital->getId()) === null
+                                                    ? "No existe"
+                                                    : htmlspecialchars($hospitalService->getAlmcaenGeneral($hospital->getId())->getNombre())
+                                                ?>
+                                            </p>
                                         </div>
                                         <div class="hospital-actions">
-                                            <a href="/hospitals/edit?id=<?= $hospital->getId() ?>"
+                                            <a href="/hospitals/edit?id_hospital=<?= $hospital->getId() ?>"
                                                class="btn btn-sm btn-secondary">
                                                 Editar hospital
                                             </a>
                                             <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
                                                class="btn btn-sm btn-primary">
                                                 Añadir planta
+                                            </a>
+                                            <!-- Check if the hospital has a general warehouse already -->
+                                            <?php if (!$hospitalService->getAlmcaenGeneral($hospital->getId())): ?>
+                                                <a href="/almacen/create?id_hospital=<?= $hospital->getId() ?>"
+                                                   class="btn btn-sm btn-secondary">
+                                                    Añadir Almacén General
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <a href="/hospitals/delete?id_hospital=<?= $hospital->getId() ?>"
+                                               class="btn btn-sm btn-danger">
+                                                Eliminar
                                             </a>
                                         </div>
                                     </div>
