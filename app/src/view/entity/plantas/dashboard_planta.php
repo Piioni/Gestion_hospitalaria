@@ -104,43 +104,41 @@ include __DIR__ . "/../../layouts/_header.php";
                         }
                         ?>
                         <div class="planta-card card">
-                            <div class="card-header">
+                            <div class="collapsible-header planta-header"
+                                 onclick="toggleCollapsible(this, 'planta-<?= $planta->getId() ?>')">
                                 <h3 class="planta-name"><?= htmlspecialchars($planta->getNombre()) ?></h3>
-                                <div class="planta-actions">
-                                    <a href="/botiquines/create?id_planta=<?= $planta->getId() ?>"
-                                       class="btn btn-sm btn-primary">
-                                        Añadir botiquín
-                                    </a>
-                                    <a href="/plantas/edit?id=<?= $planta->getId() ?>"
-                                       class="btn btn-sm btn-secondary">
-                                        Editar planta
-                                    </a>
-                                    <button onclick="confirmarEliminar(<?= $planta->getId() ?>)"
-                                            class="btn btn-sm btn-danger">
-                                        Eliminar
-                                    </button>
-                                </div>
+                                <span class="collapsible-icon">▼</span>
                             </div>
 
-                            <div class="card-body">
-                                <div class="planta-details">
-                                    <div class="planta-info">
-                                        <p><strong>ID:</strong> <?= $planta->getId() ?></p>
-                                        <p><strong>Hospital:</strong> <?= htmlspecialchars($hospitalNombre) ?>
-                                            (ID: <?= $planta->getIdHospital() ?>)</p>
-                                        <p><strong>Almacén:</strong> <?= $almacenInfo ?></p>
+                            <div id="planta-<?= $planta->getId() ?>" class="collapsible-content">
+                                <div class="card-body">
+                                    <div class="planta-details">
+                                        <div class="planta-info">
+                                            <p><strong>ID:</strong> <?= $planta->getId() ?></p>
+                                            <p><strong>Hospital:</strong> <?= htmlspecialchars($hospitalNombre) ?>
+                                                (ID: <?= $planta->getIdHospital() ?>)</p>
+                                            <p><strong>Almacén:</strong> <?= $almacenInfo ?></p>
+                                        </div>
+                                        <div class="planta-actions">
+                                            <a href="/botiquines/create?id_planta=<?= $planta->getId() ?>"
+                                               class="btn btn-sm btn-primary">
+                                                Añadir botiquín
+                                            </a>
+                                            <a href="/plantas/edit?id=<?= $planta->getId() ?>"
+                                               class="btn btn-sm btn-secondary">
+                                                Editar planta
+                                            </a>
+                                            <button onclick="confirmarEliminar(<?= $planta->getId() ?>)"
+                                                    class="btn btn-sm btn-danger">
+                                                Eliminar
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <hr class="divider">
+                                    <hr class="divider">
 
-                                <div class="collapsible-section">
-                                    <div class="collapsible-header"
-                                         onclick="toggleCollapsible(this, 'botiquines-<?= $planta->getId() ?>')">
-                                        <h4 class="subsection-title" style="margin: 0;">Botiquines de la planta</h4>
-                                        <span class="collapsible-icon">▼</span>
-                                    </div>
-                                    <div id="botiquines-<?= $planta->getId() ?>" class="collapsible-content">
+                                    <div class="botiquines-section">
+                                        <h4 class="subsection-title">Botiquines de la planta</h4>
                                         <?php
                                         try {
                                             $botiquines = $botiquinService->getBotiquinesByPlantaId($planta->getId());

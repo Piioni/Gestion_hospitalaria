@@ -56,39 +56,39 @@ include __DIR__ . "/../../layouts/_header.php";
                 <div class="hospitals-list">
                     <?php foreach ($hospitals as $index => $hospital): ?>
                         <div class="hospital-card card">
-                            <div class="card-header">
+                            <div class="collapsible-header hospital-header"
+                                 onclick="toggleCollapsible(this, 'hospital-<?= $hospital->getId() ?>')">
                                 <h3 class="hospital-name"><?= htmlspecialchars($hospital->getNombre()) ?></h3>
-                                <div class="hospital-actions">
-                                    <a href="/hospitals/edit?id=<?= $hospital->getId() ?>"
-                                       class="btn btn-sm btn-secondary">
-                                        Editar hospital
-                                    </a>
-                                    <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
-                                       class="btn btn-sm btn-primary">
-                                        Añadir planta
-                                    </a>
-                                </div>
+                                <span class="collapsible-icon">▼</span>
                             </div>
 
-                            <div class="card-body">
-                                <div class="hospital-details">
-                                    <div class="hospital-info">
-                                        <p><strong>ID:</strong> <?= $hospital->getId() ?></p>
-                                        <p><strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?></p>
-                                        <p>
-                                            <strong>Dirección:</strong> <?= htmlspecialchars($hospital->getUbicacion()) ?>
-                                        </p>
+                            <div id="hospital-<?= $hospital->getId() ?>" class="collapsible-content">
+                                <div class="card-body">
+                                    <div class="hospital-details">
+                                        <div class="hospital-info">
+                                            <p><strong>ID:</strong> <?= $hospital->getId() ?></p>
+                                            <p><strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?>
+                                            </p>
+                                            <p>
+                                                <strong>Dirección:</strong> <?= htmlspecialchars($hospital->getUbicacion()) ?>
+                                            </p>
+                                        </div>
+                                        <div class="hospital-actions">
+                                            <a href="/hospitals/edit?id=<?= $hospital->getId() ?>"
+                                               class="btn btn-sm btn-secondary">
+                                                Editar hospital
+                                            </a>
+                                            <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
+                                               class="btn btn-sm btn-primary">
+                                                Añadir planta
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <hr class="divider">
+                                    <hr class="divider">
 
-                                <div class="collapsible-section">
-                                    <div class="collapsible-header" onclick="toggleCollapsible(this, 'plantas-<?= $hospital->getId() ?>')">
-                                        <h4 class="subsection-title" style="margin: 0;">Plantas del hospital</h4>
-                                        <span class="collapsible-icon">▼</span>
-                                    </div>
-                                    <div id="plantas-<?= $hospital->getId() ?>" class="collapsible-content">
+                                    <div class="plantas-section">
+                                        <h4 class="subsection-title">Plantas del hospital</h4>
                                         <?php
                                         try {
                                             $plantas = $plantaService->getPlantasByHospitalId($hospital->getId());
