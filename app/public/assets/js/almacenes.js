@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
             plantaSelect.required = true;
             document.querySelector('label[for="id_planta"]').classList.add('field-required');
             document.querySelector('label[for="id_planta"]').classList.remove('field-optional');
-            document.querySelector('.field-help').style.display = 'none';
+            if (document.querySelector('.field-help')) {
+                document.querySelector('.field-help').style.display = 'none';
+            }
         } else {
             // Si es GENERAL u otro tipo, deshabilitar el selector de plantas
             plantaSelect.disabled = true;
@@ -23,7 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
             plantaSelect.value = '';
             document.querySelector('label[for="id_planta"]').classList.remove('field-required');
             document.querySelector('label[for="id_planta"]').classList.add('field-optional');
-            document.querySelector('.field-help').style.display = 'block';
+            if (document.querySelector('.field-help')) {
+                document.querySelector('.field-help').style.display = 'block';
+            }
         }
     }
     
@@ -45,6 +49,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const option = document.createElement('option');
                 option.value = planta.id_planta;
                 option.textContent = planta.nombre;
+                
+                // Preseleccionar la planta si estamos en modo edición
+                if (window.selectedPlantaId && planta.id_planta == window.selectedPlantaId) {
+                    option.selected = true;
+                }
+                
                 plantaSelect.appendChild(option);
             });
         }
