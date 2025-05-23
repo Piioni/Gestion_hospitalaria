@@ -3,6 +3,7 @@
 namespace model\repository;
 
 use model\Database;
+use model\entity\Almacen;
 use PDO;
 
 class AlmacenRepository
@@ -12,6 +13,17 @@ class AlmacenRepository
     public function __construct()
     {
         $this->pdo = Database::getInstance()->getPdo();
+    }
+
+    public function createAlmacenFromData(array $data): Almacen
+    {
+        return new Almacen(
+            $data['id_almacen'],
+            $data['nombre'],
+            $data['tipo'],
+            $data['id_hospital'],
+            $data['id_planta']
+        );
     }
 
     public function create($tipo, $id_hospital, $id_planta = null): bool
@@ -59,7 +71,7 @@ class AlmacenRepository
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getByPlantaId($id_planta): array
+    public function getByPlantaId($id_planta) : ?Almacen
     {
         $stmt = $this->pdo->prepare("
             SELECT * 
@@ -67,7 +79,26 @@ class AlmacenRepository
             WHERE id_planta = ?"
         );
         $stmt->execute([$id_planta]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $almacenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($almacenData)) {
+            return null;
+        }
+        return $this->createAlmacenFromData($almacenData[0]);
+    }
+
+    public function getByHospitalId($id_hospital) : ?Almacen
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT * 
+            FROM almacenes
+            WHERE id_hospital = ?"
+        );
+        $stmt->execute([$id_hospital]);
+        $almacenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($almacenData)) {
+            return null;
+        }
+        return $this->createAlmacenFromData($almacenData[0]);
     }
 
 

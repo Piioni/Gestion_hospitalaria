@@ -8,8 +8,8 @@ class Almacen
 
     private string $nombre;
     private string $tipo;
-    private string $id_planta;
     private string $id_hospital;
+    private string $id_planta;
 
     /**
      * @param int $id_almacen
@@ -18,13 +18,13 @@ class Almacen
      * @param string $id_planta
      * @param string $id_hospital
      */
-    public function __construct(int $id_almacen, string $nombre, string $tipo, string $id_planta, string $id_hospital)
+    public function __construct(int $id_almacen, string $nombre, string $tipo, string $id_hospital, string $id_planta )
     {
         $this->id_almacen = $id_almacen;
         $this->nombre = $nombre;
         $this->tipo = $tipo;
-        $this->id_planta = $id_planta;
         $this->id_hospital = $id_hospital;
+        $this->id_planta = $id_planta;
     }
 
     public function getIdAlmacen(): int

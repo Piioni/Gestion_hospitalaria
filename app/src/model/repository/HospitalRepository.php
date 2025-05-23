@@ -97,28 +97,6 @@ class HospitalRepository
         return null;
     }
 
-    public function getAlmacenGeneral($id): ?Almacen
-    {
-        $stmt = $this->pdo->prepare("
-            SELECT *
-            FROM almacenes 
-            WHERE id_hospital = ? AND tipo = 'general'
-            ");
-        $stmt->execute([$id]);
-        $almacenData = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($almacenData) {
-            return new Almacen(
-                $almacenData['id_almacen'],
-                $almacenData['nombre'],
-                $almacenData['tipo'],
-                $almacenData['id_planta'],
-                $almacenData['id_hospital']
-            );
-        }
-        return null;
-    }
-
-
     public function existsByName($nombre): bool
     {
         $stmt = $this->pdo->prepare("

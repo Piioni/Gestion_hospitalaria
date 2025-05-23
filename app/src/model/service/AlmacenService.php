@@ -2,6 +2,7 @@
 
 namespace model\service;
 
+use model\entity\Almacen;
 use model\repository\AlmacenRepository;
 
 class AlmacenService
@@ -46,7 +47,12 @@ class AlmacenService
         return $this->almacenRepository->getById($id_almacen);
     }
 
-    public function getAlmacenByPlantaId($id_planta)
+    public function getAlmacenByHospitalId($id_hospital): ?Almacen
+    {
+        return $this->almacenRepository->getByHospitalId($id_hospital);
+    }
+
+    public function getAlmacenByPlantaId($id_planta): ?Almacen
     {
         return $this->almacenRepository->getByPlantaId($id_planta);
     }

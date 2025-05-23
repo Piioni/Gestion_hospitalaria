@@ -1,5 +1,6 @@
 <?php
 
+use model\service\AlmacenService;
 use model\service\HospitalService;
 use model\service\PlantaService;
 
@@ -7,8 +8,9 @@ use model\service\PlantaService;
 $hospitalService = new HospitalService();
 $hospitals = $hospitalService->getAllHospitals();
 
-// Crear instancia del servicio de plantas
+// Crear instancia del servicio de plantas y almacenes
 $plantaService = new PlantaService();
+$almacenService = new AlmacenService();
 
 $title = "Sistema de Gestión Hospitalaria";
 include __DIR__ . "/../../layouts/_header.php";
@@ -82,9 +84,11 @@ include __DIR__ . "/../../layouts/_header.php";
                                                     General:
                                                 </strong>
                                                 <?php
-                                                echo $hospitalService->getAlmcaenGeneral($hospital->getId()) === null
-                                                    ? "No existe"
-                                                    : htmlspecialchars($hospitalService->getAlmcaenGeneral($hospital->getId())->getNombre())
+                                                if ($almacenService->getAlmacenByHospitalId($hospital->getId()) == null) {
+                                                    echo "No asignado";
+                                                } else {
+                                                    htmlspecialchars($almacenService->getAlmacenByHospitalId($hospital->getId()->getNombre()));
+                                                }
                                                 ?>
                                             </p>
                                         </div>
@@ -98,8 +102,8 @@ include __DIR__ . "/../../layouts/_header.php";
                                                 Añadir planta
                                             </a>
                                             <!-- Check if the hospital has a general warehouse already -->
-                                            <?php if (!$hospitalService->getAlmcaenGeneral($hospital->getId())): ?>
-                                                <a href="/almacen/create?id_hospital=<?= $hospital->getId() ?>"
+                                            <?php if (!$almacenService->getAlmacenByHospitalId($hospital->getId())): ?>
+                                                <a href="/almacenes/create?id_hospital=<?= $hospital->getId() ?>"
                                                    class="btn btn-sm btn-secondary">
                                                     Añadir Almacén General
                                                 </a>
@@ -123,7 +127,9 @@ include __DIR__ . "/../../layouts/_header.php";
                                             if (empty($plantas)):
                                                 ?>
                                                 <div class="empty-plants">
-                                                    Este hospital no tiene plantas registradas.
+                                                    <p>
+                                                        Este hospital no tiene plantas registradas.
+                                                    </p>
                                                     <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
                                                        class="btn btn-sm btn-primary">
                                                         Añadir una planta
@@ -136,6 +142,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                                         <tr>
                                                             <th>ID</th>
                                                             <th>Nombre</th>
+                                                            <th>Almacen</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                         </thead>
@@ -144,6 +151,14 @@ include __DIR__ . "/../../layouts/_header.php";
                                                             <tr>
                                                                 <td><?= $planta->getId() ?></td>
                                                                 <td><?= htmlspecialchars($planta->getNombre()) ?></td>
+                                                                <td>
+                                                                    <?php
+                                                                    if ($almacenService->getAlmacenByPlantaId($planta->getId()) == null) {
+                                                                        echo "No asignado";
+                                                                    } else {
+                                                                        htmlspecialchars($almacenService->getAlmacenByPlantaId($planta->getId())->getNombre());
+                                                                    }
+                                                                    ?>
                                                                 <td class="actions-column">
                                                                     <a href="/plants/edit?id=<?= $planta->getId() ?>"
                                                                        class="btn btn-sm btn-secondary">

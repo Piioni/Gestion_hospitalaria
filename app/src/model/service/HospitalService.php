@@ -2,6 +2,7 @@
 
 namespace model\service;
 
+use model\entity\Almacen;
 use model\entity\Hospital;
 use model\repository\HospitalRepository;
 use InvalidArgumentException;
@@ -81,11 +82,6 @@ class HospitalService
     public function getHospitalById($id): ?Hospital
     {
         return $this->hospitalRepository->getById($id);
-    }
-
-    public function getAlmcaenGeneral($id)
-    {
-        return $this->hospitalRepository->getAlmacenGeneral($id);
     }
 
     public function updateHospital($id, $name, $address): bool
