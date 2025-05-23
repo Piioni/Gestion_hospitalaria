@@ -122,7 +122,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                             </a>
                                             <!-- Check if the hospital has a general warehouse already -->
                                             <?php if (!$almacenService->getAlmacenByHospitalId($hospital->getId())): ?>
-                                                <a href="/almacenes/create?id_hospital=<?= $hospital->getId() ?>"
+                                                <a href="/almacenes/create?tipo=GENERAL&id_hospital=<?= $hospital->getId() ?>"
                                                    class="btn btn-sm btn-secondary">
                                                     Añadir Almacén General
                                                 </a>

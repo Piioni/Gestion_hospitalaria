@@ -721,3 +721,71 @@ p {
 .mb-4 { margin-bottom: 1.5rem !important; }
 .me-1 { margin-right: 0.25rem !important; }
 .me-2 { margin-right: 0.5rem !important; }
+
+/* ===========================================
+   ALMACENES
+   Estilos para la sección de almacenes
+   =========================================== */
+
+.almacen-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.almacen-card {
+    background-color: var(--lighter-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.tipo-info {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+.tipo-info i {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.almacen-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.almacen-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.info-label {
+    font-weight: 500;
+    color: var(--light-text);
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: var(--dark-text);
+}
+
+.location-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--primary-light-bg);
+    border-radius: var(--border-radius-sm);
+}
+
+.location-item {
+    flex: 1;
+    min-width: 150px;
+}

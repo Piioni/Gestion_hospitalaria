@@ -26,12 +26,12 @@ class AlmacenRepository
         );
     }
 
-    public function create($tipo, $id_hospital, $id_planta = null): bool
+    public function create($nombre, $tipo, $id_hospital, $id_planta = null): bool
     {
         $stmt = $this->pdo->prepare("
-            INSERT INTO almacenes (tipo, id_hospital, id_planta) 
-            VALUES (? , ?, ?)");
-        return $stmt->execute([$tipo, $id_hospital, $id_planta]);
+            INSERT INTO almacenes (nombre, tipo, id_hospital, id_planta) 
+            VALUES (? , ?, ?, ?)");
+        return $stmt->execute([$nombre, $tipo, $id_hospital, $id_planta]);
     }
 
     public function update($id_almacen, $tipo, $id_hospital, $id_planta): bool

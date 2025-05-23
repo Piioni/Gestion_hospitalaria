@@ -103,3 +103,61 @@
 .hospital-select {
     max-width: 100%;
 }
+
+/* Estilos específicos para formularios de almacenes */
+.almacen-form {
+    gap: 2rem;
+}
+
+.almacen-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.form-field {
+    position: relative;
+}
+
+.form-field-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--light-text);
+}
+
+.field-required::after {
+    content: "*";
+    color: var(--accent-color);
+    margin-left: 4px;
+}
+
+.field-optional {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-left: 0.5rem;
+    font-weight: normal;
+}
+
+.field-help {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-top: 0.375rem;
+}
+
+.field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .field-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+.disabled-field {
+    background-color: var(--light-bg);
+    cursor: not-allowed;
+    opacity: 0.7;
+}

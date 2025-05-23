@@ -4,10 +4,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const plantaSelect = document.getElementById('id_planta');
     const tipoSelect = document.getElementById('tipo');
     
-    // Deshabilitar inicialmente el selector de plantas
-    plantaSelect.disabled = true;
-
-    // Función para actualizar las plantas basadas en el hospital seleccionado
+    /**
+     * Gestiona la visibilidad del campo de planta según el tipo de almacén
+     */
+    function gestionarVisibilidadPlanta() {
+        const plantaGroup = plantaSelect.closest('.form-group');
+        
+        if (tipoSelect.value === 'PLANTA') {
+            // Para almacenes de tipo PLANTA, mostrar y hacer obligatorio el campo
+            plantaGroup.style.display = 'block';
+            plantaSelect.setAttribute('required', 'required');
+            
+            // Si hay un hospital seleccionado, habilitar el selector de plantas
+            if (hospitalSelect.value) {
+                plantaSelect.disabled = false;
+            }
+        } else if (tipoSelect.value === 'GENERAL') {
+            // Para almacenes de tipo GENERAL, ocultar y hacer opcional
+            plantaGroup.style.display = 'none';
+            plantaSelect.removeAttribute('required');
+            plantaSelect.value = '';
+        } else {
+            // Estado por defecto (ningún tipo seleccionado)
+            plantaGroup.style.display = 'block';
+            plantaSelect.removeAttribute('required');
+        }
+    }
+    
+    /**
+     * Actualiza las opciones de plantas basadas en el hospital seleccionado
+     */
     function actualizarPlantas() {
         const selectedHospitalId = hospitalSelect.value;
         
@@ -20,25 +46,20 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        console.log("Hospital seleccionado:", selectedHospitalId);
-        
         // Filtrar las plantas por el hospital seleccionado
-        // Nota: Ajustar nombres de propiedades según la estructura real
-        const plantasDelHospital = allPlantas.filter(planta => {
-            console.log("Comparando:", planta.id_hospital, selectedHospitalId);
-            return planta.id_hospital == selectedHospitalId;
-        });
+        const plantasDelHospital = window.allPlantas.filter(planta => 
+            planta.id_hospital == selectedHospitalId
+        );
         
-        console.log("Plantas filtradas:", plantasDelHospital);
-        
-        // Habilitar el selector de plantas si hay plantas disponibles
+        // Habilitar el selector de plantas si hay plantas disponibles y el tipo lo permite
         if (plantasDelHospital.length > 0) {
-            plantaSelect.disabled = false;
+            // Solo habilitar si el tipo seleccionado es compatible
+            plantaSelect.disabled = tipoSelect.value !== 'PLANTA';
             
             // Agregar las plantas filtradas al selector
             plantasDelHospital.forEach(planta => {
                 const option = document.createElement('option');
-                option.value = planta.id;  // Ajustar según la estructura real
+                option.value = planta.id;
                 option.textContent = planta.nombre;
                 plantaSelect.appendChild(option);
             });
@@ -46,30 +67,30 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mantener deshabilitado si no hay plantas
             plantaSelect.disabled = true;
             
-            // Opcionalmente, mostrar un mensaje
+            // Mensaje informativo
             const noPlantasOption = document.createElement('option');
             noPlantasOption.textContent = "No hay plantas disponibles para este hospital";
+            noPlantasOption.disabled = true;
             plantaSelect.appendChild(noPlantasOption);
         }
+        
+        // Re-aplicar la lógica de visibilidad después de actualizar las plantas
+        gestionarVisibilidadPlanta();
     }
     
-    // Evento para el cambio de hospital
+    // Configurar eventos
     hospitalSelect.addEventListener('change', actualizarPlantas);
     
-    // También manejar el cambio de tipo de almacén si es necesario
     tipoSelect.addEventListener('change', function() {
-        // Lógica específica para cuando cambia el tipo de almacén
-        // Por ejemplo, si "GENERAL" no requiere planta, podríamos deshabilitarla
-        if (this.value === "GENERAL") {
-            // Lógica para almacén general
-        } else if (this.value === "PLANTA") {
-            // Lógica para almacén de planta
-        }
-        
-        // Actualizar plantas basadas en el hospital seleccionado
+        gestionarVisibilidadPlanta();
         actualizarPlantas();
     });
     
-    // Inicializar al cargar la página
+    // Inicialización: gestionar estados iniciales si hay valores preseleccionados
+    if (tipoSelect.value) {
+        gestionarVisibilidadPlanta();
+    }
+    
+    // Inicializar lista de plantas
     actualizarPlantas();
 });
