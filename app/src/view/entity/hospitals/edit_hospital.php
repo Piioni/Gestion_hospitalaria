@@ -8,19 +8,17 @@ $hospitalService = new HospitalService();
 $hospital_id = $_GET["id_hospital"] ?? null;
 
 if (!$hospital_id || !is_numeric($hospital_id)) {
-    header("Location: /hospitals/list");
+    header("Location: /hospitals");
     exit;
 }
 
 // Obtener los datos del hospital
 $hospitalData = $hospitalService->getHospitalById($hospital_id);
 if (empty($hospitalData)) {
-    header("Location: /hospitals/list");
+    header("Location: /hospitals");
     exit;
 }
 
-$title = "Editar Hospital";
-include __DIR__ . "/../../layouts/_header.php";
 
 // Inicializar variables y mensajes
 $hospital = [
@@ -38,16 +36,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Intentar actualizar el hospital con los datos sanitizados
-        $hospitalService->updateHospital($hospital['id'], $hospital['name'], $hospital['address']);
-        $success = true;
+        $success = $hospitalService->updateHospital($hospital['id'], $hospital['name'], $hospital['address']);
+
     } catch (InvalidArgumentException $e) {
-        // Capturar errores de validación
+        // Capturar errores de validación para desplegar el mensaje.
         $errors[] = $e->getMessage();
     } catch (Exception $e) {
         // Capturar otros errores
         $errors[] = "Error al actualizar el hospital: " . $e->getMessage();
     }
 }
+
+$title = "Editar Hospital";
+include __DIR__ . "/../../layouts/_header.php";
 ?>
 
 <div class="page-section">
@@ -85,16 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label for="name" class="form-label">Nombre del Hospital</label>
                         <div class="form-field">
                             <input type="text" id="name" name="name" class="form-input"
-                                value="<?= htmlspecialchars($hospital['name']) ?>" 
-                                placeholder="Ingrese el nombre del hospital" required>
+                                   value="<?= htmlspecialchars($hospital['name']) ?>"
+                                   placeholder="Ingrese el nombre del hospital" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="address" class="form-label">Dirección</label>
                         <div class="form-field">
                             <input type="text" id="address" name="address" class="form-input"
-                                value="<?= htmlspecialchars($hospital['address']) ?>" 
-                                placeholder="Ingrese la dirección del hospital" required>
+                                   value="<?= htmlspecialchars($hospital['address']) ?>"
+                                   placeholder="Ingrese la dirección del hospital" required>
                         </div>
                     </div>
                     <div class="form-actions">

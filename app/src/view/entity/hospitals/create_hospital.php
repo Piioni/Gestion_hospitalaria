@@ -4,9 +4,6 @@ use model\service\HospitalService;
 
 $hospitalService = new HospitalService();
 
-$title = "Crear Hospital";
-include __DIR__ . "/../../layouts/_header.php";
-
 // Inicializar variables y mensajes
 $hospital = [
     'name' => '',
@@ -38,6 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Error al crear el hospital: " . $e->getMessage();
     }
 }
+
+$title = "Crear Hospital";
+include __DIR__ . "/../../layouts/_header.php";
 ?>
 
 <div class="page-section">
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Guardar Hospital</button>
-                        <a href="/hospitals/list" class="btn btn-secondary">Cancelar</a>
+                        <a href="/hospitals" class="btn btn-secondary">Volver</a>
                     </div>
                 </form>
             </div>

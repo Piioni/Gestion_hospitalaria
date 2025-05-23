@@ -12,6 +12,9 @@ $hospitals = $hospitalService->getAllHospitals();
 $plantaService = new PlantaService();
 $almacenService = new AlmacenService();
 
+// Verificar si se ha enviado un mensaje de éxito
+$success = $_GET['success'] ?? null;
+
 $title = "Sistema de Gestión Hospitalaria";
 include __DIR__ . "/../../layouts/_header.php";
 ?>
@@ -48,6 +51,22 @@ include __DIR__ . "/../../layouts/_header.php";
         </div>
 
         <div class="hospitals-section">
+            <?php if ($success): ?>
+                <?php if ($_GET['success'] == 'deleted'): ?>
+                    <div class="alert alert-success">
+                        Hospital eliminado correctamente.
+                    </div>
+                <?php elseif ($_GET['success'] == 'created'): ?>
+                    <div class="alert alert-success">
+                        Hospital creado correctamente.
+                    </div>
+                <?php elseif ($_GET['success'] == 'updated'): ?>
+                    <div class="alert alert-success">
+                        Hospital actualizado correctamente.
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <h2 class="section-title">Hospitales y sus plantas</h2>
 
             <?php if (empty($hospitals)): ?>

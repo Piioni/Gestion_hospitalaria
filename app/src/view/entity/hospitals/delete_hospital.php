@@ -1,12 +1,14 @@
 <?php
 
+// TODO : Implementar la lógica de eliminación de hospitales, Decidir si si se pueden eliminar o no
+
 use model\service\HospitalService;
 
 // Obtener el ID del hospital
 $id_hospital = $_GET["id_hospital"] ?? null;
 
 if (!$id_hospital || !is_numeric($id_hospital)) {
-    header('Location: /hospitals/list?error=id_invalid');
+    header('Location: /hospitals?error=id_invalid');
     exit;
 }
 
@@ -15,10 +17,10 @@ $force = isset($_GET["force"]) && $_GET["force"] === "1";
 try {
     $hospitalService = new HospitalService();
 
-    // Si es una solicitud de confirmación, eliminar directamente
+    // Sí es una solicitud de confirmación, eliminar directamente
     if ($force || isset($_GET["confirm"])) {
         $result = $hospitalService->deleteHospital($id_hospital, $force);
-        header('Location: /hospitals/list?success=deleted');
+        header('Location: /hospitals/dashboard?success=deleted');
         exit;
     }
 
@@ -28,7 +30,7 @@ try {
     // Si no hay relaciones, eliminar directamente
     if ($relationInfo['canDelete']) {
         $result = $hospitalService->deleteHospital($id_hospital);
-        header('Location: /hospitals/list?success=deleted');
+        header('Location: /hospitals?success=deleted');
         exit;
     }
 
@@ -41,12 +43,12 @@ try {
 
 } catch (InvalidArgumentException $e) {
     // Error de validación
-    header('Location: /hospitals/list?error=' . urlencode($e->getMessage()));
+    header('Location: /hospitals?error=' . urlencode($e->getMessage()));
     exit;
 } catch (Exception $e) {
     // Error inesperado
     error_log("Error al procesar eliminación: " . $e->getMessage());
-    header('Location: /hospitals/list?error=unexpected');
+    header('Location: /hospitals?error=unexpected');
     exit;
 }
 ?>
@@ -87,7 +89,7 @@ try {
                         <input type="hidden" name="force" value="1">
                         <button type="submit" class="btn btn-danger">Eliminar de todos modos</button>
                     </form>
-                    <a href="/hospitals/list" class="btn btn-secondary">Cancelar</a>
+                    <a href="/hospitals" class="btn btn-secondary">Cancelar</a>
                 </div>
             </div>
         </div>
