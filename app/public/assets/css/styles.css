@@ -1,35 +1,19 @@
-/* 1. Variables primero */
-@import 'variables.css';
+/* Estilos globales */
+@import 'main.css';
 
-/* 2. Reset y base */
-@import 'reset.css';
-
-/* 3. Tipografía */
-@import 'typography.css';
-
-/* 4. Componentes básicos */
+/* Componentes básicos */
 @import 'buttons.css';
 @import 'forms.css';
-@import 'cards.css';
 @import 'tables.css';
 @import 'alerts.css';
 
-/* 5. Layout y estructura */
+/* Layout y estructura */
 @import 'header.css';
-@import 'hero.css';
 @import 'nav.css';
-@import 'layout.css';
 @import 'footer.css';
 
-/* 6. Componentes específicos */
-@import 'components.css';
-@import 'pages.css';
-
-/* 7. Utilidades */
-@import 'utilities.css';
-
-/* 8. Animaciones */
+/* Animaciones */
 @import 'animations.css';
 
-/* 9. Responsive al final */
+/* Responsive al final */
 @import 'responsive.css';

@@ -1,0 +1,691 @@
+/* ===========================================
+   VARIABLES CSS
+   Colores, tipografía, espaciado y sombras
+   =========================================== */
+
+:root {
+    /* Colores primarios */
+    --primary-color: #458ff6;
+    --primary-dark: #3a7ad9;
+    --secondary-color: #4CAF50;
+    --secondary-dark: #3d8b40;
+    --accent-color: #FF6B6B;
+    --accent-dark: #e05c5c;
+
+    /* Colores de fondo */
+    --light-bg: #f8fafc;
+    --lighter-bg: #ffffff;
+    --primary-light-bg: rgba(69, 143, 246, 0.05);
+    --primary-lighter-bg: rgba(69, 143, 246, 0.1);
+
+    /* Colores de texto */
+    --dark-text: #2d3748;
+    --light-text: #718096;
+    --muted-text: #a0aec0;
+
+    /* Bordes y líneas */
+    --border-color: #e2e8f0;
+
+    /* Sombras */
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --strong-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Espaciado */
+    --section-spacing: 5rem;
+    --card-padding: 1.5rem;
+    --section-padding: 4rem 0;
+
+    /* Tipografía */
+    --font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* Bordes */
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+}
+
+/* ===========================================
+   RESET Y ESTILOS BASE
+   Configuración inicial y reset básico
+   =========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family), serif;
+    background-color: var(--light-bg);
+    color: var(--dark-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* Divisores */
+.divider {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
+
+/* ===========================================
+   TIPOGRAFÍA
+   Headings, párrafos y texto
+   =========================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+.lead-text {
+    font-size: 1.25rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-light {
+    color: var(--light-text);
+}
+
+.text-muted {
+    color: var(--muted-text);
+}
+
+/* Títulos y descripciones */
+.page-title,
+.hero-title,
+.section-title,
+.service-title,
+.feature-title {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.page-description,
+.hero-description,
+.section-description,
+.service-description,
+.feature-description {
+    color: var(--light-text);
+}
+
+.section-title {
+    font-size: 2rem;
+}
+
+.section-description {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.subsection-title {
+    margin: 2rem 0 1.5rem 0;
+    color: var(--primary-color);
+}
+
+/* ===========================================
+   CARDS (TARJETAS)
+   Estilos para cards y contenedores
+   =========================================== */
+
+
+/* Estilo base para todas las cards */
+.card,
+.service-card,
+.feature-card,
+.user-profile-badge {
+    background-color: var(--lighter-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.card {
+    margin-bottom: 2.5rem;
+}
+
+.card-header {
+    padding: var(--card-padding);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--primary-light-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-content,
+.card-body {
+    padding: var(--card-padding);
+}
+
+/* Cards interactivas */
+.service-card,
+.feature-card {
+    padding: 2rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-card:hover,
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--strong-shadow);
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Card específico para hospitales */
+.hospital-card {
+    margin-bottom: 1.5rem;
+}
+
+.hospital-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem var(--card-padding);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.hospital-header:hover {
+    background-color: var(--primary-dark);
+}
+
+.hospital-header .hospital-name {
+    margin: 0;
+    color: white;
+}
+
+.hospital-details {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.hospital-info {
+    flex: 2;
+    min-width: 250px;
+}
+
+.hospital-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.plantas-section {
+    margin-top: 1rem;
+}
+
+/* Cards de perfil de usuario */
+.user-profile-badge {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+.user-info-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.user-info-container .lead-text {
+    margin-right: 1rem;
+}
+
+.user-profile-badge {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--lighter-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+}
+
+.user-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-info-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.user-info-container .user-profile-badge {
+    margin-top: 0;
+    margin-right: 1rem;
+    flex: 1;
+    min-width: 250px;
+}
+
+.user-info-container .lead-text {
+    margin-right: 1rem;
+    margin-bottom: 0;
+}
+
+
+/* ===========================================
+   SECCIÓN HERO
+   Estilos para la sección principal de hero
+   =========================================== */
+
+.hero-section {
+    padding: var(--section-padding);
+    position: relative;
+    background-color: var(--lighter-bg);
+    margin-bottom: var(--section-spacing);
+}
+
+.hero-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.hero-content {
+    z-index: 2;
+}
+
+.hero-image {
+    display: flex;
+    justify-content: center;
+}
+
+/* ===========================================
+   LAYOUT
+   Estructura de páginas y secciones
+   =========================================== */
+
+/* Secciones generales */
+.page-section,
+.services-section,
+.features-section {
+    padding: var(--section-padding);
+    margin-bottom: var(--section-spacing);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+}
+
+/* Grids */
+.services-grid,
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.services-cta {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* Secciones específicas */
+.overview-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hospitals-section {
+    margin-top: 4rem;
+}
+
+/* Estados vacíos */
+.empty-state,
+.empty-plants,
+.empty-selection-message {
+    text-align: center;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+}
+
+.empty-state {
+    padding: 3rem 1rem;
+    border-radius: var(--border-radius);
+    margin: 2rem 0;
+}
+
+.empty-plants {
+    padding: 1.5rem;
+    border-radius: var(--border-radius-sm);
+    margin-top: 1.5rem;
+}
+
+.empty-selection-message {
+    font-style: italic;
+    padding: 1.5rem !important;
+}
+
+/* ===========================================
+   COMPONENTES ESPECIALES
+   Selectores, collapsable y otros componentes
+   =========================================== */
+
+/* Selector de ubicaciones */
+.location-selector {
+    padding: 1rem 0;
+}
+
+.location-selector-header {
+    margin-bottom: 1.5rem;
+}
+
+.location-selector-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.selection-container,
+.selection-list-container {
+    background-color: var(--light-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+}
+
+.selection-list-title {
+    margin-bottom: 1rem;
+    color: var(--dark-text);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.selection-list-wrapper {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--lighter-bg);
+}
+
+.selection-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.selection-list li {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.selection-list li:last-child {
+    border-bottom: none;
+}
+
+.selection-list li:hover {
+    background-color: var(--primary-light-bg);
+}
+
+.selection-item-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Secciones de ubicación */
+.location-section {
+    margin-top: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+/* Contenedor de secciones con mejor control de espaciado */
+#location-sections-container {
+    min-height: 0;
+    transition: min-height 0.3s ease;
+}
+
+#location-sections-container.has-selection {
+    min-height: 200px;
+    margin-bottom: 2rem;
+}
+
+/* Reducir el espacio cuando no hay selecciones activas */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Secciones colapsables */
+.collapsible-section {
+    margin-top: 1rem;
+}
+
+.collapsible-header {
+    padding: 1rem;
+    background-color: var(--primary-light-bg);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+/* Estilos específicos para el encabezado de hospital */
+.collapsible-header.hospital-header {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.collapsible-header.hospital-header .hospital-name {
+    color: white;
+}
+
+.collapsible-header.hospital-header .collapsible-icon {
+    color: white;
+}
+
+.collapsible-header:hover {
+    background-color: var(--primary-lighter-bg);
+}
+
+.collapsible-header.hospital-header:hover {
+    background-color: var(--primary-dark);
+}
+
+.collapsible-content {
+    display: none;
+    padding: 1rem 0;
+    overflow: hidden;
+    background-color: var(--primary-light-bg);
+}
+
+.collapsible-content.active {
+    display: block;
+    padding: var(--card-padding);
+}
+
+.collapsible-icon {
+    transition: transform 0.3s;
+    font-size: 1rem;
+}
+
+.collapsible-header.active .collapsible-icon {
+    transform: rotate(180deg);
+}
+
+/* Listas de dependencias */
+.dependencies-list {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+}
+
+/* ===========================================
+   PÁGINAS ESPECÍFICAS
+   Estilos para páginas particulares
+   =========================================== */
+
+/* Página de autenticación */
+.auth-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-title {
+    color: var(--primary-color);
+}
+
+.auth-card {
+    padding: 2rem;
+}
+
+.auth-link {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Página de error 404 */
+.error-template {
+    padding: 40px 15px;
+    text-align: center;
+    margin: 4rem 0;
+}
+
+.error-template h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.error-template h2 {
+    font-size: 2rem;
+    color: var(--dark-text);
+    margin-bottom: 2rem;
+}
+
+.error-details {
+    font-size: 1.2rem;
+    color: var(--light-text);
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    margin: 2rem 0;
+}
+
+/* ===========================================
+   UTILIDADES
+   Clases de utilidad y espaciado
+   =========================================== */
+
+/* Márgenes */
+.mt-4 { margin-top: 1.5rem !important; }
+.mt-5 { margin-top: 3rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.me-1 { margin-right: 0.25rem !important; }
+.me-2 { margin-right: 0.5rem !important; }
