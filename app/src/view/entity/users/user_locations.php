@@ -42,6 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_locations'])) {
         $selectedPlantas = isset($_POST['plantas']) ? $_POST['plantas'] : [];
         $selectedBotiquines = isset($_POST['botiquines']) ? $_POST['botiquines'] : [];
 
+        // Verificar que sólo se haya seleccionado un tipo de ubicación
+        $hasHospitales = !empty($selectedHospitales);
+        $hasPlantas = !empty($selectedPlantas);
+        $hasBotiquines = !empty($selectedBotiquines);
+
+        // Contar cuántos tipos se han seleccionado
+        $selectedTypes = ($hasHospitales ? 1 : 0) + ($hasPlantas ? 1 : 0) + ($hasBotiquines ? 1 : 0);
+
+        if ($selectedTypes > 1) {
+            throw new Exception("Solo puede asignar un tipo de ubicación: hospitales, plantas o botiquines.");
+        }
+
         // Guardar las ubicaciones asignadas
         $userService->saveUserLocations($userId, $selectedHospitales, $selectedPlantas, $selectedBotiquines);
 
@@ -51,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_locations'])) {
     }
 }
 
+$scripts = "user_locations.js";
 $title = 'Asignar Ubicaciones';
 include(__DIR__ . '/../../layouts/_header.php');
 ?>
@@ -61,13 +74,22 @@ include(__DIR__ . '/../../layouts/_header.php');
         <div class="col">
             <div class="page-header">
                 <h1 class="page-title">Asignar Ubicaciones</h1>
-                <div class="user-profile-badge">
-                    <div class="user-avatar">
-                        <i class="bi bi-person-circle"></i>
+                <div class="user-info-container mb-3">
+                    <div class="user-profile-badge">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="user-info">
+                            <p class="lead-text mb-0">Usuario: <strong><?= htmlspecialchars($user->getNombre()) ?></strong></p>
+                        </div>
                     </div>
-                    <div class="user-info">
-                        <p class="lead-text mb-0">Usuario: <strong><?= htmlspecialchars($user->getNombre()) ?></strong></p>
-                        <small class="text-muted"><i class="bi bi-envelope me-1"></i><?= htmlspecialchars($user->getEmail()) ?></small>
+                    <div class="user-profile-badge">
+                        <div class="user-avatar">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="user-info">
+                            <p class="lead-text mb-0"><?= htmlspecialchars($user->getEmail()) ?></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,19 +113,33 @@ include(__DIR__ . '/../../layouts/_header.php');
     <div class="card">
         <div class="card-header">
             <h3 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Ubicaciones Disponibles</h3>
-            <p class="text-muted mb-0">Seleccione las ubicaciones que desea asignar al usuario</p>
+            <p class="text-light mb-0">Seleccione el tipo de ubicación que desea asignar al usuario</p>
+            <div class="alert alert-info mt-3">
+                <i class="bi bi-info-circle-fill me-2"></i> Las ubicaciones son excluyentes. Solo puede asignar un tipo:
+                hospitales, plantas o botiquines.
+            </div>
         </div>
         <div class="card-body">
-            <form method="POST">
+            <form method="POST" class="form">
+                <!-- Selector de tipo de ubicación -->
+                <div class="form-group mb-3">
+                    <label for="location-type-select" class="form-label">Tipo de ubicación:</label>
+                    <select id="location-type-select" class="form-select">
+                        <option value="">Seleccione un tipo de ubicación</option>
+                        <option value="hospitales">Hospitales</option>
+                        <option value="plantas">Plantas</option>
+                        <option value="botiquines">Botiquines</option>
+                    </select>
+                </div>
 
-                <!-- Contenido de las pestañas -->
-                <div class="tab-content" id="locationTabsContent">
-                    <!-- Pestaña de Hospitales -->
-                    <div class="tab-pane fade show active" id="hospitales" role="tabpanel" aria-labelledby="hospitales-tab">
+                <!-- Contenedor de las secciones de ubicación con espaciado optimizado -->
+                <div id="location-sections-container">
+                    <!-- Sección de Hospitales -->
+                    <div class="location-section" id="hospitales-section" style="display: none;">
                         <div class="location-selector">
                             <div class="location-selector-header">
-                                <h4><i class="bi bi-hospital me-2 text-primary"></i>Seleccionar Hospitales</h4>
-                                <p class="text-muted">Elija los hospitales a los que el usuario tendrá acceso</p>
+                                <h4 class="subsection-title"><i class="bi bi-hospital me-2 text-primary"></i>Seleccionar Hospitales</h4>
+                                <p class="text-light">Elija los hospitales a los que el usuario tendrá acceso</p>
                             </div>
 
                             <div class="location-selector-content">
@@ -141,12 +177,12 @@ include(__DIR__ . '/../../layouts/_header.php');
                         </div>
                     </div>
 
-                    <!-- Pestaña de Plantas -->
-                    <div class="tab-pane fade" id="plantas" role="tabpanel" aria-labelledby="plantas-tab">
+                    <!-- Sección de Plantas -->
+                    <div class="location-section" id="plantas-section" style="display: none;">
                         <div class="location-selector">
                             <div class="location-selector-header">
-                                <h4><i class="bi bi-building me-2 text-success"></i>Seleccionar Plantas</h4>
-                                <p class="text-muted">Elija las plantas a las que el usuario tendrá acceso</p>
+                                <h4 class="subsection-title"><i class="bi bi-building me-2 text-success"></i>Seleccionar Plantas</h4>
+                                <p class="text-light">Elija las plantas a las que el usuario tendrá acceso</p>
                             </div>
 
                             <div class="location-selector-content">
@@ -160,7 +196,7 @@ include(__DIR__ . '/../../layouts/_header.php');
                                                     <option value="<?= $planta->getId() ?>"><?= htmlspecialchars($planta->getNombre()) ?></option>
                                                 <?php endforeach; ?>
                                             </select>
-                                            <button type="button" id="add-planta" class="btn btn-success">
+                                            <button type="button" id="add-planta" class="btn btn-primary">
                                                 <i class="bi bi-plus-lg"></i>
                                             </button>
                                         </div>
@@ -184,12 +220,12 @@ include(__DIR__ . '/../../layouts/_header.php');
                         </div>
                     </div>
 
-                    <!-- Pestaña de Botiquines -->
-                    <div class="tab-pane fade" id="botiquines" role="tabpanel" aria-labelledby="botiquines-tab">
+                    <!-- Sección de Botiquines -->
+                    <div class="location-section" id="botiquines-section" style="display: none;">
                         <div class="location-selector">
                             <div class="location-selector-header">
-                                <h4><i class="bi bi-box-seam me-2 text-info"></i>Seleccionar Botiquines</h4>
-                                <p class="text-muted">Elija los botiquines a los que el usuario tendrá acceso</p>
+                                <h4 class="subsection-title"><i class="bi bi-box-seam me-2 text-info"></i>Seleccionar Botiquines</h4>
+                                <p class="text-light">Elija los botiquines a los que el usuario tendrá acceso</p>
                             </div>
 
                             <div class="location-selector-content">
@@ -203,7 +239,7 @@ include(__DIR__ . '/../../layouts/_header.php');
                                                     <option value="<?= $botiquin->getId() ?>"><?= htmlspecialchars($botiquin->getNombre()) ?></option>
                                                 <?php endforeach; ?>
                                             </select>
-                                            <button type="button" id="add-botiquin" class="btn btn-info text-white">
+                                            <button type="button" id="add-botiquin" class="btn btn-primary">
                                                 <i class="bi bi-plus-lg"></i>
                                             </button>
                                         </div>
@@ -233,11 +269,11 @@ include(__DIR__ . '/../../layouts/_header.php');
                     <!-- Los campos se generarán dinámicamente -->
                 </div>
 
-                <div class="action-buttons mt-4">
+                <div class="action-buttons">
                     <a href="/users/dashboard" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Volver al listado
                     </a>
-                    <button type="submit" name="save_locations" class="btn btn-success px-4">
+                    <button type="submit" name="save_locations" class="btn btn-primary">
                         <i class="bi bi-check-circle me-1"></i> Guardar Ubicaciones
                     </button>
                 </div>
@@ -245,204 +281,5 @@ include(__DIR__ . '/../../layouts/_header.php');
         </div>
     </div>
 </div>
-
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Variables para almacenar las selecciones
-    let selectedHospitales = {};
-    let selectedPlantas = {};
-    let selectedBotiquines = {};
-    
-    // Elementos de mensajes vacíos
-    const noHospitalesMsg = document.getElementById('no-hospitals-msg');
-    const noPlantasMsg = document.getElementById('no-plantas-msg');
-    const noBotiquinesMsg = document.getElementById('no-botiquines-msg');
-
-    // Inicializar pestañas manualmente ya que no tenemos Bootstrap JS
-    initTabs();
-
-    // Función para actualizar los campos ocultos
-    function updateHiddenFields() {
-        const container = document.getElementById('hidden-fields-container');
-        container.innerHTML = '';
-
-        // Agregar campos para hospitales
-        Object.keys(selectedHospitales).forEach(id => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'hospitales[]';
-            input.value = id;
-            container.appendChild(input);
-        });
-
-        // Agregar campos para plantas
-        Object.keys(selectedPlantas).forEach(id => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'plantas[]';
-            input.value = id;
-            container.appendChild(input);
-        });
-
-        // Agregar campos para botiquines
-        Object.keys(selectedBotiquines).forEach(id => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'botiquines[]';
-            input.value = id;
-            container.appendChild(input);
-        });
-        
-        // Actualizar visibilidad de mensajes vacíos
-        noHospitalesMsg.style.display = Object.keys(selectedHospitales).length > 0 ? 'none' : 'block';
-        noPlantasMsg.style.display = Object.keys(selectedPlantas).length > 0 ? 'none' : 'block';
-        noBotiquinesMsg.style.display = Object.keys(selectedBotiquines).length > 0 ? 'none' : 'block';
-    }
-
-    // Agregar hospitales
-    document.getElementById('add-hospital').addEventListener('click', function() {
-        const select = document.getElementById('hospital-select');
-        const id = select.value;
-        const name = select.options[select.selectedIndex].text;
-
-        if (id && !selectedHospitales[id]) {
-            selectedHospitales[id] = name;
-
-            const list = document.getElementById('selected-hospitals');
-            const item = document.createElement('li');
-            item.className = 'selection-item';
-            item.innerHTML = `
-                <span class="selection-item-text">
-                    <i class="bi bi-hospital text-primary"></i>
-                    ${name}
-                </span>
-                <button type="button" class="btn-remove remove-hospital" data-id="${id}" title="Eliminar">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-            `;
-            list.appendChild(item);
-
-            updateHiddenFields();
-            select.value = '';
-        }
-    });
-
-    // Agregar plantas
-    document.getElementById('add-planta').addEventListener('click', function() {
-        const select = document.getElementById('planta-select');
-        const id = select.value;
-        const name = select.options[select.selectedIndex].text;
-
-        if (id && !selectedPlantas[id]) {
-            selectedPlantas[id] = name;
-
-            const list = document.getElementById('selected-plantas');
-            const item = document.createElement('li');
-            item.className = 'selection-item';
-            item.innerHTML = `
-                <span class="selection-item-text">
-                    <i class="bi bi-building text-success"></i>
-                    ${name}
-                </span>
-                <button type="button" class="btn-remove remove-planta" data-id="${id}" title="Eliminar">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-            `;
-            list.appendChild(item);
-
-            updateHiddenFields();
-            select.value = '';
-        }
-    });
-
-    // Agregar botiquines
-    document.getElementById('add-botiquin').addEventListener('click', function() {
-        const select = document.getElementById('botiquin-select');
-        const id = select.value;
-        const name = select.options[select.selectedIndex].text;
-
-        if (id && !selectedBotiquines[id]) {
-            selectedBotiquines[id] = name;
-
-            const list = document.getElementById('selected-botiquines');
-            const item = document.createElement('li');
-            item.className = 'selection-item';
-            item.innerHTML = `
-                <span class="selection-item-text">
-                    <i class="bi bi-box-seam text-info"></i>
-                    ${name}
-                </span>
-                <button type="button" class="btn-remove remove-botiquin" data-id="${id}" title="Eliminar">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-            `;
-            list.appendChild(item);
-
-            updateHiddenFields();
-            select.value = '';
-        }
-    });
-
-    // Eliminar elementos (delegación de eventos)
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.remove-hospital')) {
-            const button = e.target.closest('.remove-hospital');
-            const id = button.dataset.id;
-            delete selectedHospitales[id];
-            button.closest('li').remove();
-            updateHiddenFields();
-        }
-
-        if (e.target.closest('.remove-planta')) {
-            const button = e.target.closest('.remove-planta');
-            const id = button.dataset.id;
-            delete selectedPlantas[id];
-            button.closest('li').remove();
-            updateHiddenFields();
-        }
-
-        if (e.target.closest('.remove-botiquin')) {
-            const button = e.target.closest('.remove-botiquin');
-            const id = button.dataset.id;
-            delete selectedBotiquines[id];
-            button.closest('li').remove();
-            updateHiddenFields();
-        }
-    });
-    
-    // Función para inicializar pestañas manualmente
-    function initTabs() {
-        const tabLinks = document.querySelectorAll('.nav-link');
-        const tabContents = document.querySelectorAll('.tab-pane');
-        
-        tabLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remover la clase active de todas las pestañas
-                tabLinks.forEach(l => l.classList.remove('active'));
-                tabContents.forEach(c => {
-                    c.classList.remove('show');
-                    c.classList.remove('active');
-                });
-                
-                // Agregar la clase active a la pestaña actual
-                this.classList.add('active');
-                
-                // Mostrar el contenido correspondiente
-                const targetId = this.getAttribute('data-bs-target').substring(1);
-                const targetContent = document.getElementById(targetId);
-                targetContent.classList.add('show');
-                targetContent.classList.add('active');
-            });
-        });
-    }
-    
-    // Inicializar los mensajes vacíos
-    updateHiddenFields();
-});
-</script>
 
 <?php include(__DIR__ . '/../../layouts/_footer.php'); ?>

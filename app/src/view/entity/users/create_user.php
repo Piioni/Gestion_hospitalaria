@@ -49,6 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $input['confirm_password'] = '';
                 $input['role'] = '';
 
+                // Preguntarle si se desea asignar localizaciones al usuario
+
+
 
             }
 
@@ -86,7 +89,7 @@ include(__DIR__ . '/../../layouts/_header.php');
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="/register" class="form">
+            <form method="POST" class="form">
                 <div class="form-group">
                     <label for="nombre" class="form-label">Nombre</label>
                     <div class="form-field">

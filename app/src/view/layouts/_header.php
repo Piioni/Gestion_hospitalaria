@@ -5,10 +5,10 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Inicializar $title con un valor predeterminado
 $title = $title ?? "Stock Hospitalario";
-$scripts = $scripts ?? "main.js";
+$scripts = $scripts ?? null;
 
 // Variable para el título de la barra de navegación
-$navTitle = $navTitle ??  "Pegasus Medical";
+$navTitle = $navTitle ?? "Pegasus Medical";
 
 ?>
 
@@ -18,10 +18,13 @@ $navTitle = $navTitle ??  "Pegasus Medical";
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
+    <?php if (isset($scripts)): ?>
+        <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
+    <?php endif; ?>
     <script src="/assets/js/nav.js" defer></script>
 </head>
 <body>
@@ -31,11 +34,11 @@ $navTitle = $navTitle ??  "Pegasus Medical";
             <span class="logo-icon">🏥</span>
             <span class="logo-text"><?= htmlspecialchars($navTitle) ?></span>
         </a>
-        
+
         <button class="mobile-menu-toggle" aria-label="Abrir menú">
             <span class="hamburger"></span>
         </button>
-        
+
         <nav class="main-nav">
             <ul class="nav-links">
                 <!-- Categoría: Gestión de Infraestructura -->
@@ -48,14 +51,14 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                                 <li><a href="/hospitals">Dashboard</a></li>
                             </ul>
                         </div>
-                        
+
                         <div class="mega-dropdown-section">
                             <h3>Plantas</h3>
                             <ul>
                                 <li><a href="/plantas">Dashboard</a></li>
                             </ul>
                         </div>
-                        
+
                         <div class="mega-dropdown-section">
                             <h3>Botiquines</h3>
                             <ul>
@@ -66,7 +69,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                         </div>
                     </div>
                 </li>
-                
+
                 <!-- Categoría: Gestión de Inventario -->
                 <li class="dropdown mega-dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Inventario</a>
@@ -79,7 +82,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                                 <li><a href="/almacenes/create">Crear nuevo</a></li>
                             </ul>
                         </div>
-                        
+
                         <div class="mega-dropdown-section">
                             <h3>Productos</h3>
                             <ul>
@@ -88,7 +91,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                                 <li><a href="/productos/create">Crear nuevo</a></li>
                             </ul>
                         </div>
-                        
+
                         <div class="mega-dropdown-section">
                             <h3>Pactos</h3>
                             <ul>
@@ -99,7 +102,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                         </div>
                     </div>
                 </li>
-                
+
                 <!-- Categoría: Logística -->
                 <li class="dropdown mega-dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Logística</a>
@@ -112,7 +115,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                                 <li><a href="/reposiciones/create">Crear nueva</a></li>
                             </ul>
                         </div>
-                        
+
                         <div class="mega-dropdown-section">
                             <h3>Etiquetas</h3>
                             <ul>
@@ -121,7 +124,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                                 <li><a href="/etiquetas/create">Crear nueva</a></li>
                             </ul>
                         </div>
-                        
+
                         <div class="mega-dropdown-section">
                             <h3>Lecturas</h3>
                             <ul>
@@ -158,7 +161,7 @@ $navTitle = $navTitle ??  "Pegasus Medical";
                                 <li class="dropdown-divider"></li>
                                 <li><a href="/users/edit?id=<?= $_SESSION['user']['id'] ?>">Mi perfil</a></li>
                             <?php endif; ?>
-                          <li><a href="/logout">Cerrar sesión</a></li>
+                            <li><a href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </li>
                 <?php else: ?>
