@@ -31,8 +31,8 @@ class HospitalRepository
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO hospitales (nombre, ubicacion) 
-                VALUES (?, ?)"
+                INSERT INTO hospitales (nombre, ubicacion, activo) 
+                VALUES (?, ?, 1)"
             );
             return $stmt->execute([$nombre, $ubicacion]);
         } catch (PDOException $e) {
@@ -48,7 +48,7 @@ class HospitalRepository
             $stmt = $this->pdo->prepare("
                 UPDATE hospitales 
                 SET nombre = ?, ubicacion = ? 
-                WHERE id_hospital = ?"
+                WHERE id_hospital = ? AND activo = 1"
             );
             return $stmt->execute([$nombre, $ubicacion, $id]);
         } catch (PDOException $e) {
@@ -61,7 +61,8 @@ class HospitalRepository
     {
         try {
             $stmt = $this->pdo->prepare("
-                DELETE FROM hospitales 
+                UPDATE hospitales
+                SET activo = 0
                 WHERE id_hospital = ?"
             );
             return $stmt->execute([$id]);
@@ -73,7 +74,7 @@ class HospitalRepository
 
     public function getAll(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM hospitales");
+        $stmt = $this->pdo->query("SELECT * FROM hospitales WHERE activo = 1");
         $hospitals = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $hospitalObjects = [];
         foreach ($hospitals as $hospitalData) {
@@ -87,7 +88,7 @@ class HospitalRepository
         $stmt = $this->pdo->prepare("
             SELECT * 
             FROM hospitales 
-            WHERE id_hospital = ?"
+            WHERE id_hospital = ? AND activo = 1"
         );
         $stmt->execute([$id]);
         $hospitalData = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -102,7 +103,7 @@ class HospitalRepository
         $stmt = $this->pdo->prepare("
             SELECT COUNT(*) 
             FROM hospitales 
-            WHERE nombre = ?"
+            WHERE nombre = ? AND activo = 1"
         );
         $stmt->execute([$nombre]);
         return (int)$stmt->fetchColumn() > 0;
@@ -113,7 +114,7 @@ class HospitalRepository
         $stmt = $this->pdo->prepare("
             SELECT COUNT(*) 
             FROM hospitales 
-            WHERE ubicacion = ?"
+            WHERE ubicacion = ? AND activo = 1"
         );
         $stmt->execute([$ubicacion]);
         return (int)$stmt->fetchColumn() > 0;
@@ -124,7 +125,7 @@ class HospitalRepository
         $stmt = $this->pdo->prepare("
             SELECT COUNT(*) 
             FROM hospitales 
-            WHERE nombre = ? AND id_hospital != ?");
+            WHERE activo = 1 AND nombre = ? AND id_hospital != ? ");
         $stmt->execute([$nombre, $id]);
         return (int)$stmt->fetchColumn() > 0;
     }
@@ -134,7 +135,7 @@ class HospitalRepository
         $stmt = $this->pdo->prepare("
             SELECT COUNT(*) 
             FROM hospitales 
-            WHERE ubicacion = ? AND id_hospital != ?"
+            WHERE activo = 1 AND ubicacion = ? AND id_hospital != ? "
         );
         $stmt->execute([$ubicacion, $id]);
         return (int)$stmt->fetchColumn() > 0;
@@ -151,7 +152,7 @@ class HospitalRepository
             $stmt = $this->pdo->prepare("
                 SELECT id_planta, nombre 
                 FROM plantas 
-                WHERE id_hospital = ?
+                WHERE id_hospital = ? AND activo = 1
             ");
             $stmt->execute([$id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -172,7 +173,7 @@ class HospitalRepository
             $stmt = $this->pdo->prepare("
                 SELECT COUNT(*) 
                 FROM plantas 
-                WHERE id_hospital = ?
+                WHERE id_hospital = ? AND activo = 1
             ");
             $stmt->execute([$id]);
             return (int)$stmt->fetchColumn();
