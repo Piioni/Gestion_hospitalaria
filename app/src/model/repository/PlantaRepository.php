@@ -29,9 +29,9 @@ class PlantaRepository
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO plantas (id_hospital, nombre) 
-                VALUES (?, ?)"
-            );
+                INSERT INTO plantas (id_hospital, nombre, activo) 
+                VALUES (?, ?, 1)
+                ");
             return $stmt->execute([$id_hospital, $nombre]);
         } catch (PDOException $e) {
             error_log("Error al crear planta: " . $e->getMessage());
@@ -45,9 +45,10 @@ class PlantaRepository
             $stmt = $this->pdo->query("
                 SELECT * 
                 FROM plantas
+                WHERE activo = 1
                 ORDER BY nombre"
             );
-            
+
             $plantasObjects = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $plantasObjects[] = $this->createPlantaFromData($row);
@@ -65,8 +66,9 @@ class PlantaRepository
             $stmt = $this->pdo->query("
                 SELECT * 
                 FROM plantas
-                ORDER BY nombre"
-            );
+                WHERE activo = 1
+                ORDER BY nombre
+                ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error al obtener todas las plantas: " . $e->getMessage());
@@ -80,11 +82,11 @@ class PlantaRepository
             $stmt = $this->pdo->prepare("
                 SELECT * 
                 FROM plantas 
-                WHERE id_hospital = ?
-                ORDER BY nombre"
-            );
+                WHERE id_hospital = ? AND activo = 1
+                ORDER BY nombre
+                ");
             $stmt->execute([$hospitalId]);
-            
+
             $plantasObjects = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $plantasObjects[] = $this->createPlantaFromData($row);
@@ -102,8 +104,8 @@ class PlantaRepository
             $stmt = $this->pdo->prepare("
                 SELECT * 
                 FROM plantas 
-                WHERE id_planta = ?"
-            );
+                WHERE id_planta = ? AND activo = 1
+                ");
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
         } catch (PDOException $e) {
