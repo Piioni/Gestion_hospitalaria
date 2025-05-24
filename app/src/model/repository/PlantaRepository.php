@@ -39,6 +39,36 @@ class PlantaRepository
         }
     }
 
+    public function update($id_planta, $id_hospital, $nombre): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                UPDATE plantas 
+                SET id_hospital = ?, nombre = ? 
+                WHERE id_planta = ? AND activo = 1
+                ");
+            return $stmt->execute([$id_hospital, $nombre, $id_planta]);
+        } catch (PDOException $e) {
+            error_log("Error al actualizar planta: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function delete($id_planta): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                UPDATE plantas 
+                SET activo = 0 
+                WHERE id_planta = ?
+                ");
+            return $stmt->execute([$id_planta]);
+        } catch (PDOException $e) {
+            error_log("Error al eliminar planta: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getAll(): array
     {
         try {
@@ -98,7 +128,7 @@ class PlantaRepository
         }
     }
 
-    public function getPlantaById($id): array
+    public function getPlantaById($id): Planta
     {
         try {
             $stmt = $this->pdo->prepare("
@@ -106,11 +136,17 @@ class PlantaRepository
                 FROM plantas 
                 WHERE id_planta = ? AND activo = 1
                 ");
-            $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            $plantaData = $stmt->execute([$id]);
+            if ($plantaData) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($row) {
+                    return $this->createPlantaFromData($row);
+                }
+            }
         } catch (PDOException $e) {
             error_log("Error al obtener planta por ID: " . $e->getMessage());
             throw $e;
         }
+        throw new \InvalidArgumentException("Planta no encontrada o inactiva");
     }
 }

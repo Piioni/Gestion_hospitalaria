@@ -5,15 +5,15 @@ use model\service\HospitalService;
 $hospitalService = new HospitalService();
 
 // Obtener el ID del hospital de la URL
-$hospital_id = $_GET["id_hospital"] ?? null;
+$id_hospital = $_GET["id_hospital"] ?? null;
 
-if (!$hospital_id || !is_numeric($hospital_id)) {
+if (!$id_hospital || !is_numeric($id_hospital)) {
     header("Location: /hospitals");
     exit;
 }
 
 // Obtener los datos del hospital
-$hospitalData = $hospitalService->getHospitalById($hospital_id);
+$hospitalData = $hospitalService->getHospitalById($id_hospital);
 if (empty($hospitalData)) {
     header("Location: /hospitals");
     exit;

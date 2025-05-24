@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Asegurar que los menús estén cerrados después de que todo esté cargado
+    // Asegurar que los menús estén cerrados después de que to do esté cargado
     window.addEventListener('load', function() {
         closeAllDropdowns();
     });
