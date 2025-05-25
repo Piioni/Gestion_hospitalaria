@@ -78,12 +78,8 @@ class PlantaRepository
                 WHERE activo = 1
                 ORDER BY nombre"
             );
-
-            $plantasObjects = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $plantasObjects[] = $this->createPlantaFromData($row);
-            }
-            return $plantasObjects;
+            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createPlantaFromData'], $plantasData);
         } catch (PDOException $e) {
             error_log("Error al obtener todas las plantas: " . $e->getMessage());
             throw $e;
@@ -116,19 +112,15 @@ class PlantaRepository
                 ORDER BY nombre
                 ");
             $stmt->execute([$hospitalId]);
-
-            $plantasObjects = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $plantasObjects[] = $this->createPlantaFromData($row);
-            }
-            return $plantasObjects;
+            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createPlantaFromData'], $plantasData);
         } catch (PDOException $e) {
             error_log("Error al obtener plantas por hospital: " . $e->getMessage());
             throw $e;
         }
     }
 
-    public function getPlantaById($id): Planta
+    public function getPlantaById($id): ?Planta
     {
         try {
             $stmt = $this->pdo->prepare("
@@ -136,17 +128,12 @@ class PlantaRepository
                 FROM plantas 
                 WHERE id_planta = ? AND activo = 1
                 ");
-            $plantaData = $stmt->execute([$id]);
-            if ($plantaData) {
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($row) {
-                    return $this->createPlantaFromData($row);
-                }
-            }
+            $stmt->execute([$id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? $this->createPlantaFromData($row) : null;
         } catch (PDOException $e) {
             error_log("Error al obtener planta por ID: " . $e->getMessage());
             throw $e;
         }
-        throw new \InvalidArgumentException("Planta no encontrada o inactiva");
     }
 }

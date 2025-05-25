@@ -36,7 +36,6 @@ class HospitalRepository
                 ");
             return $stmt->execute([$nombre, $ubicacion]);
         } catch (PDOException $e) {
-            // Registrar el error y relanzarlo
             error_log("Error al crear hospital: " . $e->getMessage());
             throw $e;
         }
@@ -74,72 +73,100 @@ class HospitalRepository
 
     public function getAll(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM hospitales WHERE activo = 1");
-        $hospitals = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $hospitalObjects = [];
-        foreach ($hospitals as $hospitalData) {
-            $hospitalObjects[] = $this->createHospitalFromData($hospitalData);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM hospitales 
+                WHERE activo = 1
+                ");
+            $stmt->execute();
+            $hospitalesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createHospitalFromData'], $hospitalesData);
+        } catch (PDOException $e) {
+            error_log("Error al obtener todos los hospitales: " . $e->getMessage());
+            throw $e;
         }
-        return $hospitalObjects;
     }
 
     public function getById($id): ?Hospital
     {
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM hospitales 
-            WHERE id_hospital = ? AND activo = 1
-            ");
-        $stmt->execute([$id]);
-        $hospitalData = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($hospitalData) {
-            return $this->createHospitalFromData($hospitalData);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM hospitales 
+                WHERE id_hospital = ? AND activo = 1
+                ");
+            $stmt->execute([$id]);
+            $hospitalData = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $hospitalData ? $this->createHospitalFromData($hospitalData) : null;
+        } catch (PDOException $e) {
+            error_log("Error al obtener hospital por ID: " . $e->getMessage());
+            throw $e;
         }
-        return null;
     }
 
     public function existsByName($nombre): bool
     {
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) 
-            FROM hospitales 
-            WHERE nombre = ? AND activo = 1
-            ");
-        $stmt->execute([$nombre]);
-        return (int)$stmt->fetchColumn() > 0;
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) 
+                FROM hospitales 
+                WHERE nombre = ? AND activo = 1
+                ");
+            $stmt->execute([$nombre]);
+            return (int)$stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            error_log("Error al verificar existencia por nombre: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function existsByAddress($ubicacion): bool
     {
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) 
-            FROM hospitales 
-            WHERE ubicacion = ? AND activo = 1
-            ");
-        $stmt->execute([$ubicacion]);
-        return (int)$stmt->fetchColumn() > 0;
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) 
+                FROM hospitales 
+                WHERE ubicacion = ? AND activo = 1
+                ");
+            $stmt->execute([$ubicacion]);
+            return (int)$stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            error_log("Error al verificar existencia por dirección: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function existsByNameExceptId($nombre, $id): bool
     {
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) 
-            FROM hospitales 
-            WHERE activo = 1 AND nombre = ? AND id_hospital != ? 
-            ");
-        $stmt->execute([$nombre, $id]);
-        return (int)$stmt->fetchColumn() > 0;
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) 
+                FROM hospitales 
+                WHERE activo = 1 AND nombre = ? AND id_hospital != ? 
+                ");
+            $stmt->execute([$nombre, $id]);
+            return (int)$stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            error_log("Error al verificar existencia por nombre exceptuando ID: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function existsByAddressExceptId($ubicacion, $id): bool
     {
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) 
-            FROM hospitales 
-            WHERE activo = 1 AND ubicacion = ? AND id_hospital != ? 
-            ");
-        $stmt->execute([$ubicacion, $id]);
-        return (int)$stmt->fetchColumn() > 0;
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) 
+                FROM hospitales 
+                WHERE activo = 1 AND ubicacion = ? AND id_hospital != ? 
+                ");
+            $stmt->execute([$ubicacion, $id]);
+            return (int)$stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            error_log("Error al verificar existencia por dirección exceptuando ID: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**

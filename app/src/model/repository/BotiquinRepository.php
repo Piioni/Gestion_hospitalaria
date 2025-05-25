@@ -5,6 +5,7 @@ namespace model\repository;
 use model\Database;
 use model\entity\Botiquin;
 use PDO;
+use PDOException;
 
 class BotiquinRepository
 {
@@ -27,62 +28,90 @@ class BotiquinRepository
 
     public function create($id_planta, $nombre, $capacidad): bool
     {
-        $stmt = $this->pdo->prepare("
-            INSERT INTO botiquines (id_planta, nombre, capacidad) 
-            VALUES (?, ?, ?)
-            ");
-        return $stmt->execute([$id_planta, $nombre, $capacidad]);
+        try {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO botiquines (id_planta, nombre, capacidad) 
+                VALUES (?, ?, ?)
+                ");
+            return $stmt->execute([$id_planta, $nombre, $capacidad]);
+        } catch (PDOException $e) {
+            error_log("Error al crear botiquín: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function update($id_botiquin, $id_planta, $nombre, $capacidad): bool
     {
-        $stmt = $this->pdo->prepare("
-            UPDATE botiquines 
-            SET id_planta = ?, nombre = ?, capacidad = ? 
-            WHERE id_botiquin = ?
-            ");
-        return $stmt->execute([$id_planta, $nombre, $capacidad, $id_botiquin]);
+        try {
+            $stmt = $this->pdo->prepare("
+                UPDATE botiquines 
+                SET id_planta = ?, nombre = ?, capacidad = ? 
+                WHERE id_botiquin = ?
+                ");
+            return $stmt->execute([$id_planta, $nombre, $capacidad, $id_botiquin]);
+        } catch (PDOException $e) {
+            error_log("Error al actualizar botiquín: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function delete($id_botiquin): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                DELETE FROM botiquines 
+                WHERE id_botiquin = ?
+                ");
+            return $stmt->execute([$id_botiquin]);
+        } catch (PDOException $e) {
+            error_log("Error al eliminar botiquín: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getAll(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM botiquines");
-        $botiquines = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $botiquinObjects = [];
-        foreach ($botiquines as $botiquinData) {
-            $botiquinObjects[] = $this->createBotiquinFromData($botiquinData);
+        try {
+            $stmt = $this->pdo->query("SELECT * FROM botiquines");
+            $botiquinesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createBotiquinFromData'], $botiquinesData);
+        } catch (PDOException $e) {
+            error_log("Error al obtener todos los botiquines: " . $e->getMessage());
+            throw $e;
         }
-        return $botiquinObjects;
     }
 
     public function getByPlantaId($id_planta): array
     {
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM botiquines 
-            WHERE id_planta = ?
-            ");
-        $stmt->execute([$id_planta]);
-        $botiquines = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $botiquinObjects = [];
-        foreach ($botiquines as $botiquinData) {
-            $botiquinObjects[] = $this->createBotiquinFromData($botiquinData);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM botiquines 
+                WHERE id_planta = ?
+                ");
+            $stmt->execute([$id_planta]);
+            $botiquinesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createBotiquinFromData'], $botiquinesData);
+        } catch (PDOException $e) {
+            error_log("Error al obtener botiquines por ID de planta: " . $e->getMessage());
+            throw $e;
         }
-        return $botiquinObjects;
     }
 
     public function getBotiquinById($id): ?Botiquin
     {
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM botiquines 
-            WHERE id_botiquin = ?"
-        );
-        $stmt->execute([$id]);
-        $botiquinData = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($botiquinData) {
-            return $this->createBotiquinFromData($botiquinData);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM botiquines 
+                WHERE id_botiquin = ?"
+            );
+            $stmt->execute([$id]);
+            $botiquinData = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $botiquinData ? $this->createBotiquinFromData($botiquinData) : null;
+        } catch (PDOException $e) {
+            error_log("Error al obtener botiquín por ID: " . $e->getMessage());
+            throw $e;
         }
-        return null;
     }
 }
