@@ -59,5 +59,4 @@ class BotiquinService
     {
         return $this->botiquinRepository->getBotiquinById($id);
     }
-
 }
