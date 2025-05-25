@@ -105,7 +105,7 @@ include __DIR__ . "/../../layouts/_header.php";
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Actualizar Planta</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         <a href="/plantas" class="btn btn-secondary">Volver</a>
                         <a href="/plantas/delete?id_planta=<?= $planta['id'] ?>" class="btn btn-danger">Eliminar Planta</a>
                     </div>

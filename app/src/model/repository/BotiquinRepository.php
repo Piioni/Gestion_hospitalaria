@@ -34,6 +34,16 @@ class BotiquinRepository
         return $stmt->execute([$id_planta, $nombre, $capacidad]);
     }
 
+    public function update($id_botiquin, $id_planta, $nombre, $capacidad): bool
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE botiquines 
+            SET id_planta = ?, nombre = ?, capacidad = ? 
+            WHERE id_botiquin = ?
+            ");
+        return $stmt->execute([$id_planta, $nombre, $capacidad, $id_botiquin]);
+    }
+
     public function getAll(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM botiquines");

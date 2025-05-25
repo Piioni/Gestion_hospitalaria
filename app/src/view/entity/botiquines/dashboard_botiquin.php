@@ -37,6 +37,14 @@ include __DIR__ . '/../../layouts/_header.php';
             </div>
         </div>
 
+        <?php if (isset($_GET['error'])) :
+            if ($_GET['error'] == 'id_not_found') : ?>
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> No se encontró el botiquin con el ID especificado.
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
         <div class="filter-section card">
             <div class="card-body">
                 <h3 class="filter-title">Filtrar botiquines</h3>
@@ -78,7 +86,7 @@ include __DIR__ . '/../../layouts/_header.php';
                 </div>
             <?php else: ?>
                 <div class="botiquines-list">
-                    <?php foreach ($botiquines as $botiquin): 
+                    <?php foreach ($botiquines as $botiquin):
                         // Obtener la planta asociada
                         try {
                             $planta = $plantasService->getPlantaById($botiquin->getIdPlanta());
@@ -86,7 +94,7 @@ include __DIR__ . '/../../layouts/_header.php';
                         } catch (Exception $e) {
                             $plantaNombre = "Error al cargar la planta";
                         }
-                    ?>
+                        ?>
                         <div class="botiquin-card card">
                             <div class="collapsible-header planta-header"
                                  onclick="toggleCollapsible(this, 'botiquin-<?= $botiquin->getId() ?>')">
@@ -101,7 +109,8 @@ include __DIR__ . '/../../layouts/_header.php';
                                             <p><strong>ID:</strong> <?= $botiquin->getId() ?></p>
                                             <p><strong>Planta:</strong> <?= htmlspecialchars($plantaNombre) ?>
                                                 (ID: <?= $botiquin->getIdPlanta() ?>)</p>
-                                            <p><strong>Capacidad:</strong> <?= $botiquin->getCapacidad() ?> medicamentos</p>
+                                            <p><strong>Capacidad:</strong> <?= $botiquin->getCapacidad() ?> medicamentos
+                                            </p>
                                         </div>
                                         <div class="planta-actions">
                                             <a href="/botiquines/edit?id_botiquin=<?= $botiquin->getId() ?>"
