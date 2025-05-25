@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Incomporar acciones correctas en la tabla de botiquines.
+
 use model\service\PlantaService;
 use model\service\HospitalService;
 use model\service\AlmacenService;
@@ -144,8 +146,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                         try {
                                             $botiquines = $botiquinService->getBotiquinesByPlantaId($planta->getId());
 
-                                            if (empty($botiquines)):
-                                                ?>
+                                            if (empty($botiquines)): ?>
                                                 <div class="empty-plants">
                                                     Esta planta no tiene botiquines registrados.
                                                     <a href="/botiquines/create?id_planta=<?= $planta->getId() ?>"
@@ -160,7 +161,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                                         <tr>
                                                             <th>ID</th>
                                                             <th>Nombre</th>
-                                                            <th>Ubicación</th>
+                                                            <th>Capacidad</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                         </thead>
@@ -169,13 +170,13 @@ include __DIR__ . "/../../layouts/_header.php";
                                                             <tr>
                                                                 <td><?= $botiquin->getId() ?></td>
                                                                 <td><?= htmlspecialchars($botiquin->getNombre()) ?></td>
-                                                                <td><?= htmlspecialchars($botiquin->getUbicacion()) ?></td>
+                                                                <td><?= htmlspecialchars($botiquin->getCapacidad()) ?></td>
                                                                 <td class="actions-column">
-                                                                    <a href="/botiquines/edit?id=<?= $botiquin->getId() ?>"
+                                                                    <a href="/botiquines/edit?id_botiquin=<?= $botiquin->getId() ?>"
                                                                        class="btn btn-sm btn-secondary">
                                                                         Editar
                                                                     </a>
-                                                                    <a href="/botiquines/view?id=<?= $botiquin->getId() ?>"
+                                                                    <a href="/botiquines/view?id_botiquin=<?= $botiquin->getId() ?>"
                                                                        class="btn btn-sm btn-info">
                                                                         Ver stock
                                                                     </a>
