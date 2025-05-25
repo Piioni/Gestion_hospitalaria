@@ -1,6 +1,7 @@
 <?php
 
-// TODO: Incomporar acciones correctas en la tabla de botiquines.
+// TODO: Incorporar filtrado por nombre de planta
+// TODO: Incorporar acciones de editar y eliminar botiquines.
 
 use model\service\PlantaService;
 use model\service\HospitalService;

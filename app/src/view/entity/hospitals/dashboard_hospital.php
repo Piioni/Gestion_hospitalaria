@@ -22,28 +22,10 @@ include __DIR__ . "/../../layouts/_header.php";
 <div class="page-section">
     <div class="container">
         <div class="overview-section">
-            <h1 class="page-title">Sistema de Gestión Hospitalaria</h1>
+            <h1 class="page-title">Gestion de Hospitales</h1>
             <p class="lead-text">
-                Bienvenido al sistema de gestión de stock hospitalario, una herramienta diseñada para administrar
-                eficientemente los recursos médicos en centros de salud.
+                Aquí puedes gestionar los hospitales, sus plantas y almacenes asociados. Puedes crear, editar o eliminar hospitales y ver sus detalles.
             </p>
-            <div class="overview-text">
-                <p>
-                    Los hospitales son instituciones fundamentales en el sistema de salud, proporcionando atención
-                    médica
-                    integral a pacientes con diversas necesidades. Cada hospital está organizado en plantas
-                    especializadas
-                    que se centran en diferentes áreas de la medicina, como cardiología, pediatría, oncología y
-                    traumatología.
-                </p>
-                <p>
-                    La gestión eficiente de recursos hospitalarios es esencial para garantizar la calidad de la atención
-                    y
-                    optimizar los costos operativos. Este sistema permite administrar el inventario de medicamentos y
-                    suministros médicos en cada planta, asegurando que el personal sanitario tenga acceso a los recursos
-                    necesarios en todo momento.
-                </p>
-            </div>
             <div class="action-buttons">
                 <a href="/hospitals/list" class="btn btn-primary">Ver hospitales</a>
                 <a href="/hospitals/create" class="btn btn-secondary">Crear hospital</a>
