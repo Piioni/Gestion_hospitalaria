@@ -16,50 +16,50 @@ class HospitalService
         $this->hospitalRepository = new HospitalRepository();
     }
 
-    public function createHospital($name, $address): bool
+    public function createHospital($nombre, $ubicacion): bool
     {
         // Validación de reglas de negocio
-        if (empty($name)) {
+        if (empty($nombre)) {
             throw new InvalidArgumentException("El nombre del hospital es obligatorio");
         }
 
-        if (empty($address)) {
+        if (empty($ubicacion)) {
             throw new InvalidArgumentException("La dirección del hospital es obligatoria");
         }
 
         // Validación de duplicados
-        if ($this->hospitalRepository->existsByName($name)) {
-            throw new InvalidArgumentException("Ya existe un hospital con el nombre '$name'");
+        if ($this->hospitalRepository->existsByName($nombre)) {
+            throw new InvalidArgumentException("Ya existe un hospital con el nombre '$nombre'");
         }
 
-        if ($this->hospitalRepository->existsByAddress($address)) {
-            throw new InvalidArgumentException("Ya existe un hospital con la dirección '$address'");
+        if ($this->hospitalRepository->existsByAddress($ubicacion)) {
+            throw new InvalidArgumentException("Ya existe un hospital con la dirección '$ubicacion'");
         }
 
-        return $this->hospitalRepository->create($name, $address);
+        return $this->hospitalRepository->create($nombre, $ubicacion);
     }
 
     /**
      * Elimina un hospital si no tiene dependencias o si se fuerza la eliminación
-     * @param int $id ID del hospital
+     * @param int $id_hospital ID del hospital
      * @param bool $force Si es true, fuerza la eliminación incluso con dependencias
      * @return bool Resultado de la operación
      */
-    public function deleteHospital($id, $force = false): bool
+    public function deleteHospital($id_hospital, $force = false): bool
     {
         // Validación del ID
-        if (empty($id) || !is_numeric($id)) {
+        if (empty($id_hospital) || !is_numeric($id_hospital)) {
             throw new InvalidArgumentException("El ID del hospital es inválido");
         }
 
         // Verificar que el hospital existe
-        $hospital = $this->hospitalRepository->getById($id);
+        $hospital = $this->hospitalRepository->getById($id_hospital);
         if (empty($hospital)) {
             throw new InvalidArgumentException("El hospital no existe");
         }
 
         // Verificar si hay plantas asociadas
-        $plantCount = $this->hospitalRepository->countRelatedPlants($id);
+        $plantCount = $this->hospitalRepository->countRelatedPlants($id_hospital);
 
         // Si hay plantas asociadas y no se fuerza la eliminación, no permitir
         if ($plantCount > 0 && !$force) {
@@ -67,11 +67,45 @@ class HospitalService
         }
 
         // Eliminar el hospital
-        $result = $this->hospitalRepository->delete($id);
+        $result = $this->hospitalRepository->delete($id_hospital);
         if (!$result) {
             throw new InvalidArgumentException("No se pudo eliminar el hospital");
         }
         return true;
+    }
+
+    public function updateHospital($id_hospital, $nombre, $ubicacion): bool
+    {
+        // Validación de reglas de negocio
+        if (empty($id_hospital) || !is_numeric($id_hospital)) {
+            throw new InvalidArgumentException("El ID del hospital es inválido");
+        }
+
+        if (empty($nombre)) {
+            throw new InvalidArgumentException("El nombre del hospital es obligatorio");
+        }
+
+        if (empty($ubicacion)) {
+            throw new InvalidArgumentException("La dirección del hospital es obligatoria");
+        }
+
+        // Validación de duplicados (excepto el mismo hospital)
+        if ($this->hospitalRepository->existsByNameExceptId($nombre, $id_hospital)) {
+            throw new InvalidArgumentException("Ya existe otro hospital con el nombre '$nombre'");
+        }
+
+        if ($this->hospitalRepository->existsByAddressExceptId($ubicacion, $id_hospital)) {
+            throw new InvalidArgumentException("Ya existe otro hospital con la dirección '$ubicacion'");
+        }
+
+        // Verificar que los datos no sean los mismos que ya existen
+        $existingHospital = $this->hospitalRepository->getById($id_hospital);
+        if ($existingHospital->getNombre() === $nombre &&
+            $existingHospital->getUbicacion() === $ubicacion) {
+            throw new InvalidArgumentException("No se han realizado cambios en el hospital.");
+        }
+
+        return $this->hospitalRepository->update($id_hospital, $nombre, $ubicacion);
     }
 
     public function getAllHospitals(): array
@@ -79,58 +113,31 @@ class HospitalService
         return $this->hospitalRepository->getAll();
     }
 
-    public function getHospitalById($id): ?Hospital
+    public function getHospitalById($id_hospital): ?Hospital
     {
-        return $this->hospitalRepository->getById($id);
-    }
-
-    public function updateHospital($id, $name, $address): bool
-    {
-        // Validación de reglas de negocio
-        if (empty($id) || !is_numeric($id)) {
-            throw new InvalidArgumentException("El ID del hospital es inválido");
-        }
-
-        if (empty($name)) {
-            throw new InvalidArgumentException("El nombre del hospital es obligatorio");
-        }
-
-        if (empty($address)) {
-            throw new InvalidArgumentException("La dirección del hospital es obligatoria");
-        }
-
-        // Validación de duplicados (excepto el mismo hospital)
-        if ($this->hospitalRepository->existsByNameExceptId($name, $id)) {
-            throw new InvalidArgumentException("Ya existe otro hospital con el nombre '$name'");
-        }
-
-        if ($this->hospitalRepository->existsByAddressExceptId($address, $id)) {
-            throw new InvalidArgumentException("Ya existe otro hospital con la dirección '$address'");
-        }
-
-        return $this->hospitalRepository->update($id, $name, $address);
+        return $this->hospitalRepository->getById($id_hospital);
     }
 
     /**
      * Verifica si un hospital tiene plantas asociadas
-     * @param int $id ID del hospital
+     * @param int $id_hospital ID del hospital
      * @return array Información sobre las plantas asociadas
      */
-    public function checkHospitalRelations($id): array
+    public function checkHospitalRelations($id_hospital): array
     {
         // Validación del ID
-        if (empty($id) || !is_numeric($id)) {
+        if (empty($id_hospital) || !is_numeric($id_hospital)) {
             throw new InvalidArgumentException("El ID del hospital es inválido");
         }
 
         // Verificar que el hospital existe
-        $hospital = $this->hospitalRepository->getById($id);
+        $hospital = $this->hospitalRepository->getById($id_hospital);
         if (empty($hospital)) {
             throw new InvalidArgumentException("El hospital no existe");
         }
 
         // Obtener plantas relacionadas
-        $relatedPlants = $this->hospitalRepository->getRelatedPlants($id);
+        $relatedPlants = $this->hospitalRepository->getRelatedPlants($id_hospital);
 
         return [
             'hospital' => $hospital,

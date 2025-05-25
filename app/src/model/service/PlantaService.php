@@ -42,6 +42,13 @@ class PlantaService
             throw new InvalidArgumentException("El nombre de la planta es obligatorio");
         }
 
+        // Verificar que los datos no sean los mismos que ya existen
+        $existingPlanta = $this->plantaRepository->getPlantaById($id);
+        if ($existingPlanta->getIdHospital() == $hospitalId &&
+            $existingPlanta->getNombre() === $nombre) {
+            throw new InvalidArgumentException("No se han realizado cambios en la planta.");
+        }
+
         return $this->plantaRepository->update($id, $hospitalId, $nombre);
     }
 
