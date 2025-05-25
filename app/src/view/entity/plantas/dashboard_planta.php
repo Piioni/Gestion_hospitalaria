@@ -125,14 +125,14 @@ include __DIR__ . "/../../layouts/_header.php";
                                                class="btn btn-sm btn-primary">
                                                 Añadir botiquín
                                             </a>
-                                            <a href="/plantas/edit?id=<?= $planta->getId() ?>"
+                                            <a href="/plantas/edit?id_planta=<?= $planta->getId() ?>"
                                                class="btn btn-sm btn-secondary">
                                                 Editar planta
                                             </a>
-                                            <button onclick="confirmarEliminar(<?= $planta->getId() ?>)"
-                                                    class="btn btn-sm btn-danger">
-                                                Eliminar
-                                            </button>
+                                            <a href="/plantas/delete?id_planta=<?= $planta->getId() ?>"
+                                               class="btn btn-sm btn-danger">
+                                                Eliminar planta
+                                            </a>
                                         </div>
                                     </div>
 
@@ -209,12 +209,6 @@ include __DIR__ . "/../../layouts/_header.php";
         const content = document.getElementById(contentId);
         content.classList.toggle('active');
         header.classList.toggle('active');
-    }
-
-    function confirmarEliminar(id) {
-        if (confirm('¿Está seguro de que desea eliminar esta planta? Esta acción no se puede deshacer.')) {
-            window.location.href = '/plantas/delete?id=' + id;
-        }
     }
 
     // Actualizar automáticamente el formulario cuando cambia el select
