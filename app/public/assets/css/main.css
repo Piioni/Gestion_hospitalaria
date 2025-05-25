@@ -186,7 +186,6 @@ p {
    Estilos para cards y contenedores
    =========================================== */
 
-
 /* Estilo base para todas las cards */
 .card,
 .service-card,
@@ -234,54 +233,67 @@ p {
     margin-bottom: 1rem;
 }
 
-/* Card específico para hospitales */
-.hospital-card {
+/* Card específico para hospitales, plantas y botiquines */
+.hospital-card,
+.planta-card,
+.botiquin-card {
     margin-bottom: 1.5rem;
 }
 
-.hospital-header {
-    background-color: var(--primary-color);
-    color: white;
+/* Detalles de entidades (hospitales, plantas, etc.) */
+.hospital-details,
+.planta-details {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+}
+
+.hospital-info,
+.planta-info {
+    flex: 2;
+    min-width: 250px;
+}
+
+.hospital-actions,
+.planta-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+    min-width: 160px;
+    align-self: flex-start;
+}
+
+/* Encabezados desplegables */
+.hospital-header,
+.planta-header {
+    background-color: var(--light-bg);
+    color: var(--dark-text);
     padding: 1rem var(--card-padding);
     border-radius: var(--border-radius) var(--border-radius) 0 0;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.hospital-header:hover {
+.hospital-header:hover,
+.planta-header:hover,
+.hospital-header.active,
+.planta-header.active {
     background-color: var(--primary-dark);
-}
-
-.hospital-header .hospital-name {
-    margin: 0;
     color: white;
 }
 
-.hospital-details {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.hospital-info {
-    flex: 2;
-    min-width: 250px;
-}
-
-.hospital-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: flex-start;
-}
-
-.plantas-section {
-    margin-top: 1rem;
+.hospital-header .hospital-name,
+.planta-header .planta-name {
+    margin: 0;
+    color: inherit;
 }
 
 /* Cards de perfil de usuario */
@@ -329,39 +341,6 @@ p {
 .user-info-container .lead-text {
     margin-right: 1rem;
     margin-bottom: 0;
-}
-
-/* Card específico para hospitales y plantas */
-.hospital-card,
-.planta-card {
-    margin-bottom: 1.5rem;
-}
-
-.hospital-details,
-.planta-details {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    align-items: flex-start;
-}
-
-.hospital-info,
-.planta-info {
-    flex: 2;
-    min-width: 250px;
-}
-
-.hospital-actions,
-.planta-actions {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: flex-start;
-    min-width: 160px;
-    align-self: flex-start;
 }
 
 /* ===========================================
@@ -435,7 +414,9 @@ p {
     border-bottom: 1px solid var(--border-color);
 }
 
-.hospitals-section {
+.hospitals-section,
+.plantas-section,
+.botiquines-section {
     margin-top: 4rem;
 }
 
@@ -557,13 +538,6 @@ p {
     margin-bottom: 2rem;
 }
 
-/* Reducir el espacio cuando no hay selecciones activas */
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
 /* Secciones colapsables */
 .collapsible-section {
     margin-top: 1rem;
@@ -578,7 +552,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .collapsible-header:hover,
@@ -607,41 +581,6 @@ p {
 
 .collapsible-header.active .collapsible-icon {
     transform: rotate(180deg);
-}
-
-/* Hospital y Planta Headers */
-.hospital-header,
-.planta-header {
-    background-color: var(--light-bg);
-    color: var(--dark-text);
-    padding: 1rem var(--card-padding);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s;
-}
-
-.hospital-header:hover,
-.planta-header:hover,
-.hospital-header.active,
-.planta-header.active {
-    background-color: var(--primary-dark);
-    color: white;
-}
-
-.hospital-header .hospital-name,
-.planta-header .planta-name {
-    margin: 0;
-    color: inherit;
-}
-
-.hospital-header:hover .hospital-name,
-.planta-header:hover .planta-name,
-.hospital-header.active .hospital-name,
-.planta-header.active .planta-name {
-    color: white;
 }
 
 /* Listas de dependencias */

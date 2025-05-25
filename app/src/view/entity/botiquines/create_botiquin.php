@@ -106,7 +106,7 @@ include __DIR__ . "/../../layouts/_header.php";
                         <div class="form-field">
                             <input type="text" name="nombre" id="nombre" class="form-input"
                                 value="<?= htmlspecialchars($botiquin['nombre']); ?>" 
-                                placeholder="Ingrese el nombre del botiquín" required>
+                                placeholder="Ingrese el nombre del botiquín" >
                         </div>
                     </div>
                     <div class="form-group">
@@ -114,12 +114,12 @@ include __DIR__ . "/../../layouts/_header.php";
                         <div class="form-field">
                             <input type="number" name="capacidad" id="capacidad" class="form-input"
                                 value="<?= htmlspecialchars($botiquin['capacidad']); ?>" 
-                                placeholder="Ingrese la capacidad del botiquín" required min="1">
+                                placeholder="Ingrese la capacidad del botiquín" >
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Crear Botiquín</button>
-                        <a href="/botiquines/list" class="btn btn-secondary">Cancelar</a>
+                        <a href="/botiquines" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>
