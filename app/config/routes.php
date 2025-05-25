@@ -38,6 +38,12 @@ return[
         '/plantas/delete' => 'entity/plantas/delete_planta.php',
         '/plantas/list' => 'entity/plantas/list_planta.php',
 
+        // Botiquines pages
+        '/botiquines' => 'entity/botiquines/dashboard_botiquin.php',
+        '/botiquines/create' => 'entity/botiquines/create_botiquin.php',
+        '/botiquines/edit' => 'entity/botiquines/edit_botiquin.php',
+        '/botiquines/delete' => 'entity/botiquines/delete_botiquin.php',
+
         // Almacen pages
         '/almacenes' => 'entity/almacenes/indexAlmacen.php',
         '/almacenes/create' => 'entity/almacenes/create_almacen.php',
