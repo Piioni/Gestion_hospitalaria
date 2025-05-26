@@ -36,7 +36,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 .table th:first-child {
@@ -48,14 +48,16 @@
 }
 
 .table tbody tr {
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     background-color: var(--lighter-bg);
+    position: relative;
 }
 
 .table tbody tr:hover {
     background-color: var(--primary-light-bg);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(142, 0, 58, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(142, 0, 58, 0.1);
+    z-index: 5;
 }
 
 .table tbody tr:last-child td:first-child {
@@ -70,17 +72,59 @@
     border-bottom: none;
 }
 
+/* Alternancia de colores suave */
+.table tbody tr:nth-child(even) {
+    background-color: rgba(248, 249, 250, 0.7);
+}
+
+.table tbody tr:nth-child(even):hover {
+    background-color: var(--primary-light-bg);
+}
+
 /* Columna de acciones mejorada */
 .actions-column {
     white-space: nowrap;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     justify-content: flex-end;
     align-items: center;
 }
 
 .actions-column.gap-3 {
     gap: 0.75rem !important;
+}
+
+/* Botón dentro de una tabla */
+.table .btn {
+    padding: 0.4rem 0.85rem;
+    border-radius: calc(var(--border-radius-sm) - 1px);
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease-in-out;
+}
+
+.table .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Botones de acción específicos */
+.table .btn-secondary {
+    background: linear-gradient(145deg, #546E7A 0%, #455A64 100%);
+    border-color: #455A64;
+}
+
+.table .btn-info {
+    background: linear-gradient(145deg, #4cc9f0 0%, #3b9cc1 100%);
+    border-color: #3b9cc1;
+    color: white;
+}
+
+.table .btn-danger {
+    background: linear-gradient(145deg, #dc3545 0%, #c82333 100%);
+    border-color: #c82333;
+    color: white;
 }
 
 /* Indicadores de estado en tablas */
@@ -92,21 +136,25 @@
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .table-status.active {
     background-color: rgba(46, 160, 67, 0.1);
     color: #2ea043;
+    border: 1px solid rgba(46, 160, 67, 0.2);
 }
 
 .table-status.inactive {
     background-color: rgba(142, 0, 58, 0.1);
     color: var(--primary-color);
+    border: 1px solid rgba(142, 0, 58, 0.2);
 }
 
 .table-status.pending {
     background-color: rgba(243, 165, 48, 0.1);
     color: var(--accent-dark);
+    border: 1px solid rgba(243, 165, 48, 0.2);
 }
 
 /* Celdas numéricas */
@@ -114,6 +162,34 @@
     font-variant-numeric: tabular-nums;
     text-align: right;
     font-weight: 500;
+}
+
+/* Tabla con borde completo */
+.table.table-bordered th,
+.table.table-bordered td {
+    border: 1px solid var(--border-color);
+}
+
+/* Efecto de focus para accesibilidad */
+.table tbody tr:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
+}
+
+/* Mejoras para tablas en tarjetas desplegables */
+.collapsible-content .table-responsive {
+    margin: 1rem 0 0.5rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.collapsible-content .table th {
+    font-size: 0.85rem;
+    padding: 0.85rem 1rem;
+}
+
+.collapsible-content .table td {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
 }
 
 /* Responsive para tablas */
@@ -126,6 +202,13 @@
 
     .actions-column {
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.35rem;
+    }
+    
+    .table .btn {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+        width: 100%;
+        justify-content: center;
     }
 }

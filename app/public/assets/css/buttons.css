@@ -51,6 +51,10 @@
     transform: none !important;
 }
 
+.btn i, .btn svg {
+    font-size: 1.1em;
+}
+
 /* Botón primario - Acción principal */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
@@ -63,7 +67,7 @@
     background: linear-gradient(135deg, var(--primary-dark) 0%, #5a0021 100%);
     border-color: var(--primary-dark);
     box-shadow: 0 4px 12px rgba(142, 0, 58, 0.3);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     color: white;
 }
 
@@ -74,18 +78,23 @@
 
 /* Botón secundario - Acción secundaria */
 .btn-secondary {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
+    background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
     color: white;
-    border-color: var(--secondary-color);
+    border-color: #455A64;
     box-shadow: 0 2px 4px rgba(74, 74, 74, 0.2);
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--secondary-dark) 0%, #1a1a1a 100%);
-    border-color: var(--secondary-dark);
+    background: linear-gradient(135deg, #455A64 0%, #37474F 100%);
+    border-color: #37474F;
     box-shadow: 0 4px 12px rgba(74, 74, 74, 0.3);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     color: white;
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(74, 74, 74, 0.3);
 }
 
 /* Botón outline - Acción terciaria */
@@ -100,7 +109,33 @@
     color: white;
     border-color: var(--primary-color);
     box-shadow: 0 4px 12px rgba(142, 0, 58, 0.2);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+}
+
+.btn-outline:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(142, 0, 58, 0.2);
+}
+
+/* Botón info para visualización */
+.btn-info {
+    background: linear-gradient(135deg, #4cc9f0 0%, #3b9cc1 100%);
+    color: white;
+    border-color: #3b9cc1;
+    box-shadow: 0 2px 4px rgba(59, 156, 193, 0.2);
+}
+
+.btn-info:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3b9cc1 0%, #2a7d9b 100%);
+    border-color: #2a7d9b;
+    box-shadow: 0 4px 12px rgba(59, 156, 193, 0.3);
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-info:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(59, 156, 193, 0.3);
 }
 
 /* Botón de peligro/eliminación */
@@ -115,8 +150,13 @@
     background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
     border-color: #c82333;
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     color: white;
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
 /* Botón de éxito */
@@ -131,8 +171,13 @@
     background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
     border-color: #1e7e34;
     box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     color: white;
+}
+
+.btn-success:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
 }
 
 /* Botón de advertencia */
@@ -147,13 +192,18 @@
     background: linear-gradient(135deg, var(--accent-dark) 0%, #b8751a 100%);
     border-color: var(--accent-dark);
     box-shadow: 0 4px 12px rgba(243, 165, 48, 0.3);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     color: white;
+}
+
+.btn-warning:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(243, 165, 48, 0.3);
 }
 
 /* Tamaños de botones */
 .btn-sm {
-    padding: 0.375rem 0.75rem;
+    padding: 0.375rem 0.85rem;
     font-size: 0.8rem;
     border-radius: calc(var(--border-radius-sm) - 1px);
 }
@@ -200,6 +250,57 @@
     transform: scale(1.1);
 }
 
+/* Efecto de focus para accesibilidad */
+.btn:focus-visible {
+    box-shadow: 0 0 0 3px rgba(142, 0, 58, 0.3);
+    outline: none;
+}
+
+/* Botón con icono */
+.btn-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon.btn-sm {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.8rem;
+}
+
+.btn-icon.btn-lg {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.2rem;
+}
+
+/* Grupo de botones */
+.btn-group {
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    margin-right: -1px;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: var(--border-radius-sm);
+    border-bottom-left-radius: var(--border-radius-sm);
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: var(--border-radius-sm);
+    border-bottom-right-radius: var(--border-radius-sm);
+    margin-right: 0;
+}
+
 /* Contenedores de acciones */
 .action-buttons {
     display: flex;
@@ -213,4 +314,21 @@
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 2rem;
+}
+
+/* Responsive para botones */
+@media (max-width: 768px) {
+    .action-buttons,
+    .hero-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn,
+    .hero-buttons .btn {
+        width: 100%;
+    }
+    
+    .btn-sm {
+        padding: 0.35rem 0.75rem;
+    }
 }

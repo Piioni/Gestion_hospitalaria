@@ -22,7 +22,7 @@ include __DIR__ . "/../../../layouts/_header.php";
 <div class="page-section">
     <div class="container">
         <div class="overview-section">
-            <h1 class="page-title">Gestion de Hospitales</h1>
+            <h1 class="page-title">Gestión de Hospitales</h1>
             <p class="lead-text">
                 Aquí puedes gestionar los hospitales, sus plantas y almacenes asociados. Puedes crear, editar o eliminar hospitales y ver sus detalles.
             </p>
@@ -71,9 +71,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <div class="card-body">
                                     <div class="hospital-details">
                                         <div class="hospital-info">
-                                            <p>
-                                                <strong>ID:</strong> <?= $hospital->getId() ?>
-                                            </p>
                                             <p>
                                                 <strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?>
                                             </p>
@@ -147,7 +144,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                     <table class="table">
                                                         <thead>
                                                         <tr>
-                                                            <th>ID</th>
                                                             <th>Nombre</th>
                                                             <th>Almacen</th>
                                                             <th>Acciones</th>
@@ -156,7 +152,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                         <tbody>
                                                         <?php foreach ($plantas as $planta): ?>
                                                             <tr>
-                                                                <td><?= $planta->getId() ?></td>
                                                                 <td><?= htmlspecialchars($planta->getNombre()) ?></td>
                                                                 <td>
                                                                     <?php
