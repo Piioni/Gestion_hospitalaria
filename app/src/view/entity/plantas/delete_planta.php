@@ -15,7 +15,7 @@ $force = isset($_GET["force"]) && $_GET["force"] === "1";
 try {
     $plantaService = new PlantaService();
 
-    // Si es una solicitud de confirmación, eliminar directamente
+    // Sí es una solicitud de confirmación, eliminar directamente
     if ($force || isset($_GET["confirm"])) {
         $result = $plantaService->deletePlanta($id_planta);
         header('Location: /plantas/dashboard?success=deleted');
