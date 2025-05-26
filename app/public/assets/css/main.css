@@ -376,7 +376,6 @@ p {
    Estructura de páginas y secciones
    =========================================== */
 
-/* Secciones generales */
 .page-section,
 .services-section,
 .features-section {
@@ -451,7 +450,6 @@ p {
    Selectores, collapsable y otros componentes
    =========================================== */
 
-/* Selector de ubicaciones */
 .location-selector {
     padding: 1rem 0;
 }
@@ -727,4 +725,54 @@ p {
 .location-item {
     flex: 1;
     min-width: 150px;
+}
+
+/* ===========================================
+   STOCK Y BOTIQUINES
+   Estilos para la sección de stock en botiquines
+   =========================================== */
+
+.estado-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.bajo-stock {
+    color: #721c24;
+    background-color: #f8d7da;
+}
+
+.stock-ok {
+    color: #155724;
+    background-color: #d4edda;
+}
+
+.acciones-stock {
+    display: flex;
+    gap: 5px;
+}
+
+.acciones-stock .btn {
+    padding: 2px 5px;
+    font-size: 0.8em;
+}
+
+.badge {
+    background-color: #6c757d;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    font-size: 0.8em;
+}
+
+.empty-stock {
+    padding: 1.5rem;
+    text-align: center;
+    background-color: var(--light-bg);
+    border-radius: var(--border-radius-sm);
+    color: var(--light-text);
+    margin: 1rem 0;
 }

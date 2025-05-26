@@ -55,6 +55,7 @@ return[
         '/productos/delete' => 'entity/productos/delete_producto.php',
 
         // Stock pages
-        '/stock' => 'entity/stock/dashboard_stock.php',
+        '/stocks' => 'entity/stocks/dashboard_stock.php',
+        '/stocks/botiquines' => 'entity/stocks/stock_botiquin.php',
     ]
 ];
