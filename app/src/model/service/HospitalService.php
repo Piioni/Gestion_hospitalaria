@@ -145,4 +145,14 @@ class HospitalService
             'canDelete' => empty($relatedPlants)
         ];
     }
+
+    public function getHospitalsByNombre($filtroNombre) : array
+    {
+        // Validación del filtro
+        if (empty($filtroNombre)) {
+            return $this->hospitalRepository->getAll();
+        }
+
+        return $this->hospitalRepository->getByNombre($filtroNombre);
+    }
 }

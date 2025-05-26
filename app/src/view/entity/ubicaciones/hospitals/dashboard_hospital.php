@@ -6,7 +6,16 @@ use model\service\PlantaService;
 
 // Obtener servicio de hospital
 $hospitalService = new HospitalService();
-$hospitals = $hospitalService->getAllHospitals();
+
+// Obtener filtro de nombre si existe
+$filtroNombre = $_GET['nombre'] ?? null;
+
+// Obtener hospitales filtrados por nombre si se proporciona un filtro
+if ($filtroNombre) {
+    $hospitals = $hospitalService->getHospitalsByNombre($filtroNombre);
+} else {
+    $hospitals = $hospitalService->getAllHospitals();
+}
 
 // Crear instancia del servicio de plantas y almacenes
 $plantaService = new PlantaService();
@@ -48,11 +57,39 @@ include __DIR__ . "/../../../layouts/_header.php";
                 <?php endif; ?>
             <?php endif; ?>
 
+            <div class="filter-section card">
+                <div class="card-body">
+                    <h3 class="filter-title">Filtrar hospitales</h3>
+                    <form action="" method="GET" class="filter-form">
+                        <div class="filter-fields">
+                            <div class="filter-field">
+                                <label for="nombre" class="form-label">Nombre:</label>
+                                <div class="form-field">
+                                    <input type="text" name="nombre" id="nombre" class="form-input"
+                                           placeholder="Buscar por nombre de hospital"
+                                           value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                            <?php if (isset($_GET['nombre'])): ?>
+                                <a href="?" class="btn btn-secondary">Limpiar filtros</a>
+                            <?php endif; ?>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <h2 class="section-title">Hospitales y sus plantas</h2>
 
             <?php if (empty($hospitals)): ?>
                 <div class="empty-state">
-                    No hay hospitales registrados en el sistema.
+                    <?php if ($filtroNombre): ?>
+                        No hay hospitales que coincidan con el criterio de búsqueda.
+                    <?php else: ?>
+                        No hay hospitales registrados en el sistema.
+                    <?php endif; ?>
                     <a href="/hospitals/create" class="btn btn-primary">Crear un hospital</a>
                 </div>
             <?php else: ?>
