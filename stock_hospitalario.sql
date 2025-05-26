@@ -1,0 +1,535 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.2
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: mysql
+-- Tiempo de generación: 26-05-2025 a las 18:20:43
+-- Versión del servidor: 8.0.42
+-- Versión de PHP: 8.2.27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `stock_hospitalario`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `almacenes`
+--
+
+CREATE TABLE `almacenes` (
+  `id_almacen` int NOT NULL,
+  `nombre` varchar(35) NOT NULL,
+  `tipo` enum('GENERAL','PLANTA') NOT NULL,
+  `id_hospital` int NOT NULL,
+  `id_planta` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `almacenes`
+--
+
+INSERT INTO `almacenes` (`id_almacen`, `nombre`, `tipo`, `id_hospital`, `id_planta`) VALUES
+(1, 'Almacen Central Importante', 'GENERAL', 1, NULL),
+(5, 'Almacen de Enfermeria', 'PLANTA', 1, 2),
+(6, 'Almace Nacional ', 'GENERAL', 6, NULL),
+(7, 'Almacen del Mampinga', 'PLANTA', 1, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `botiquines`
+--
+
+CREATE TABLE `botiquines` (
+  `id_botiquin` int NOT NULL,
+  `id_planta` int NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `capacidad` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `botiquines`
+--
+
+INSERT INTO `botiquines` (`id_botiquin`, `id_planta`, `nombre`, `capacidad`) VALUES
+(1, 4, 'Botiquin de Paracetamols ', 100);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `catalogo_productos`
+--
+
+CREATE TABLE `catalogo_productos` (
+  `id_catalogo` int NOT NULL,
+  `id_planta` int NOT NULL,
+  `id_producto` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `consumos`
+--
+
+CREATE TABLE `consumos` (
+  `id_consumo` int NOT NULL,
+  `id_botiquin` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id_usuario` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `hospitales`
+--
+
+CREATE TABLE `hospitales` (
+  `id_hospital` int NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `ubicacion` varchar(50) NOT NULL,
+  `activo` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `hospitales`
+--
+
+INSERT INTO `hospitales` (`id_hospital`, `nombre`, `ubicacion`, `activo`) VALUES
+(1, 'Hospital de Fuentenueva 2', 'Calle fuentenueva 2', 1),
+(6, 'Hospsital Nacional', 'Gran Via', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `movimientos`
+--
+
+CREATE TABLE `movimientos` (
+  `id_movimiento` int NOT NULL,
+  `tipo_movimiento` enum('TRANSLADO','ENTRADA') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  `id_origen` int DEFAULT NULL,
+  `id_destino` int NOT NULL,
+  `fecha_movimiento` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id_responsable` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `plantas`
+--
+
+CREATE TABLE `plantas` (
+  `id_planta` int NOT NULL,
+  `id_hospital` int NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `activo` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `plantas`
+--
+
+INSERT INTO `plantas` (`id_planta`, `id_hospital`, `nombre`, `activo`) VALUES
+(1, 1, 'Planta de pediatria ', 0),
+(2, 1, 'Planta de Enfermeria ', 0),
+(3, 1, 'Planta del mamapinga', 0),
+(4, 1, 'Planta de Enfermeria 2', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `productos`
+--
+
+CREATE TABLE `productos` (
+  `id_producto` int NOT NULL,
+  `codigo` varchar(30) NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `descripcion` varchar(80) NOT NULL,
+  `unidad_medida` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `reposiciones`
+--
+
+CREATE TABLE `reposiciones` (
+  `id_reposicion` int NOT NULL,
+  `id_almacen` int NOT NULL,
+  `id_botiquin` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id_usuario` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `roles`
+--
+
+CREATE TABLE `roles` (
+  `id_rol` int NOT NULL,
+  `nombre` enum('ADMINISTRADOR','GESTOR_GENERAL','GESTOR_HOSPITAL','GESTOR_PLANTA','USUARIO_BOTIQUIN') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `roles`
+--
+
+INSERT INTO `roles` (`id_rol`, `nombre`) VALUES
+(1, 'ADMINISTRADOR'),
+(2, 'GESTOR_GENERAL'),
+(3, 'GESTOR_HOSPITAL'),
+(4, 'GESTOR_PLANTA'),
+(5, 'USUARIO_BOTIQUIN');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `stocks`
+--
+
+CREATE TABLE `stocks` (
+  `id_stock` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `tipo_ubicacion` enum('ALMACEN','BOTIQUIN') NOT NULL,
+  `id_ubicacion` int NOT NULL,
+  `cantidad` int NOT NULL,
+  `cantidad_minima` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `users`
+--
+
+CREATE TABLE `users` (
+  `id_usuario` int NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(80) NOT NULL,
+  `id_rol` int NOT NULL,
+  `activo` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `users`
+--
+
+INSERT INTO `users` (`id_usuario`, `nombre`, `email`, `password`, `id_rol`, `activo`) VALUES
+(1, 'Juan Rangel', 'juan@gmail.com', '$2y$10$9.3fzx6PQL8MxAphoPDGhue1JyLsuAvdIN.yNAPHDPsPt0.xxLrmG', 1, 1),
+(2, 'Erick Quispe', 'erick@gmail.com', '$2y$10$Lzjumt4ft73K4IXwlSR4FuxokW47D261NbSv0szpFzvog.VT55ee.', 2, 1),
+(3, 'Manu', 'manu@gmail.com', '$2y$10$bE/EDEooJCE94umkXjKzZuxDkATn2u2HQ6X8pwTU.EWXtDy5Js8t.', 3, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `user_botiquin`
+--
+
+CREATE TABLE `user_botiquin` (
+  `id_usuario` int NOT NULL,
+  `id_botiquin` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `user_hospital`
+--
+
+CREATE TABLE `user_hospital` (
+  `id_usuario` int NOT NULL,
+  `id_hospital` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `user_planta`
+--
+
+CREATE TABLE `user_planta` (
+  `id_usuario` int NOT NULL,
+  `id_planta` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `almacenes`
+--
+ALTER TABLE `almacenes`
+  ADD PRIMARY KEY (`id_almacen`),
+  ADD KEY `fk_almacen-id_hospital` (`id_hospital`),
+  ADD KEY `fk_almacen-id_planta` (`id_planta`);
+
+--
+-- Indices de la tabla `botiquines`
+--
+ALTER TABLE `botiquines`
+  ADD PRIMARY KEY (`id_botiquin`),
+  ADD KEY `fk_botiquin-id_planta` (`id_planta`);
+
+--
+-- Indices de la tabla `catalogo_productos`
+--
+ALTER TABLE `catalogo_productos`
+  ADD PRIMARY KEY (`id_catalogo`),
+  ADD KEY `fk_catalogo-id_planta` (`id_planta`),
+  ADD KEY `fk_catalogo-id_producto` (`id_producto`);
+
+--
+-- Indices de la tabla `consumos`
+--
+ALTER TABLE `consumos`
+  ADD PRIMARY KEY (`id_consumo`),
+  ADD KEY `fk_consumo-id_botiquin` (`id_botiquin`),
+  ADD KEY `fk_consumo-id_producto` (`id_producto`),
+  ADD KEY `fk_consumo-id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `hospitales`
+--
+ALTER TABLE `hospitales`
+  ADD PRIMARY KEY (`id_hospital`);
+
+--
+-- Indices de la tabla `movimientos`
+--
+ALTER TABLE `movimientos`
+  ADD PRIMARY KEY (`id_movimiento`),
+  ADD KEY `fk_movimientos-id_producto` (`id_producto`),
+  ADD KEY `fk_movimientos-id_almacen_destino` (`id_destino`),
+  ADD KEY `fk_movimientos-id_almacen_origen` (`id_origen`);
+
+--
+-- Indices de la tabla `plantas`
+--
+ALTER TABLE `plantas`
+  ADD PRIMARY KEY (`id_planta`),
+  ADD KEY `fk_planta-id_hospital` (`id_hospital`);
+
+--
+-- Indices de la tabla `productos`
+--
+ALTER TABLE `productos`
+  ADD PRIMARY KEY (`id_producto`);
+
+--
+-- Indices de la tabla `reposiciones`
+--
+ALTER TABLE `reposiciones`
+  ADD PRIMARY KEY (`id_reposicion`),
+  ADD KEY `fk_reposiciones-id_almacen` (`id_almacen`),
+  ADD KEY `fk_reposiciones-id_botiquin` (`id_botiquin`),
+  ADD KEY `fk_reposiciones-id_producto` (`id_producto`),
+  ADD KEY `fk_reposiciones-id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id_rol`);
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id_usuario`);
+
+--
+-- Indices de la tabla `user_botiquin`
+--
+ALTER TABLE `user_botiquin`
+  ADD KEY `fk_botiquin` (`id_botiquin`),
+  ADD KEY `fk_usuario_botiquin` (`id_usuario`);
+
+--
+-- Indices de la tabla `user_hospital`
+--
+ALTER TABLE `user_hospital`
+  ADD KEY `fk_hospital` (`id_hospital`),
+  ADD KEY `fk_usuario_hopsital` (`id_usuario`);
+
+--
+-- Indices de la tabla `user_planta`
+--
+ALTER TABLE `user_planta`
+  ADD KEY `fk_planta` (`id_planta`),
+  ADD KEY `fk_usuario_planta` (`id_usuario`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `almacenes`
+--
+ALTER TABLE `almacenes`
+  MODIFY `id_almacen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `botiquines`
+--
+ALTER TABLE `botiquines`
+  MODIFY `id_botiquin` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `catalogo_productos`
+--
+ALTER TABLE `catalogo_productos`
+  MODIFY `id_catalogo` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `consumos`
+--
+ALTER TABLE `consumos`
+  MODIFY `id_consumo` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `hospitales`
+--
+ALTER TABLE `hospitales`
+  MODIFY `id_hospital` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `movimientos`
+--
+ALTER TABLE `movimientos`
+  MODIFY `id_movimiento` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `plantas`
+--
+ALTER TABLE `plantas`
+  MODIFY `id_planta` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `productos`
+--
+ALTER TABLE `productos`
+  MODIFY `id_producto` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `reposiciones`
+--
+ALTER TABLE `reposiciones`
+  MODIFY `id_reposicion` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id_rol` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
+ALTER TABLE `users`
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `almacenes`
+--
+ALTER TABLE `almacenes`
+  ADD CONSTRAINT `fk_almacen-id_planta` FOREIGN KEY (`id_planta`) REFERENCES `plantas` (`id_planta`) ON DELETE SET NULL ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `botiquines`
+--
+ALTER TABLE `botiquines`
+  ADD CONSTRAINT `fk_botiquin-id_planta` FOREIGN KEY (`id_planta`) REFERENCES `plantas` (`id_planta`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `catalogo_productos`
+--
+ALTER TABLE `catalogo_productos`
+  ADD CONSTRAINT `fk_catalogo-id_planta` FOREIGN KEY (`id_planta`) REFERENCES `plantas` (`id_planta`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_catalogo-id_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `consumos`
+--
+ALTER TABLE `consumos`
+  ADD CONSTRAINT `fk_consumo-id_botiquin` FOREIGN KEY (`id_botiquin`) REFERENCES `botiquines` (`id_botiquin`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_consumo-id_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_consumo-id_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `users` (`id_usuario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `movimientos`
+--
+ALTER TABLE `movimientos`
+  ADD CONSTRAINT `fk_movimientos-id_almacen_destino` FOREIGN KEY (`id_destino`) REFERENCES `almacenes` (`id_almacen`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_movimientos-id_almacen_origen` FOREIGN KEY (`id_origen`) REFERENCES `almacenes` (`id_almacen`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_movimientos-id_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `plantas`
+--
+ALTER TABLE `plantas`
+  ADD CONSTRAINT `fk_planta-id_hospital` FOREIGN KEY (`id_hospital`) REFERENCES `hospitales` (`id_hospital`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `reposiciones`
+--
+ALTER TABLE `reposiciones`
+  ADD CONSTRAINT `fk_reposiciones-id_almacen` FOREIGN KEY (`id_almacen`) REFERENCES `almacenes` (`id_almacen`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_reposiciones-id_botiquin` FOREIGN KEY (`id_botiquin`) REFERENCES `botiquines` (`id_botiquin`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_reposiciones-id_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_reposiciones-id_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `users` (`id_usuario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `user_botiquin`
+--
+ALTER TABLE `user_botiquin`
+  ADD CONSTRAINT `fk_botiquin` FOREIGN KEY (`id_botiquin`) REFERENCES `botiquines` (`id_botiquin`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_usuario_botiquin` FOREIGN KEY (`id_usuario`) REFERENCES `users` (`id_usuario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `user_hospital`
+--
+ALTER TABLE `user_hospital`
+  ADD CONSTRAINT `fk_hospital` FOREIGN KEY (`id_hospital`) REFERENCES `hospitales` (`id_hospital`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_usuario_hopsital` FOREIGN KEY (`id_usuario`) REFERENCES `users` (`id_usuario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `user_planta`
+--
+ALTER TABLE `user_planta`
+  ADD CONSTRAINT `fk_planta` FOREIGN KEY (`id_planta`) REFERENCES `plantas` (`id_planta`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_usuario_planta` FOREIGN KEY (`id_usuario`) REFERENCES `users` (`id_usuario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
