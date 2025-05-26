@@ -23,34 +23,38 @@ return[
         '/users/edit' => 'entity/users/edit_user.php',
         '/users/delete' => 'entity/users/deleteUser.php',
 
+        // Ubicaciones pages
         // Hospital pages
-        '/hospitals' => 'entity/hospitals/dashboard_hospital.php',
-        '/hospitals/create' => 'entity/hospitals/create_hospital.php',
-        '/hospitals/edit' => 'entity/hospitals/edit_hospital.php',
-        '/hospitals/delete' => 'entity/hospitals/delete_hospital.php',
+        '/ubicaciones/hospitals' => 'entity/ubicaciones/hospitals/dashboard_hospital.php',
+        '/ubicaciones/hospitals/create' => 'entity/ubicaciones/hospitals/create_hospital.php',
+        '/ubicaciones/hospitals/edit' => 'entity/ubicaciones/hospitals/edit_hospital.php',
+        '/ubicaciones/hospitals/delete' => 'entity/ubicaciones/hospitals/delete_hospital.php',
 
         // Planta pages
-        '/plantas' => 'entity/plantas/dashboard_planta.php',
-        '/plantas/create' => 'entity/plantas/create_planta.php',
-        '/plantas/edit' => 'entity/plantas/edit_planta.php',
-        '/plantas/delete' => 'entity/plantas/delete_planta.php',
+        '/ubicaciones/plantas' => 'entity/ubicaciones/plantas/dashboard_planta.php',
+        '/ubicaciones/plantas/create' => 'entity/ubicaciones/plantas/create_planta.php',
+        '/ubicaciones/plantas/edit' => 'entity/ubicaciones/plantas/edit_planta.php',
+        '/ubicaciones/plantas/delete' => 'entity/ubicaciones/plantas/delete_planta.php',
 
         // Botiquines pages
-        '/botiquines' => 'entity/botiquines/dashboard_botiquin.php',
-        '/botiquines/create' => 'entity/botiquines/create_botiquin.php',
-        '/botiquines/edit' => 'entity/botiquines/edit_botiquin.php',
-        '/botiquines/delete' => 'entity/botiquines/delete_botiquin.php',
+        '/ubicaciones/botiquines' => 'entity/ubicaciones/botiquines/dashboard_botiquin.php',
+        '/ubicaciones/botiquines/create' => 'entity/ubicaciones/botiquines/create_botiquin.php',
+        '/ubicaciones/botiquines/edit' => 'entity/ubicaciones/botiquines/edit_botiquin.php',
+        '/ubicaciones/botiquines/delete' => 'entity/ubicaciones/botiquines/delete_botiquin.php',
 
         // Almacen pages
-        '/almacenes' => 'entity/almacenes/dashboard_almacen.php',
-        '/almacenes/create' => 'entity/almacenes/create_almacen.php',
-        '/almacenes/edit' => 'entity/almacenes/edit_almacen.php',
-        '/almacenes/delete' => 'entity/almacenes/delete_almacen.php',
+        '/almacenes' => 'entity/ubicaciones/almacenes/dashboard_almacen.php',
+        '/almacenes/create' => 'entity/ubicaciones/almacenes/create_almacen.php',
+        '/almacenes/edit' => 'entity/ubicaciones/almacenes/edit_almacen.php',
+        '/almacenes/delete' => 'entity/ubicaciones/almacenes/delete_almacen.php',
 
         // Producto pages
         '/productos' => 'entity/productos/dashboard_producto.php',
         '/productos/create' => 'entity/productos/create_producto.php',
         '/productos/edit' => 'entity/productos/edit_producto.php',
         '/productos/delete' => 'entity/productos/delete_producto.php',
+
+        // Stock pages
+        '/stock' => 'entity/stock/dashboard_stock.php',
     ]
 ];

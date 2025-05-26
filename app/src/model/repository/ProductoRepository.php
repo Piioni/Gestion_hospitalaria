@@ -31,7 +31,7 @@ class ProductoRepository
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO producto (codigo, nombre, descripcion, unidad_medida)
+                INSERT INTO productos (codigo, nombre, descripcion, unidad_medida)
                 VALUES (?, ?, ?, ?)
                 ");
             return $stmt->execute([$codigo, $nombre, $descripcion, $unidad_medida]);
