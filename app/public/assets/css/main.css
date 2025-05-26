@@ -57,7 +57,7 @@
 
 body {
     font-family: var(--font-family), serif;
-    background-color: var(--light-bg);
+    background-color: #f9f9fc;  /* Fondo mejorado más suave */
     color: var(--dark-text);
     line-height: 1.6;
     min-height: 100vh;
@@ -215,14 +215,14 @@ p {
 .user-profile-badge {
     background-color: var(--lighter-bg);
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
     overflow: hidden;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .card:hover {
-    box-shadow: var(--strong-shadow);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
 }
 
 .card {
@@ -232,7 +232,7 @@ p {
 .card-header {
     padding: var(--card-padding);
     border-bottom: 1px solid var(--border-color);
-    background-color: var(--primary-light-bg);
+    background-color: rgba(249, 249, 252, 0.9);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -298,32 +298,40 @@ p {
     align-self: flex-start;
 }
 
-/* Encabezados desplegables */
+/* Encabezados desplegables - Corregido para solucionar problemas */
 .hospital-header,
 .planta-header {
-    background-color: var(--light-bg);
+    background: linear-gradient(145deg, #f9f9fc 0%, #f5f5f7 100%);
     color: var(--dark-text);
-    padding: 1rem var(--card-padding);
+    padding: 1.2rem var(--card-padding);
     border-radius: var(--border-radius) var(--border-radius) 0 0;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s, color 0.3s;
+    transition: all 0.3s ease;
     border-left: 4px solid transparent;
 }
 
+/* Hover en header no activo - Se cambia texto a rojo */
 .hospital-header:hover,
 .planta-header:hover {
-    background-color: var(--primary-light-bg);
+    background: linear-gradient(145deg, #f5f5f7 0%, #eeeef2 100%);
     border-left-color: var(--primary-color);
 }
 
+/* Corregido: Al hacer hover, el texto se vuelve rojo (no blanco) */
+.hospital-header:hover .hospital-name,
+.planta-header:hover .planta-name {
+    color: var(--primary-color);
+}
+
+/* Corregido: Estado activo con fondo rojo y texto blanco */
 .hospital-header.active,
 .planta-header.active {
-    background-color: var(--primary-dark);
-    color: white;
-    border-left-color: var(--accent-color);
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-left-color: var(--primary-dark);
+    color: #ffffff;
 }
 
 .hospital-header .hospital-name,
@@ -331,6 +339,12 @@ p {
     margin: 0;
     color: inherit;
     font-weight: 600;
+}
+
+/* Corrección: Texto blanco cuando está desplegado/activo */
+.hospital-header.active .hospital-name,
+.planta-header.active .planta-name {
+    color: #ffffff;
 }
 
 /* Cards de perfil de usuario */
@@ -378,6 +392,44 @@ p {
 .user-info-container .lead-text {
     margin-right: 1rem;
     margin-bottom: 0;
+}
+
+/* Mejora para contenido desplegable */
+.collapsible-content {
+    display: none;
+    padding: 1rem 0;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.collapsible-content.active {
+    display: block;
+    padding: var(--card-padding);
+    animation: fadeDown 0.3s ease-out;
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.collapsible-icon {
+    transition: transform 0.3s;
+    font-size: 0.85rem;
+    color: inherit;
+}
+
+/* Color del icono cuando está activo */
+.collapsible-header.active .collapsible-icon {
+    transform: rotate(180deg);
+    color: #ffffff;
 }
 
 /* ===========================================
@@ -447,7 +499,7 @@ p {
 
 /* Secciones específicas */
 .overview-section {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border-color);
 }
@@ -455,7 +507,14 @@ p {
 .hospitals-section,
 .plantas-section,
 .botiquines-section {
-    margin-top: 4rem;
+    margin-top: 1rem;
+}
+
+.hospitals-section .section-title,
+.plantas-section .section-title,
+.botiquines-section .section-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Estados vacíos */
