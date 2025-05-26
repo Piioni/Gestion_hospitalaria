@@ -14,15 +14,15 @@
 .nav-link {
     display: block;
     padding: 0.75rem 1rem;
-    color: #333;
+    color: var(--dark-text);
     text-decoration: none;
-    transition: all 0.2s ease;
     font-weight: 500;
+    position: relative;
 }
 
 .nav-link:hover,
 .nav-link.active {
-    color: #0056b3;
+    color: var(--primary-color);
 }
 
 /* Estilos para el dropdown simple */
@@ -30,59 +30,114 @@
     position: relative;
 }
 
+.dropdown-toggle {
+    padding-right: 1.5rem;
+    position: relative;
+}
+
 .dropdown-toggle::after {
     content: '▼';
     font-size: 0.6em;
-    margin-left: 0.5rem;
-    vertical-align: middle;
-    transition: transform 0.2s ease;
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .dropdown.show .dropdown-toggle::after {
-    transform: rotate(180deg);
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Mejoramos el área sensible del dropdown - REDUCIDA */
+.dropdown::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;  /* Reducido de 30px a 10px */
+    background: transparent;
+    z-index: 999;
+}
+
+/* Puente más pequeño entre el enlace y el menú */
+.dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px; /* Reducido de 20px a 10px */
+    background: transparent;
+    pointer-events: none;
 }
 
 .dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 5px); /* Reducido de 15px a 5px */
     left: 0;
     z-index: 1000;
-    display: none;
     min-width: 200px;
     padding: 0.5rem 0;
     margin: 0;
     list-style: none;
     text-align: left;
     background-color: #fff;
-    border: 1px solid #eaeaea;
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    display: none;
 }
 
+/* Reducimos también el espacio antes del menú desplegable */
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -5px; /* Reducido de -20px a -5px */
+    left: 0;
+    width: 100%;
+    height: 5px; /* Reducido de 20px a 5px */
+    background: transparent;
+}
+
+/* Mejoramos la visualización del menú desplegable */
 .dropdown.show .dropdown-menu {
     display: block;
-    animation: fadeIn 0.2s ease-in-out;
 }
 
 .dropdown-menu a {
     display: block;
     padding: 0.5rem 1.5rem;
-    color: #333;
+    color: var(--dark-text);
     text-decoration: none;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    position: relative;
+    transition: color 0.3s ease;
 }
 
+/* Nuevo estilo para subrayado rojo en hover */
 .dropdown-menu a:hover {
-    background-color: #f8f9fa;
-    color: #0056b3;
+    background-color: var(--primary-light-bg);
+    color: var(--primary-color);
+    text-decoration: underline;
+    text-decoration-color: var(--primary-color);
+    text-underline-offset: 4px;
+}
+
+/* Asegurar que los enlaces activos también tienen subrayado */
+.dropdown-menu a.active {
+    text-decoration: underline;
+    text-decoration-color: var(--primary-color);
+    text-underline-offset: 4px;
+    color: var(--primary-color);
 }
 
 .dropdown-divider {
     height: 0;
     margin: 0.5rem 0;
     overflow: hidden;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid var(--border-color);
 }
 
 /* Para menús de usuario en la parte derecha */
@@ -93,6 +148,16 @@
 .user-dropdown .dropdown-menu {
     right: 0;
     left: auto;
+}
+
+.user-dropdown .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-icon {
+    font-size: 1.1rem;
 }
 
 /* Botón hamburguesa para móviles */
@@ -109,7 +174,7 @@
     position: relative;
     width: 24px;
     height: 2px;
-    background: #333;
+    background: var(--dark-text);
     transition: all 0.3s ease;
 }
 
@@ -119,7 +184,7 @@
     position: absolute;
     width: 24px;
     height: 2px;
-    background: #333;
+    background: var(--dark-text);
     transition: all 0.3s ease;
 }
 
@@ -143,18 +208,6 @@
 .mobile-menu-toggle.active .hamburger:after {
     bottom: 0;
     transform: rotate(-45deg);
-}
-
-/* Animación para los menús */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Media queries para responsive */
@@ -191,6 +244,13 @@
         width: 100%;
     }
 
+    /* Eliminamos el seudo-elemento para móviles */
+    .dropdown::before,
+    .dropdown::after,
+    .dropdown-menu::before {
+        display: none;
+    }
+
     .dropdown-menu {
         position: static;
         box-shadow: none;
@@ -200,6 +260,8 @@
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.3s ease;
+        margin: 0;
+        top: 0; /* Restablecemos la posición en móviles */
     }
 
     .dropdown.show .dropdown-menu {

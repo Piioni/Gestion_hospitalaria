@@ -13,12 +13,13 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-label {
     font-weight: 500;
     color: var(--dark-text);
+    font-size: 0.95rem;
 }
 
 .form-input,
@@ -26,34 +27,47 @@
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    transition: border-color 0.3s;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.3s;
+    font-family: var(--font-family);
+    color: var(--dark-text);
+    background-color: var(--lighter-bg);
 }
 
 .form-input:focus,
 .form-select:focus {
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(142, 0, 58, 0.1);
     outline: none;
 }
 
 .form-error {
-    color: var(--accent-color);
-    font-size: 0.875rem;
+    color: var(--primary-color);
+    font-size: 0.85rem;
     margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-error:before {
+    content: "⚠";
+    font-size: 0.9rem;
 }
 
 .form-actions {
     display: flex;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 
 .form-footer {
     text-align: center;
     margin-top: 2rem;
-    padding-top: 1rem;
+    padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
     color: var(--light-text);
+    font-size: 0.9rem;
 }
 
 /* Formulario en línea */
@@ -79,21 +93,45 @@
 .input-group {
     display: flex;
     gap: 0.5rem;
+    position: relative;
 }
 
 .input-group .btn {
     padding: 0.75rem 1rem;
+    border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+
+.input-group .form-input {
+    border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
+    flex: 1;
 }
 
 /* Filtros específicos */
 .filter-section {
     margin-bottom: 2.5rem;
     margin-top: 2.5rem;
+    background-color: var(--light-bg);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
 }
 
 .filter-title {
     margin-bottom: 1rem;
     font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    position: relative;
+}
+
+.filter-title:after {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 2px;
+    background-color: var(--primary-color);
+    bottom: -5px;
+    left: 0;
 }
 
 .hospital-filter {
@@ -110,7 +148,7 @@
 }
 
 .almacen-form .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-field {
@@ -125,9 +163,13 @@
     color: var(--light-text);
 }
 
+.field-required {
+    font-weight: 500;
+}
+
 .field-required::after {
     content: "*";
-    color: var(--accent-color);
+    color: var(--primary-color);
     margin-left: 4px;
 }
 

@@ -1,42 +1,131 @@
 /* ===========================================
-   TABLAS
-   Estilos para tablas de datos
+   TABLAS PROFESIONALES
+   Diseño moderno y funcional para datos
    =========================================== */
 
 .table-responsive {
     overflow-x: auto;
-    margin: 1rem 0;
+    margin: 1.5rem 0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    background: var(--lighter-bg);
 }
 
 .table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
 }
 
 .table th,
 .table td {
-    padding: 1rem;
+    padding: 1rem 1.25rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
 }
 
 .table th {
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.table tr:hover td {
-    background-color: rgba(69, 143, 246, 0.05);
+.table th:first-child {
+    border-top-left-radius: var(--border-radius);
 }
 
-/* Columna de acciones */
+.table th:last-child {
+    border-top-right-radius: var(--border-radius);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+    background-color: var(--lighter-bg);
+}
+
+.table tbody tr:hover {
+    background-color: var(--primary-light-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(142, 0, 58, 0.08);
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: var(--border-radius);
+}
+
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Columna de acciones mejorada */
 .actions-column {
     white-space: nowrap;
     display: flex;
     gap: 0.5rem;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .actions-column.gap-3 {
-    gap: 1rem !important;
+    gap: 0.75rem !important;
+}
+
+/* Indicadores de estado en tablas */
+.table-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.table-status.active {
+    background-color: rgba(46, 160, 67, 0.1);
+    color: #2ea043;
+}
+
+.table-status.inactive {
+    background-color: rgba(142, 0, 58, 0.1);
+    color: var(--primary-color);
+}
+
+.table-status.pending {
+    background-color: rgba(243, 165, 48, 0.1);
+    color: var(--accent-dark);
+}
+
+/* Celdas numéricas */
+.table-numeric {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Responsive para tablas */
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .actions-column {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
 }

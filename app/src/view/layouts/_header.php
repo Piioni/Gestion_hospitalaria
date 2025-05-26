@@ -31,7 +31,9 @@ $navTitle = $navTitle ?? "Pegasus Medical";
 <header class="header">
     <div class="container">
         <a href="/" class="logo">
-            <span class="logo-icon">🏥</span>
+            <span class="logo-icon">
+                <img src="/assets/img/pegasus_medical.png" alt="Logo Pegasus Medical" class="logo-image">
+            </span>
             <span class="logo-text"><?= htmlspecialchars($navTitle) ?></span>
         </a>
 

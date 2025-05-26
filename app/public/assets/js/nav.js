@@ -17,35 +17,89 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.dropdown.show').forEach(dropdown => {
             dropdown.classList.remove('show');
         });
-        // Asegurar que todos los menús desplegables estén ocultos
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             menu.style.display = 'none';
         });
     }
     
-    // IMPORTANTE: Al cargar la página, forzar el cierre de todos los menús desplegables
+    // Cerrar todos los menús desplegables al cargar
     closeAllDropdowns();
     
-    // Manejar dropdowns
+    // Variables para gestionar el tiempo de retardo al cerrar menús
+    let closeTimeout;
+    const delayClose = 200; // Reducido de 500ms a 200ms para que desaparezcan más rápido
+    
+    // Manejar dropdowns con retraso para mejorar la usabilidad
     dropdowns.forEach(dropdown => {
         const menu = dropdown.querySelector('.dropdown-menu');
         
-        // Mouse over - mostrar menú en desktop
-        dropdown.addEventListener('mouseenter', function(e) {
+        // Mouse enter - mostrar menú
+        dropdown.addEventListener('mouseenter', function() {
             if (window.innerWidth > 768) {
-                closeAllDropdowns();
+                // Cancelar cualquier cierre pendiente
+                clearTimeout(closeTimeout);
+                
+                // Cerrar otros dropdowns abiertos
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown && otherDropdown.classList.contains('show')) {
+                        otherDropdown.classList.remove('show');
+                        const otherMenu = otherDropdown.querySelector('.dropdown-menu');
+                        if (otherMenu) otherMenu.style.display = 'none';
+                    }
+                });
+                
+                // Mostrar este dropdown
                 this.classList.add('show');
-                if (menu) menu.style.display = 'block';
+                if (menu) {
+                    menu.style.display = 'block';
+                }
             }
         });
         
-        // Mouse out - ocultar menú en desktop
-        dropdown.addEventListener('mouseleave', function(e) {
+        // Mouse leave - ocultar menú con retraso menor
+        dropdown.addEventListener('mouseleave', function(event) {
             if (window.innerWidth > 768) {
-                this.classList.remove('show');
-                if (menu) menu.style.display = 'none';
+                // Verificamos si el cursor se está moviendo hacia el menú desplegable
+                const toElement = event.relatedTarget;
+                
+                // Si se mueve hacia el menú desplegable, no cerramos
+                if (menu && menu.contains(toElement)) {
+                    return;
+                }
+                
+                // Configurar un retraso antes de cerrar
+                closeTimeout = setTimeout(() => {
+                    this.classList.remove('show');
+                    if (menu) menu.style.display = 'none';
+                }, delayClose);
             }
         });
+        
+        // También aplicamos el mismo comportamiento al menú desplegable
+        if (menu) {
+            menu.addEventListener('mouseenter', function() {
+                // Cancelar cualquier cierre pendiente cuando el ratón está en el menú
+                clearTimeout(closeTimeout);
+            });
+            
+            menu.addEventListener('mouseleave', function(event) {
+                if (window.innerWidth > 768) {
+                    // Verificamos si el cursor se está moviendo hacia el elemento padre dropdown
+                    const toElement = event.relatedTarget;
+                    
+                    // Si se mueve hacia el elemento padre, no cerramos
+                    if (dropdown.contains(toElement)) {
+                        return;
+                    }
+                    
+                    // Retrasar el cierre cuando el ratón sale del menú
+                    closeTimeout = setTimeout(() => {
+                        dropdown.classList.remove('show');
+                        this.style.display = 'none';
+                    }, delayClose);
+                }
+            });
+        }
         
         // Click en toggle para abrir/cerrar en mobile
         const toggleLink = dropdown.querySelector('.dropdown-toggle');
@@ -72,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cerrar menús cuando se hace clic fuera
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown')) {
+        if (!e.target.closest('.dropdown') && window.innerWidth > 768) {
             closeAllDropdowns();
         }
     });
@@ -83,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href === currentPath || (href !== '/' && currentPath.startsWith(href))) {
+        if (href === currentPath || (href !== '/' && href !== '#' && currentPath.startsWith(href))) {
             link.classList.add('active');
             
             // Si el enlace está en un dropdown, también marcar el padre
@@ -101,12 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
             mainNav.classList.remove('show');
-            mobileMenuToggle?.classList.remove('active');
+            if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
         }
-    });
-    
-    // Asegurar que los menús estén cerrados después de que todo esté cargado
-    window.addEventListener('load', function() {
-        closeAllDropdowns();
     });
 });
