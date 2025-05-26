@@ -16,7 +16,7 @@ $almacenService = new AlmacenService();
 $success = $_GET['success'] ?? null;
 
 $title = "Sistema de Gestión Hospitalaria";
-include __DIR__ . "/../../layouts/_header.php";
+include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
 <div class="page-section">
@@ -27,8 +27,7 @@ include __DIR__ . "/../../layouts/_header.php";
                 Aquí puedes gestionar los hospitales, sus plantas y almacenes asociados. Puedes crear, editar o eliminar hospitales y ver sus detalles.
             </p>
             <div class="action-buttons">
-                <a href="/hospitals/list" class="btn btn-primary">Ver hospitales</a>
-                <a href="/hospitals/create" class="btn btn-secondary">Crear hospital</a>
+                <a href="/hospitals/create" class="btn btn-primary">Crear hospital</a>
             </div>
         </div>
 
@@ -207,4 +206,5 @@ include __DIR__ . "/../../layouts/_header.php";
     }
 </script>
 
-<?php include __DIR__ . "/../../layouts/_footer.php"; ?>
+<?php
+include __DIR__ . "/../../../layouts/_footer.php";

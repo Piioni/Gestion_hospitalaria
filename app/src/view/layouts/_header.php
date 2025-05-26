@@ -42,111 +42,45 @@ $navTitle = $navTitle ?? "Pegasus Medical";
         <nav class="main-nav">
             <ul class="nav-links">
                 <!-- Categoría: Gestión de Infraestructura -->
-                <li class="dropdown mega-dropdown">
+                <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Infraestructura</a>
-                    <div class="mega-dropdown-content">
-                        <div class="mega-dropdown-section">
-                            <h3>Hospitales</h3>
-                            <ul>
-                                <li><a href="/hospitals">Dashboard</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="mega-dropdown-section">
-                            <h3>Plantas</h3>
-                            <ul>
-                                <li><a href="/plantas">Dashboard</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="mega-dropdown-section">
-                            <h3>Botiquines</h3>
-                            <ul>
-                                <li><a href="/botiquines">Dashboard</a></li>
-                                <li><a href="/botiquines/list">Listar todos</a></li>
-                                <li><a href="/botiquines/create">Crear nuevo</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a href="/ubicaciones/hospitals">Hospitales</a></li>
+                        <li><a href="/ubicaciones/plantas">Plantas</a></li>
+                        <li><a href="/ubicaciones/almacenes">Almacenes</a></li>
+                        <li><a href="/ubicaciones/botiquines">Botiquines</a></li>
+                    </ul>
                 </li>
 
                 <!-- Categoría: Gestión de Inventario -->
-                <li class="dropdown mega-dropdown">
+                <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Inventario</a>
-                    <div class="mega-dropdown-content">
-                        <div class="mega-dropdown-section">
-                            <h3>Almacenes</h3>
-                            <ul>
-                                <li><a href="/almacenes">Dashboard</a></li>
-                                <li><a href="/almacenes/list">Listar todos</a></li>
-                                <li><a href="/almacenes/create">Crear nuevo</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="mega-dropdown-section">
-                            <h3>Productos</h3>
-                            <ul>
-                                <li><a href="/productos">Dashboard</a></li>
-                                <li><a href="/productos/list">Listar todos</a></li>
-                                <li><a href="/productos/create">Crear nuevo</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="mega-dropdown-section">
-                            <h3>Pactos</h3>
-                            <ul>
-                                <li><a href="/pactos">Dashboard</a></li>
-                                <li><a href="/pactos/list">Listar todos</a></li>
-                                <li><a href="/pactos/create">Crear nuevo</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a href="/stocks">Stock</a></li>
+                        <li><a href="/stocks/botiquines">Stock Botiquines</a></li>
+                        <li><a href="/stocks/almacenes">Stock Almacenes</a></li>
+                        <li><a href="/productos">Productos</a></li>
+                    </ul>
                 </li>
 
                 <!-- Categoría: Logística -->
-                <li class="dropdown mega-dropdown">
+                <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Logística</a>
-                    <div class="mega-dropdown-content">
-                        <div class="mega-dropdown-section">
-                            <h3>Reposiciones</h3>
-                            <ul>
-                                <li><a href="/reposiciones">Dashboard</a></li>
-                                <li><a href="/reposiciones/list">Listar todas</a></li>
-                                <li><a href="/reposiciones/create">Crear nueva</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="mega-dropdown-section">
-                            <h3>Etiquetas</h3>
-                            <ul>
-                                <li><a href="/etiquetas">Dashboard</a></li>
-                                <li><a href="/etiquetas/list">Listar todas</a></li>
-                                <li><a href="/etiquetas/create">Crear nueva</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="mega-dropdown-section">
-                            <h3>Lecturas</h3>
-                            <ul>
-                                <li><a href="/lecturas">Dashboard</a></li>
-                                <li><a href="/lecturas/list">Listar todas</a></li>
-                                <li><a href="/lecturas/create">Crear nueva</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a href="/reposiciones">Reposiciones</a></li>
+                        <li><a href="/movimientos">Movimientos</a></li>
+                        <li><a href="/etiquetas">Etiquetas</a></li>
+                        <li><a href="/lecturas">Lecturas</a></li>
+                    </ul>
                 </li>
-                <!-- Section de gestion de Usuarios -->
-                <li class="dropdown mega-dropdown">
+                
+                <!-- Section de gestión de Usuarios -->
+                <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Usuarios</a>
-                    <div class="mega-dropdown-content">
-                        <div class="mega-dropdown-section">
-                            <h3>Gestión de Usuarios</h3>
-                            <ul>
-                                <li><a href="/users/dashboard">Dashboard</a></li>
-                                <li><a href="/users/create">Crear nuevo</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a href="/users/dashboard">Dashboard</a></li>
+                        <li><a href="/users/create">Crear Usuario</a></li>
+                    </ul>
                 </li>
 
                 <!-- Sección de usuario -->

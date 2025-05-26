@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 $title = "Crear Botiquín";
-include __DIR__ . "/../../layouts/_header.php";
+include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
 <div class="page-section">
@@ -127,4 +127,4 @@ include __DIR__ . "/../../layouts/_header.php";
     </div>
 </div>
 <?php
-include __DIR__ . "/../../layouts/_footer.php";
+include __DIR__ . "/../../../layouts/_footer.php";

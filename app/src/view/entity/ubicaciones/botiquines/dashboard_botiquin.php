@@ -22,7 +22,7 @@ if ($filtro_plantas) {
 }
 
 $title = "Dashboard de Botiquines";
-include __DIR__ . '/../../layouts/_header.php';
+include __DIR__ . '/../../../layouts/_header.php';
 ?>
 
 <div class="page-section">
@@ -167,4 +167,5 @@ include __DIR__ . '/../../layouts/_header.php';
     });
 </script>
 
-<?php include __DIR__ . "/../../layouts/_footer.php"; ?>
+<?php
+include __DIR__ . "/../../../layouts/_footer.php";

@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     const dropdowns = document.querySelectorAll('.dropdown');
-    const megaDropdowns = document.querySelectorAll('.mega-dropdown');
     
     // Toggle del menú móvil
     if (mobileMenuToggle) {
@@ -18,30 +17,25 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.dropdown.show').forEach(dropdown => {
             dropdown.classList.remove('show');
         });
-        document.querySelectorAll('.mega-dropdown.show').forEach(dropdown => {
-            dropdown.classList.remove('show');
-        });
-        // También eliminar cualquier clase show de los elementos dropdown-content
-        document.querySelectorAll('.mega-dropdown-content').forEach(content => {
-            content.style.display = 'none';
+        // Asegurar que todos los menús desplegables estén ocultos
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
         });
     }
     
     // IMPORTANTE: Al cargar la página, forzar el cierre de todos los menús desplegables
     closeAllDropdowns();
     
-    // Forzar estilos iniciales correctos
-    document.querySelectorAll('.mega-dropdown-content').forEach(content => {
-        content.style.display = 'none';
-    });
-    
-    // Manejar dropdowns normales
+    // Manejar dropdowns
     dropdowns.forEach(dropdown => {
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
         // Mouse over - mostrar menú en desktop
         dropdown.addEventListener('mouseenter', function(e) {
             if (window.innerWidth > 768) {
                 closeAllDropdowns();
                 this.classList.add('show');
+                if (menu) menu.style.display = 'block';
             }
         });
         
@@ -49,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdown.addEventListener('mouseleave', function(e) {
             if (window.innerWidth > 768) {
                 this.classList.remove('show');
+                if (menu) menu.style.display = 'none';
             }
         });
         
@@ -68,43 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Si no estaba abierto, abrirlo
                     if (!isOpen) {
                         dropdown.classList.add('show');
-                    }
-                }
-            });
-        }
-    });
-    
-    // Manejar mega-dropdowns - mismo comportamiento que dropdowns normales
-    megaDropdowns.forEach(megaDropdown => {
-        const content = megaDropdown.querySelector('.mega-dropdown-content');
-        
-        megaDropdown.addEventListener('mouseenter', function(e) {
-            if (window.innerWidth > 768) {
-                closeAllDropdowns();
-                this.classList.add('show');
-                if (content) content.style.display = 'flex';
-            }
-        });
-        
-        megaDropdown.addEventListener('mouseleave', function(e) {
-            if (window.innerWidth > 768) {
-                this.classList.remove('show');
-                if (content) content.style.display = 'none';
-            }
-        });
-        
-        const toggleLink = megaDropdown.querySelector('.dropdown-toggle');
-        if (toggleLink) {
-            toggleLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                if (window.innerWidth <= 768) {
-                    const isOpen = megaDropdown.classList.contains('show');
-                    closeAllDropdowns();
-                    
-                    if (!isOpen) {
-                        megaDropdown.classList.add('show');
-                        if (content) content.style.display = 'flex';
+                        if (menu) menu.style.display = 'block';
                     }
                 }
             });
@@ -113,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cerrar menús cuando se hace clic fuera
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown') && !e.target.closest('.mega-dropdown')) {
+        if (!e.target.closest('.dropdown')) {
             closeAllDropdowns();
         }
     });
@@ -127,8 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (href === currentPath || (href !== '/' && currentPath.startsWith(href))) {
             link.classList.add('active');
             
-            // Si el enlace está en un dropdown o mega-dropdown, también marcar el padre
-            const parentDropdown = link.closest('.dropdown, .mega-dropdown');
+            // Si el enlace está en un dropdown, también marcar el padre
+            const parentDropdown = link.closest('.dropdown');
             if (parentDropdown) {
                 const parentLink = parentDropdown.querySelector('.dropdown-toggle');
                 if (parentLink) {
@@ -146,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Asegurar que los menús estén cerrados después de que to do esté cargado
+    // Asegurar que los menús estén cerrados después de que todo esté cargado
     window.addEventListener('load', function() {
         closeAllDropdowns();
     });

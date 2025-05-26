@@ -9,7 +9,7 @@ $hospitalService = new HospitalService();
 $hospitals = $hospitalService->getAllHospitals();
 
 $title = "Crear Planta";
-include __DIR__ . "/../../layouts/_header.php";
+include __DIR__ . "/../../../layouts/_header.php";
 
 $planta = [
     'id_hospital' => '',
@@ -117,4 +117,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php
-include __DIR__ . "/../../layouts/_footer.php";
+include __DIR__ . "/../../../layouts/_footer.php";
