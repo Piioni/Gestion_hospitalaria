@@ -35,51 +35,64 @@ class ProductoService
         return $this->productoRepository->delete($id_producto);
     }
 
-    /**
-     * Obtiene todos los productos con filtros opcionales
-     * 
-     * @param int|null $almacenId Filtrar por almacén
-     * @param int|null $botiquinId Filtrar por botiquín
-     * @param string|null $nombre Filtrar por nombre
-     * @return array Lista de productos que coinciden con los filtros
-     */
-    public function getAll(?int $almacenId = null, ?int $botiquinId = null, ?string $nombre = null): array
+    public function getAll(): array
     {
-        return $this->productoRepository->getAll($almacenId, $botiquinId, $nombre);
+        return $this->productoRepository->getAll();
     }
 
-    public function getById($id_producto): ?Producto
+    public function getProductoById($id_producto): ?Producto
     {
         return $this->productoRepository->getById($id_producto);
     }
 
-    public function getByCodigo($codigo): ?Producto
+    public function getProductosByCodigoAndAlmacen($codigo, $almacen): array
+    {
+        return $this->productoRepository->getByCodigoAndAlmacen($codigo, $almacen);
+    }
+
+    public function getProductosByCodigoAndBotiquin(string $codigo, $botiquin) : array
+    {
+        return $this->productoRepository->getByCodigoAndBotiquin($codigo, $botiquin);
+    }
+
+    public function getProductosByCodigo(string $codigo) : array
     {
         return $this->productoRepository->getByCodigo($codigo);
+
     }
-    
+
+    public function getProductosByAlmacen(string $almacen): array
+    {
+        return $this->productoRepository->getByAlmacen($almacen);
+    }
+
+    public function getProductosByBotiquin(string $botiquin): array
+    {
+        return $this->productoRepository->getByBotiquin($botiquin);
+    }
+
     /**
      * Valida los campos obligatorios del producto
-     * 
+     *
      * @param string $codigo
      * @param string $nombre
      * @param string $descripcion
      * @throws \InvalidArgumentException
      */
-    private function validarCampos($codigo, $nombre, $descripcion): void
+    private function validarCampos(string $codigo, string $nombre, string $descripcion): void
     {
         if (empty($codigo)) {
             throw new \InvalidArgumentException("El código del producto es obligatorio");
         }
-        
+
         if (empty($nombre)) {
             throw new \InvalidArgumentException("El nombre del producto es obligatorio");
         }
-        
+
         if (strlen($codigo) > 50) {
             throw new \InvalidArgumentException("El código no puede exceder los 50 caracteres");
         }
-        
+
         if (strlen($nombre) > 100) {
             throw new \InvalidArgumentException("El nombre no puede exceder los 100 caracteres");
         }
