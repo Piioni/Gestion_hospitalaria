@@ -124,4 +124,13 @@ class StockService
     {
         return $this->stockRepository->getProductosStockBajo($tipoUbicacion);
     }
+
+    public function botiquinHasProducts($id_botiquin): array
+    {
+        if (empty($id_botiquin) || !is_numeric($id_botiquin)) {
+            throw new \InvalidArgumentException("El ID del botiquín es inválido.");
+        }
+
+        return $this->stockRepository->getStocksByBotiquinId($id_botiquin);
+    }
 }

@@ -152,22 +152,43 @@ class StockRepository
                 JOIN productos p ON s.id_producto = p.id_producto
                 WHERE s.cantidad < s.cantidad_minima
             ";
-            
+
             $params = [];
-            
+
             // Si se especifica un tipo de ubicación, filtramos por él
             if ($tipoUbicacion) {
                 $sql .= " AND s.tipo_ubicacion = ?";
                 $params[] = $tipoUbicacion;
             }
-            
+
             $sql .= " ORDER BY s.cantidad ASC";
-            
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error al obtener productos con stock bajo: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Obtiene todos los productos de un botiquín específico
+     * @param int $id_botiquin
+     * @return array
+     */
+    public function getStocksByBotiquinId(int $id_botiquin): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM stocks 
+                WHERE tipo_ubicacion = 'BOTIQUIN' AND id_ubicacion = ?
+            ");
+            $stmt->execute([$id_botiquin]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener stocks por botiquín: " . $e->getMessage());
             throw $e;
         }
     }
