@@ -20,6 +20,10 @@ class AlmacenService
         if (empty($tipo) || empty($id_hospital) || empty($nombre)) {
             throw new \InvalidArgumentException("Los campos tipo, id_hospital y nombre son obligatorios.");
         }
+        // Verificar que no exista un almacen general en el hospital
+        if ($tipo === "GENERAL" && $this->almacenRepository->getByHospitalId($id_hospital)) {
+            throw new \InvalidArgumentException("Ya existe un almacen general en el hospital seleccionado.");
+        }
         // Verificar que en la planta no exista ya un almacen
         if ($id_planta && $this->almacenRepository->getByPlantaId($id_planta)) {
             throw new \InvalidArgumentException("Ya existe un almacen en la planta seleccionada.");
@@ -50,7 +54,7 @@ class AlmacenService
         return $this->almacenRepository->delete($id_almacen);
     }
 
-    public function getAllAlmacenes()
+    public function getAllAlmacenes(): array
     {
         return $this->almacenRepository->getAll();
     }
@@ -60,7 +64,7 @@ class AlmacenService
         return $this->almacenRepository->getById($id_almacen);
     }
 
-    public function getAlmacenByHospitalId($id_hospital): ?Almacen
+    public function getGeneralByHospitalId($id_hospital): ?Almacen
     {
         return $this->almacenRepository->getByHospitalId($id_hospital);
     }

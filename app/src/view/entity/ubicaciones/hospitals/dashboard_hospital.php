@@ -83,7 +83,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                 <?php else: ?>
                     <div class="hospitals-list">
                         <?php foreach ($hospitals as $index => $hospital):
-                            $almacen = $almacenService->getAlmacenByHospitalId($hospital->getId());
+                            $almacen = $almacenService->getGeneralByHospitalId($hospital->getId());
                             ?>
                             <div class="hospital-card card">
                                 <div class="collapsible-header hospital-header"

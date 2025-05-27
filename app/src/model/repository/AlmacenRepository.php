@@ -122,7 +122,7 @@ class AlmacenRepository
             $stmt = $this->pdo->prepare("
                 SELECT * 
                 FROM almacenes
-                WHERE id_hospital = ?"
+                WHERE id_hospital = ? AND tipo = 'GENERAL'"
             );
             $stmt->execute([$id_hospital]);
             $almacenData = $stmt->fetch(PDO::FETCH_ASSOC);
