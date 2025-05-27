@@ -1,15 +1,17 @@
 <?php
 
 // TODO: Implementar filtrado por nombre de botiquin
-// TODO: Implementar muestreado de stock
 
 use model\service\BotiquinService;
 use model\service\PlantaService;
+use model\service\HospitalService;
 
 $botiquinesService = new BotiquinService();
 
 $plantasService = new PlantaService();
 $plantas = $plantasService->getAllPlantas();
+
+$hospitalService = new HospitalService();
 
 // Obtener el filtro de planta desde la URL, si existe
 $filtro_plantas = isset($_GET['planta']) ? (int)$_GET['planta'] : null;
@@ -30,10 +32,10 @@ include __DIR__ . '/../../../layouts/_header.php';
             <div class="overview-section">
                 <h1 class="page-title">Gestión de Botiquines</h1>
                 <p class="lead-text">
-                    Control y gestión de botiquines, sus medicamentos y stock disponible.
+                    Control y gestión de botiquines en las diferentes plantas hospitalarias.
                 </p>
                 <div class="action-buttons">
-                    <a href="/botiquines/create" class="btn btn-primary">Crear nuevo botiquín</a>
+                    <a href="<?= url('botiquines.create') ?>" class="btn btn-primary">Crear nuevo botiquín</a>
                 </div>
             </div>
 
@@ -41,6 +43,22 @@ include __DIR__ . '/../../../layouts/_header.php';
                 if ($_GET['error'] == 'id_not_found') : ?>
                     <div class="alert alert-danger">
                         <strong>Error:</strong> No se encontró el botiquin con el ID especificado.
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['success'])) :
+                if ($_GET['success'] == 'created') : ?>
+                    <div class="alert alert-success">
+                        Botiquín creado correctamente.
+                    </div>
+                <?php elseif ($_GET['success'] == 'updated') : ?>
+                    <div class="alert alert-success">
+                        Botiquín actualizado correctamente.
+                    </div>
+                <?php elseif ($_GET['success'] == 'deleted') : ?>
+                    <div class="alert alert-success">
+                        Botiquín eliminado correctamente.
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
@@ -65,7 +83,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                         <div class="filter-actions">
                             <button type="submit" class="btn btn-primary">Filtrar</button>
                             <?php if ($filtro_plantas): ?>
-                                <a href="?" class="btn btn-secondary">Limpiar filtro</a>
+                                <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Limpiar filtro</a>
                             <?php endif; ?>
                         </div>
                     </form>
@@ -82,73 +100,59 @@ include __DIR__ . '/../../../layouts/_header.php';
                         <?php else: ?>
                             No hay botiquines registrados en el sistema.
                         <?php endif; ?>
-                        <a href="/botiquines/create" class="btn btn-primary">Crear un botiquín</a>
+                        <a href="<?= url('botiquines.create') ?>" class="btn btn-primary">Crear un botiquín</a>
                     </div>
                 <?php else: ?>
                     <div class="botiquines-list">
-                        <?php foreach ($botiquines as $botiquin):
-                            // Obtener la planta asociada
-                            try {
-                                $planta = $plantasService->getPlantaById($botiquin->getIdPlanta());
-                                $plantaNombre = $planta->getNombre();
-                            } catch (Exception $e) {
-                                $plantaNombre = "Error al cargar la planta";
-                            }
-                            ?>
-                            <div class="botiquin-card card">
-                                <div class="collapsible-header planta-header"
-                                     onclick="toggleCollapsible(this, 'botiquin-<?= $botiquin->getId() ?>')">
-                                    <h3 class="planta-name"><?= htmlspecialchars($botiquin->getNombre()) ?></h3>
-                                    <span class="collapsible-icon">▼</span>
-                                </div>
-
-                                <div id="botiquin-<?= $botiquin->getId() ?>" class="collapsible-content">
-                                    <div class="card-body">
-                                        <div class="planta-details">
-                                            <div class="planta-info">
-                                                <p>
-                                                    <strong>Planta:</strong> <?= htmlspecialchars($plantaNombre) ?>
-                                                </p>
-                                                <p>
-                                                    <strong>Capacidad:</strong> <?= $botiquin->getCapacidad() ?>
-                                                    medicamentos
-                                                </p>
-                                            </div>
-                                            <div class="planta-actions">
-                                                <a href="/botiquines/edit?id_botiquin=<?= $botiquin->getId() ?>"
-                                                   class="btn btn-sm btn-secondary">
-                                                    Editar
-                                                </a>
-                                                <a href="/botiquines/view?id_botiquin=<?= $botiquin->getId() ?>"
-                                                   class="btn btn-sm btn-primary">
-                                                    Ver stock
-                                                </a>
-                                                <a href="/botiquines/delete?id_botiquin=<?= $botiquin->getId() ?>"
-                                                   class="btn btn-sm btn-danger">
-                                                    Eliminar
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <hr class="divider">
-
-                                        <div class="medicamentos-section">
-                                            <h4 class="subsection-title">Medicamentos en stock</h4>
-                                            <?php
-                                            // Aquí se implementaría la lógica para mostrar los medicamentos
-                                            // Por ahora mostramos un mensaje provisional
-                                            ?>
-                                            <div class="empty-plants">
-                                                Funcionalidad de stock de medicamentos en desarrollo.
-                                                <a href="/medicamentos/create" class="btn btn-sm btn-primary">
-                                                    Añadir medicamento
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Planta</th>
+                                        <th>Hospital</th>
+                                        <th>Capacidad</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($botiquines as $botiquin):
+                                        // Obtener la planta asociada
+                                        try {
+                                            $planta = $plantasService->getPlantaById($botiquin->getIdPlanta());
+                                            $plantaNombre = $planta->getNombre();
+                                            // Obtener el hospital asociado a la planta
+                                            $hospital = $hospitalService->getHospitalById($planta->getIdHospital());
+                                            $hospitalNombre = $hospital ? $hospital->getNombre() : "No disponible";
+                                        } catch (Exception $e) {
+                                            $plantaNombre = "Error al cargar la planta";
+                                            $hospitalNombre = "No disponible";
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($botiquin->getNombre()) ?></td>
+                                        <td><?= htmlspecialchars($plantaNombre) ?></td>
+                                        <td><?= htmlspecialchars($hospitalNombre) ?></td>
+                                        <td><?= $botiquin->getCapacidad() ?> medicamentos</td>
+                                        <td class="actions-column">
+                                            <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>"
+                                                class="btn btn-sm btn-secondary">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </a>
+                                            <a href="<?= url('stocks.botiquines', ['id_botiquin' => $botiquin->getId()]) ?>"
+                                                class="btn btn-sm btn-primary">
+                                                <i class="bi bi-box-seam"></i> Ver stock
+                                            </a>
+                                            <a href="<?= url('botiquines.delete', ['id_botiquin' => $botiquin->getId()]) ?>"
+                                                class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
@@ -156,12 +160,6 @@ include __DIR__ . '/../../../layouts/_header.php';
     </div>
 
     <script>
-        function toggleCollapsible(header, contentId) {
-            const content = document.getElementById(contentId);
-            content.classList.toggle('active');
-            header.classList.toggle('active');
-        }
-
         // Actualizar automáticamente el formulario cuando cambia el select
         document.getElementById('planta').addEventListener('change', function () {
             this.form.submit();

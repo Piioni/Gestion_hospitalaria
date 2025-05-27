@@ -9,13 +9,13 @@ $plantasService = new PlantaService();
 $id_botiquin = $_GET['id_botiquin'] ?? null;
 
 if (!$id_botiquin) {
-    header("Location: /botiquines");
+    header("Location: " . url('botiquines.dashboard'));
     exit;
 }
 
 // Validar que exista un botiquín con el ID proporcionado
 if ($botiquinesService->getBotiquinById($id_botiquin) == null) {
-    header("Location: /botiquines?error=id_not_found");
+    header("Location: " . url('botiquines.dashboard', ['error' => 'id_not_found']));
     exit;
 } else {
     $botiquin = $botiquinesService->getBotiquinById($id_botiquin);
@@ -33,6 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $success = $botiquinesService->updateBotiquin($id_botiquin, $id_planta, $nombre, $capacidad);
+        
+        if ($success) {
+            // Redirigir a la página de lista de botiquines con mensaje de éxito
+            header('Location: ' . url('botiquines.dashboard', ['success' => 'updated']));
+            exit;
+        }
+        
     } catch (InvalidArgumentException $e) {
         $errors[] = $e->getMessage();
     } catch (Exception $e) {
@@ -104,8 +111,8 @@ include __DIR__ . "/../../../layouts/_header.php";
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                            <a href="/botiquines" class="btn btn-secondary">Volver</a>
-                            <a href="/botiquines/delete?id_botiquin=<?= $botiquin->getId() ?>" class="btn btn-danger">Eliminar
+                            <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Volver</a>
+                            <a href="<?= url('botiquines.delete', ['id_botiquin' => $botiquin->getId()]) ?>" class="btn btn-danger">Eliminar
                                 botiquín</a>
                         </div>
                     </form>

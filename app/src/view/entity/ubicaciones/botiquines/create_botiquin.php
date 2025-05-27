@@ -27,12 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $success = $botiquinService->createBotiquin($id_planta, $nombre, $capacidad);
 
-        // Reiniciar el formulario después de un envío exitoso
-        $botiquin = [
-            'id_planta' => '',
-            'nombre' => '',
-            'capacidad' => 0,
-        ];
+        if ($success) {
+            // Redirigir a la página de lista de botiquines con mensaje de éxito
+            header('Location: ' . url('botiquines.dashboard', ['success' => 'created']));
+            exit;
+        }
 
     } catch (InvalidArgumentException $e) {
         // Manejo de errores de validación
@@ -106,7 +105,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <div class="form-field">
                             <input type="text" name="nombre" id="nombre" class="form-input"
                                 value="<?= htmlspecialchars($botiquin['nombre']); ?>" 
-                                placeholder="Ingrese el nombre del botiquín" >
+                                placeholder="Ingrese el nombre del botiquín" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -114,12 +113,12 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <div class="form-field">
                             <input type="number" name="capacidad" id="capacidad" class="form-input"
                                 value="<?= htmlspecialchars($botiquin['capacidad']); ?>" 
-                                placeholder="Ingrese la capacidad del botiquín" >
+                                placeholder="Ingrese la capacidad del botiquín" required>
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Crear Botiquín</button>
-                        <a href="/botiquines" class="btn btn-secondary">Cancelar</a>
+                        <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>

@@ -12,13 +12,26 @@ $stockService = new StockService();
 
 $plantas = $plantaService->getAllPlantas();
 
-// Obtener el filtro de planta desde la URL, si existe
+// Obtener los filtros desde la URL
 $filtro_plantas = isset($_GET['planta']) ? (int)$_GET['planta'] : null;
+$filtro_botiquin = isset($_GET['id_botiquin']) ? (int)$_GET['id_botiquin'] : null;
 
-// Filtrar los botiquines por planta 
-if ($filtro_plantas) {
+// Filtrar los botiquines según los parámetros
+if ($filtro_botiquin) {
+    // Si se especificó un botiquín específico
+    $botiquin = $botiquinService->getBotiquinById($filtro_botiquin);
+    if ($botiquin) {
+        $botiquines = [$botiquin];
+        // Obtenemos la planta para preseleccionarla en el filtro
+        $filtro_plantas = $botiquin->getIdPlanta();
+    } else {
+        $botiquines = [];
+    }
+} elseif ($filtro_plantas) {
+    // Si se especificó una planta
     $botiquines = $botiquinService->getBotiquinesByPlantaId($filtro_plantas);
 } else {
+    // Si no hay filtros, mostrar todos los botiquines
     $botiquines = $botiquinService->getAllBotiquines();
 }
 
@@ -33,6 +46,9 @@ include __DIR__ . '/../../layouts/_header.php';
             <p class="lead-text">
                 Control y visualización del stock de medicamentos en botiquines.
             </p>
+            <div class="action-buttons">
+                <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Volver a Botiquines</a>
+            </div>
         </div>
 
         <div class="filter-section card">
@@ -54,8 +70,8 @@ include __DIR__ . '/../../layouts/_header.php';
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Filtrar</button>
-                        <?php if ($filtro_plantas): ?>
-                            <a href="?" class="btn btn-secondary">Limpiar filtro</a>
+                        <?php if ($filtro_plantas || $filtro_botiquin): ?>
+                            <a href="<?= url('stocks.botiquines') ?>" class="btn btn-secondary">Limpiar filtro</a>
                         <?php endif; ?>
                     </div>
                 </form>
@@ -69,10 +85,12 @@ include __DIR__ . '/../../layouts/_header.php';
                 <div class="empty-state">
                     <?php if ($filtro_plantas): ?>
                         No hay botiquines registrados para la planta seleccionada.
+                    <?php elseif ($filtro_botiquin): ?>
+                        No se encontró el botiquín especificado.
                     <?php else: ?>
                         No hay botiquines registrados en el sistema.
                     <?php endif; ?>
-                    <a href="/botiquines/create" class="btn btn-primary">Crear un botiquín</a>
+                    <a href="<?= url('botiquines.create') ?>" class="btn btn-primary">Crear un botiquín</a>
                 </div>
             <?php else: ?>
                 <div class="botiquines-list">
@@ -96,11 +114,12 @@ include __DIR__ . '/../../layouts/_header.php';
                                 <span class="collapsible-icon">▼</span>
                             </div>
 
-                            <div id="botiquin-<?= $botiquin->getId() ?>" class="collapsible-content">
+                            <div id="botiquin-<?= $botiquin->getId() ?>" class="collapsible-content <?= $filtro_botiquin == $botiquin->getId() ? 'active' : '' ?>">
                                 <div class="card-body">
                                     <div class="botiquin-details">
                                         <p><strong>Ubicación:</strong> <?= htmlspecialchars($plantaNombre) ?></p>
                                         <p><strong>Capacidad:</strong> <?= $botiquin->getCapacidad() ?> medicamentos</p>
+                                        <p><strong>Productos en stock:</strong> <?= count($productosEnStock) ?></p>
                                     </div>
 
                                     <div class="stock-section">
@@ -138,13 +157,13 @@ include __DIR__ . '/../../layouts/_header.php';
                                                                 <td><span class="estado-badge <?= $estadoClase ?>"><?= $estadoTexto ?></span></td>
                                                                 <td class="acciones-stock">
                                                                     <a href="/movimientos/create?tipo=consumo&id_stock=<?= $stock->getId() ?>" class="btn btn-sm btn-warning" title="Consumir">
-                                                                        <i class="fas fa-minus-circle"></i> Consumir
+                                                                        <i class="bi bi-dash-circle"></i> Consumir
                                                                     </a>
                                                                     <a href="/movimientos/create?tipo=desecho&id_stock=<?= $stock->getId() ?>" class="btn btn-sm btn-danger" title="Desechar">
-                                                                        <i class="fas fa-trash"></i> Desechar
+                                                                        <i class="bi bi-trash"></i> Desechar
                                                                     </a>
                                                                     <a href="/movimientos/create?tipo=reposicion&id_stock=<?= $stock->getId() ?>" class="btn btn-sm btn-success" title="Reponer">
-                                                                        <i class="fas fa-plus-circle"></i> Reponer
+                                                                        <i class="bi bi-plus-circle"></i> Reponer
                                                                     </a>
                                                                 </td>
                                                             </tr>
