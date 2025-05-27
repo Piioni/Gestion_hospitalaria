@@ -4,9 +4,11 @@ use model\service\PlantaService;
 use model\service\HospitalService;
 use model\service\AlmacenService;
 use model\service\BotiquinService;
+use model\service\StockService;
 
 // Obtener servicio de plantas
 $plantaService = new PlantaService();
+$stockService = new StockService();
 
 // Crear instancia del servicio de hospitales para obtener información relacionada
 $hospitalService = new HospitalService();
@@ -142,28 +144,28 @@ include __DIR__ . "/../../../layouts/_header.php";
                                             <div class="planta-actions">
                                                 <a href="<?= url('botiquines.create', ['id_planta' => $planta->getId()]) ?>"
                                                    class="btn btn-sm btn-primary">
-                                                    Añadir botiquín
+                                                    <i class="bi bi-plus-circle"></i> Añadir botiquín
                                                 </a>
                                                 <a href="<?= url('plantas.edit', ['id_planta' => $planta->getId()]) ?>"
                                                    class="btn btn-sm btn-secondary">
-                                                    Editar planta
+                                                    <i class="bi bi-pencil"></i> Editar planta
                                                 </a>
                                                 <?php
                                                 $almacen = $almacenService->getAlmacenByPlantaId($planta->getId());
                                                 if ($almacen) :?>
                                                     <a href="<?= url('almacenes.edit', ['id_almacen' => $almacen->getId()]) ?>"
                                                        class="btn btn-sm btn-primary">
-                                                        Editar almacén
+                                                        <i class="bi bi-pencil"></i> Editar almacén
                                                     </a>
                                                 <?php else: ?>
                                                     <a href="<?= url('almacenes.create', ['id_planta' => $planta->getId()]) ?>"
                                                        class="btn btn-sm btn-primary">
-                                                        Crear almacén
+                                                        <i class="bi bi-plus-circle"></i> Crear almacén
                                                     </a>
                                                 <?php endif; ?>
                                                 <a href="<?= url('plantas.delete', ['id_planta' => $planta->getId()]) ?>"
                                                    class="btn btn-sm btn-danger">
-                                                    Eliminar planta
+                                                    <i class="bi bi-trash"></i> Eliminar planta
                                                 </a>
                                             </div>
                                         </div>
@@ -191,6 +193,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                             <tr>
                                                                 <th>Nombre</th>
                                                                 <th>Capacidad</th>
+                                                                <th>Inventario</th>
                                                                 <th>Acciones</th>
                                                             </tr>
                                                             </thead>
@@ -199,15 +202,24 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                 <tr>
                                                                     <td><?= htmlspecialchars($botiquin->getNombre()) ?></td>
                                                                     <td><?= htmlspecialchars($botiquin->getCapacidad()) ?></td>
+                                                                    <td>
+                                                                        <?php
+                                                                        try {
+                                                                            $stock = $botiquinService->getBotiquinProducts($botiquin->getId());
+                                                                            echo htmlspecialchars($stock) . ' productos.';
+                                                                        } catch (Exception $e) {
+                                                                            echo 'Error al cargar el stock';
+                                                                        }
+                                                                        ?>
                                                                     <td class="actions-column">
                                                                         <div class="btn-container">
                                                                             <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>"
                                                                                class="btn btn-sm btn-secondary">
-                                                                                Editar
+                                                                                <i class="bi bi-pencil"></i>Editar
                                                                             </a>
                                                                             <a href="<?= url('stocks.botiquines', ['id_botiquin' => $botiquin->getId()]) ?>"
                                                                                class="btn btn-sm btn-info">
-                                                                                Ver stock
+                                                                                <i class="bi bi-box-seam"></i>Ver stock
                                                                             </a>
                                                                         </div>
                                                                     </td>

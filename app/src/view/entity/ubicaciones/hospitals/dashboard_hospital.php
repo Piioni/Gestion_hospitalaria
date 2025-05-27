@@ -119,28 +119,28 @@ include __DIR__ . "/../../../layouts/_header.php";
                                             <div class="hospital-actions">
                                                 <a href="<?= url('hospitals.edit', ['id_hospital' => $hospital->getId()]) ?>"
                                                    class="btn btn-sm btn-secondary">
-                                                    Editar hospital
+                                                    <i class="bi bi-pencil"></i> Editar
                                                 </a>
                                                 <a href="<?= url('plantas.create', ['id_hospital' => $hospital->getId()]) ?>"
                                                    class="btn btn-sm btn-primary">
-                                                    Añadir planta
+                                                    <i class="bi bi-plus-circle"></i> Añadir planta
                                                 </a>
                                                 <!-- Check if the hospital has a general warehouse already to display the corresponding button -->
                                                 <?php if (!$almacen): ?>
                                                     <a href="<?= url('almacenes.create', ['tipo' => 'GENERAL', 'id_hospital' => $hospital->getId()]) ?>"
                                                        class="btn btn-sm btn-secondary">
-                                                        Añadir Almacén General
+                                                        <i class="bi bi-plus-circle"></i> Añadir Almacén General
                                                     </a>
                                                 <?php else: ?>
                                                     <a href="<?= url('almacenes.edit', ['id_almacen' => $almacen->getId()]) ?>"
                                                        class="btn btn-sm btn-secondary">
-                                                        Editar Almacén General
+                                                        <i class="bi bi-pencil"></i> Editar Almacén General
                                                     </a>
                                                 <?php endif; ?>
 
                                                 <a href="<?= url('hospitals.delete', ['id_hospital' => $hospital->getId()]) ?>"
                                                    class="btn btn-sm btn-danger">
-                                                    Eliminar
+                                                    <i class="bi bi-trash"></i> Eliminar
                                                 </a>
                                             </div>
                                         </div>
@@ -190,11 +190,11 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                         <div class="btn-container">
                                                                             <a href="<?= url('plantas.edit', ['id_planta' => $planta->getId()]) ?>"
                                                                                class="btn btn-sm btn-secondary">
-                                                                                Editar
+                                                                                <i class="bi bi-pencil"></i>Editar
                                                                             </a>
                                                                             <a href="<?= url('plantas.dashboard', ['id' => $planta->getId()]) ?>"
                                                                                class="btn btn-sm btn-info">
-                                                                                Ver stock
+                                                                                <i class="bi bi-box-seam"></i> Ver stock
                                                                             </a>
                                                                         </div>
                                                                     </td>
@@ -228,25 +228,34 @@ include __DIR__ . "/../../../layouts/_header.php";
         }
 
         // Mostrar notificaciones toast según los parámetros de la URL
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             <?php if ($success): ?>
-                <?php if ($success === 'deleted'): ?>
-                    ToastSystem.success('Éxito', 'Hospital eliminado correctamente.', null, {autoClose: true, closeDelay: 5000});
-                <?php elseif ($success === 'created'): ?>
-                    ToastSystem.success('Éxito', 'Hospital creado correctamente.', null, {autoClose: true, closeDelay: 5000});
-                <?php elseif ($success === 'updated'): ?>
-                    ToastSystem.success('Éxito', 'Hospital actualizado correctamente.', null, {autoClose: true, closeDelay: 5000});
-                <?php endif; ?>
+            <?php if ($success === 'deleted'): ?>
+            ToastSystem.success('Éxito', 'Hospital eliminado correctamente.', null, {
+                autoClose: true,
+                closeDelay: 5000
+            });
+            <?php elseif ($success === 'created'): ?>
+            ToastSystem.success('Éxito', 'Hospital creado correctamente.', null, {autoClose: true, closeDelay: 5000});
+            <?php elseif ($success === 'updated'): ?>
+            ToastSystem.success('Éxito', 'Hospital actualizado correctamente.', null, {
+                autoClose: true,
+                closeDelay: 5000
+            });
+            <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($error): ?>
-                <?php if ($error === 'id_invalid'): ?>
-                    ToastSystem.danger('Error', 'ID de hospital no válido.', null, {autoClose: true, closeDelay: 5000});
-                <?php elseif ($error === 'unexpected'): ?>
-                    ToastSystem.danger('Error', 'Ha ocurrido un error inesperado.', null, {autoClose: true, closeDelay: 5000});
-                <?php else: ?>
-                    ToastSystem.danger('Error', '<?= htmlspecialchars(urldecode($error)) ?>', null, {autoClose: true, closeDelay: 5000});
-                <?php endif; ?>
+            <?php if ($error === 'id_invalid'): ?>
+            ToastSystem.danger('Error', 'ID de hospital no válido.', null, {autoClose: true, closeDelay: 5000});
+            <?php elseif ($error === 'unexpected'): ?>
+            ToastSystem.danger('Error', 'Ha ocurrido un error inesperado.', null, {autoClose: true, closeDelay: 5000});
+            <?php else: ?>
+            ToastSystem.danger('Error', '<?= htmlspecialchars(urldecode($error)) ?>', null, {
+                autoClose: true,
+                closeDelay: 5000
+            });
+            <?php endif; ?>
             <?php endif; ?>
         });
     </script>

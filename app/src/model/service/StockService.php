@@ -19,7 +19,7 @@ class StockService
      */
     public function getStockByBotiquinId(int $idBotiquin): array
     {
-        return $this->stockRepository->getStockByBotiquinId($idBotiquin);
+        return $this->stockRepository->getStocksByBotiquinId($idBotiquin);
     }
 
     /**
