@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: mysql
--- Tiempo de generación: 26-05-2025 a las 18:20:43
+-- Tiempo de generación: 27-05-2025 a las 04:15:16
 -- Versión del servidor: 8.0.42
 -- Versión de PHP: 8.2.27
 
@@ -41,9 +41,8 @@ CREATE TABLE `almacenes` (
 
 INSERT INTO `almacenes` (`id_almacen`, `nombre`, `tipo`, `id_hospital`, `id_planta`) VALUES
 (1, 'Almacen Central Importante', 'GENERAL', 1, NULL),
-(5, 'Almacen de Enfermeria', 'PLANTA', 1, 2),
-(6, 'Almace Nacional ', 'GENERAL', 6, NULL),
-(7, 'Almacen del Mampinga', 'PLANTA', 1, 3);
+(5, 'Almacen de Enfermeria', 'PLANTA', 1, 4),
+(6, 'Almace Nacional ', 'GENERAL', 6, NULL);
 
 -- --------------------------------------------------------
 
@@ -63,7 +62,7 @@ CREATE TABLE `botiquines` (
 --
 
 INSERT INTO `botiquines` (`id_botiquin`, `id_planta`, `nombre`, `capacidad`) VALUES
-(1, 4, 'Botiquin de Paracetamols ', 100);
+(1, 4, 'Botiquin de Paracetamols ', 50);
 
 -- --------------------------------------------------------
 
@@ -111,7 +110,7 @@ CREATE TABLE `hospitales` (
 
 INSERT INTO `hospitales` (`id_hospital`, `nombre`, `ubicacion`, `activo`) VALUES
 (1, 'Hospital de Fuentenueva 2', 'Calle fuentenueva 2', 1),
-(6, 'Hospsital Nacional', 'Gran Via', 1);
+(6, 'Hospsital Nacional', 'Gran Via', 0);
 
 -- --------------------------------------------------------
 
@@ -148,9 +147,9 @@ CREATE TABLE `plantas` (
 --
 
 INSERT INTO `plantas` (`id_planta`, `id_hospital`, `nombre`, `activo`) VALUES
-(1, 1, 'Planta de pediatria ', 0),
-(2, 1, 'Planta de Enfermeria ', 0),
-(3, 1, 'Planta del mamapinga', 0),
+(1, 1, 'Planta de pediatria ', 1),
+(2, 1, 'Planta de Enfermeria ', 1),
+(3, 1, 'Planta del mamapinga', 1),
 (4, 1, 'Planta de Enfermeria 2', 1);
 
 -- --------------------------------------------------------
