@@ -102,7 +102,24 @@ class PlantaRepository
         }
     }
 
-    public function getPlantasByHospitalId($hospitalId): array
+    public function getById($id): ?Planta
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM plantas 
+                WHERE id_planta = ? AND activo = 1
+                ");
+            $stmt->execute([$id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? $this->createPlantaFromData($row) : null;
+        } catch (PDOException $e) {
+            error_log("Error al obtener planta por ID: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getByHospitalId($hospitalId): array
     {
         try {
             $stmt = $this->pdo->prepare("
@@ -120,19 +137,39 @@ class PlantaRepository
         }
     }
 
-    public function getPlantaById($id): ?Planta
+    public function getByHospitalAndNombre($hospitalId, $nombre): array
     {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT * 
                 FROM plantas 
-                WHERE id_planta = ? AND activo = 1
+                WHERE id_hospital = ? AND nombre LIKE CONCAT('%', ?, '%') AND activo = 1
+                ORDER BY nombre
                 ");
-            $stmt->execute([$id]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row ? $this->createPlantaFromData($row) : null;
+            $stmt->execute([$hospitalId, '%' . $nombre . '%']);
+            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createPlantaFromData'], $plantasData);
         } catch (PDOException $e) {
-            error_log("Error al obtener planta por ID: " . $e->getMessage());
+            error_log("Error al obtener plantas por hospital y nombre: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
+    public function getByNombre($nombre): array
+    {
+    try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM plantas 
+                WHERE nombre LIKE CONCAT('%', ?, '%') AND activo = 1
+                ORDER BY nombre
+                ");
+            $stmt->execute(['%' . $nombre . '%']);
+            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createPlantaFromData'], $plantasData);
+        } catch (PDOException $e) {
+            error_log("Error al obtener plantas por nombre: " . $e->getMessage());
             throw $e;
         }
     }

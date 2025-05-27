@@ -43,7 +43,7 @@ class PlantaService
         }
 
         // Verificar que los datos no sean los mismos que ya existen
-        $existingPlanta = $this->plantaRepository->getPlantaById($id);
+        $existingPlanta = $this->plantaRepository->getById($id);
         if ($existingPlanta->getIdHospital() == $hospitalId &&
             $existingPlanta->getNombre() === $nombre) {
             throw new InvalidArgumentException("No se han realizado cambios en la planta.");
@@ -77,15 +77,37 @@ class PlantaService
             throw new InvalidArgumentException("El ID del hospital es inválido");
         }
 
-        return $this->plantaRepository->getPlantasByHospitalId($hospitalId);
+        return $this->plantaRepository->getByHospitalId($hospitalId);
     }
 
-    public function getPlantaById($id): Planta
+    public function getPlantasByNombre($nombre): array
+    {
+        if (empty($nombre)) {
+            throw new InvalidArgumentException("El nombre de la planta es obligatorio");
+        }
+
+        return $this->plantaRepository->getByNombre($nombre);
+    }
+
+    public function getPlantasByHospitalAndNombre( $hospitalId, $nombre): array
+    {
+        if (empty($hospitalId) || !is_numeric($hospitalId)) {
+            throw new InvalidArgumentException("El ID del hospital es inválido");
+        }
+
+        if (empty($nombre)) {
+            throw new InvalidArgumentException("El nombre de la planta es obligatorio");
+        }
+
+        return $this->plantaRepository->getByHospitalAndNombre($hospitalId, $nombre);
+    }
+
+    public function getPlantaById($id): ?Planta
     {
         if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException("El ID de la planta es inválido");
         }
 
-        return $this->plantaRepository->getPlantaById($id);
+        return $this->plantaRepository->getById($id);
     }
 }

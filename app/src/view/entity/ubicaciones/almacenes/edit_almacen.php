@@ -20,7 +20,7 @@ $success = false;
 // Verificar si se ha proporcionado un ID de almacén para editar
 if (!isset($_GET['id_almacen']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     // Redirigir al usuario si no se proporciona un ID
-    header("Location: /almacenes/dashboard?error=no_id");
+    header("Location: " . url('almacenes.dashboard', ['error' => 'no_id']));
     exit;
 }
 
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Redirigir a la misma página con un mensaje de éxito
         if ($success) {
-            header("Location: /almacenes/edit?success=true");
+            header("Location: " . url('almacenes.dashboard', ['success' => 'updated']));
             exit;
         }
     } catch (InvalidArgumentException $e) {
@@ -57,32 +57,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Verificar si hay un mensaje de éxito
-    if (isset($_GET['success']) && $_GET['success'] === 'true') {
-        $success = true;
-    } else {
-        // Obtener el ID del almacén a editar
-        $id = filter_input(INPUT_GET, 'id_almacen', FILTER_SANITIZE_NUMBER_INT);
+    // Obtener el ID del almacén a editar
+    $id = filter_input(INPUT_GET, 'id_almacen', FILTER_SANITIZE_NUMBER_INT);
 
-        try {
-            // Cargar los datos del almacén desde la base de datos
-            $almacenObj = $almacenService->getAlmacenById($id);
+    try {
+        // Cargar los datos del almacén desde la base de datos
+        $almacenObj = $almacenService->getAlmacenById($id);
 
-            if ($almacenObj) {
-                // Llenar el array con los datos del almacén
-                $almacen['id'] = $almacenObj->getId();
-                $almacen['nombre'] = $almacenObj->getNombre();
-                $almacen['tipo'] = $almacenObj->getTipo();
-                $almacen['id_hospital'] = $almacenObj->getIdHospital();
-                $almacen['id_planta'] = $almacenObj->getIdPlanta();
-            } else {
-                // El almacén no existe, redirigir
-                header("Location: /almacenes/?error=not_found");
-                exit;
-            }
-        } catch (Exception $e) {
-            $errors[] = "Error al cargar el almacén: " . $e->getMessage();
+        if ($almacenObj) {
+            // Llenar el array con los datos del almacén
+            $almacen['id'] = $almacenObj->getId();
+            $almacen['nombre'] = $almacenObj->getNombre();
+            $almacen['tipo'] = $almacenObj->getTipo();
+            $almacen['id_hospital'] = $almacenObj->getIdHospital();
+            $almacen['id_planta'] = $almacenObj->getIdPlanta();
+        } else {
+            // El almacén no existe, redirigir
+            header("Location: " . url('almacenes.dashboard', ['error' => 'not_found']));
+            exit;
         }
+    } catch (Exception $e) {
+        $errors[] = "Error al cargar el almacén: " . $e->getMessage();
     }
 }
 
@@ -95,9 +90,7 @@ include __DIR__ . "/../../../layouts/_header.php";
         <div class="container">
             <div class="page-header">
                 <div class="page-header-content">
-                    <h1 class="page-title">
-                        <?= $success ? "Almacén actualizado exitosamente" : "Editar Almacén" ?>
-                    </h1>
+                    <h1 class="page-title">Editar Almacén</h1>
                     <p class="page-description">
                         Modifique los datos del almacén según sea necesario.
                     </p>
@@ -116,18 +109,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <li><?= $error ?></li>
                             <?php endforeach; ?>
                         </ul>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($success): ?>
-                <div class="alert alert-success">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <strong>¡Operación exitosa!</strong>
-                        <p>El almacén ha sido actualizado correctamente.</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -203,8 +184,11 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-1"></i> Guardar Cambios
                                 </button>
-                                <a href="/almacenes/" class="btn btn-secondary">
+                                <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary">
                                     <i class="fas fa-times me-1"></i> Cancelar
+                                </a>
+                                <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen['id']]) ?>" class="btn btn-danger">
+                                    <i class="fas fa-trash me-1"></i> Eliminar Almacén
                                 </a>
                             </div>
                         </form>

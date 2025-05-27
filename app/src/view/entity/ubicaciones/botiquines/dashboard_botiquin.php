@@ -79,10 +79,18 @@ include __DIR__ . '/../../../layouts/_header.php';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <div class="filter-field">
+                                <label for="nombre" class="form-label">Nombre: </label>
+                                <div class="form-field">
+                                    <input type="text" name="nombre" id="nombre" class="form-input"
+                                           placeholder="Buscar por nombre de planta"
+                                           value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
+                                </div>
+                            </div>
                         </div>
                         <div class="filter-actions">
                             <button type="submit" class="btn btn-primary">Filtrar</button>
-                            <?php if ($filtro_plantas): ?>
+                            <?php if ($filtro_plantas || isset($_GET['nombre'])): ?>
                                 <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Limpiar filtro</a>
                             <?php endif; ?>
                         </div>

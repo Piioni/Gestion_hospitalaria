@@ -39,16 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $almacen['id_planta']
         );
 
-        // Reiniciar el formulario después de un envío exitoso
-        $almacen = [
-            'nombre' => '',
-            'tipo' => '',
-            'id_hospital' => '',
-            'id_planta' => '',
-        ];
-
         // Redirigir a la lista de almacenes después de crear uno nuevo
-        header("Location: /almacenes/create?success=true");
+        header("Location: " . url('almacenes.dashboard', ['success' => 'created']));
         exit; // Importante: detener la ejecución después de la redirección
 
     } catch (InvalidArgumentException $e) {
@@ -59,18 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Error al crear el almacen: " . $e->getMessage();
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Sí se accede a la página por GET, reiniciar el formulario
+    // Si se accede a la página por GET, obtener parámetros opcionales
     $almacen = [
         'nombre' => $_GET['nombre'] ?? '',
         'tipo' => $_GET['tipo'] ?? '',
         'id_hospital' => $_GET['id_hospital'] ?? '',
         'id_planta' => $_GET['id_planta'] ?? '',
     ];
-
-    // Si se accede con éxito, mostrar el mensaje de éxito
-    if (isset($_GET['success']) && $_GET['success'] === 'true') {
-        $success = true;
-    }
 }
 
 $title = "Crear Almacen";
@@ -82,9 +69,7 @@ include __DIR__ . "/../../../layouts/_header.php";
         <div class="container">
             <div class="page-header">
                 <div class="page-header-content">
-                    <h1 class="page-title">
-                        <?= $success ? "Almacen creado exitosamente" : "Crear Almacen" ?>
-                    </h1>
+                    <h1 class="page-title">Crear Almacen</h1>
                     <p class="page-description">
                         Complete el formulario para registrar un nuevo almacen en el sistema.
                     </p>
@@ -103,18 +88,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <li><?= $error ?></li>
                             <?php endforeach; ?>
                         </ul>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($success): ?>
-                <div class="alert alert-success">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <strong>¡Operación exitosa!</strong>
-                        <p>El almacen ha sido creado correctamente.</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -188,10 +161,10 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-1"></i> Crear Almacen
                                 </button>
-                                <a href="/almacenes/" class="btn btn-secondary">
+                                <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary">
                                     <i class="fas fa-times me-1"></i> Cancelar
                                 </a>
-                                <a href="/hospitals/" class="btn btn-primary">
+                                <a href="<?= url('hospitals.dashboard') ?>" class="btn btn-primary">
                                     <i class="fas fa-arrow-left me-1"></i> Volver a hospitales
                                 </a>
                             </div>

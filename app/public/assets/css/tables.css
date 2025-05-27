@@ -35,7 +35,7 @@
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -259,13 +259,13 @@
         margin: 1rem 0;
         border-radius: var(--border-radius-sm);
     }
-    
+
     .table th,
     .table td {
         padding: 0.75rem 0.5rem;
         font-size: 0.85rem;
     }
-    
+
     .table th {
         font-size: 0.75rem;
     }

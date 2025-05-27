@@ -16,10 +16,15 @@ $hospitals = $hospitalService->getAllHospitals();
 
 // Obtener filtro de hospital si existe
 $filtroHospital = isset($_GET['hospital']) ? (int)$_GET['hospital'] : null;
+$filtroNombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : null;
 
-// Obtener plantas filtradas por hospital si se proporciona un filtro
-if ($filtroHospital) {
+// Obtener plantas filtradas según el hospital y nombre
+if ($filtroHospital && $filtroNombre) {
+    $plantas = $plantaService->getPlantasByHospitalAndNombre($filtroHospital, $filtroNombre);
+} elseif ($filtroHospital) {
     $plantas = $plantaService->getPlantasByHospitalId($filtroHospital);
+} elseif ($filtroNombre) {
+    $plantas = $plantaService->getPlantasByNombre($filtroNombre);
 } else {
     $plantas = $plantaService->getAllPlantas();
 }
@@ -110,7 +115,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                             // Obtener el almacén asociado
                             try {
                                 $almacen = $almacenService->getAlmacenByPlantaId($planta->getId());
-                                $almacenInfo = $almacen ? "Almacén ID: " . $almacen->getId() : "Sin almacén asignado";
+                                $almacenInfo = $almacen ?  $almacen->getNombre() : "Sin almacén asignado";
                             } catch (Exception $e) {
                                 $almacenInfo = "Error al cargar el almacén";
                             }
@@ -196,7 +201,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                            class="btn btn-sm btn-secondary">
                                                                             Editar
                                                                         </a>
-                                                                        <a href="<?= url('botiquines.dashboard', ['id_botiquin' => $botiquin->getId()]) ?>"
+                                                                        <a href="<?= url('stocks.botiquines', ['id_botiquin' => $botiquin->getId()]) ?>"
                                                                            class="btn btn-sm btn-info">
                                                                             Ver stock
                                                                         </a>
