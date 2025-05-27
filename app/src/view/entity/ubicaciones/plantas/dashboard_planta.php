@@ -33,6 +33,11 @@ $almacenService = new AlmacenService();
 // Crear instancia del servicio de botiquines
 $botiquinService = new BotiquinService();
 
+// Verificar si se ha enviado un mensaje de éxito o error
+$success = $_GET['success'] ?? null;
+$error = $_GET['error'] ?? null;
+
+$scripts = "toasts.js";
 $title = "Plantas";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
@@ -48,30 +53,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                     <a href="<?= url('plantas.create') ?>" class="btn btn-primary">Crear nueva planta</a>
                 </div>
             </div>
-
-            <?php if (isset($_GET['error'])) :
-                if ($_GET['error'] == 'id_not_found') : ?>
-                    <div class="alert alert-danger">
-                        <strong>Error:</strong> No se encontró la planta con el ID especificado.
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
-
-            <?php if (isset($_GET['success'])) :
-                if ($_GET['success'] == 'created') : ?>
-                    <div class="alert alert-success">
-                        Planta creada correctamente.
-                    </div>
-                <?php elseif ($_GET['success'] == 'updated') : ?>
-                    <div class="alert alert-success">
-                        Planta actualizada correctamente.
-                    </div>
-                <?php elseif ($_GET['success'] == 'deleted') : ?>
-                    <div class="alert alert-success">
-                        Planta eliminada correctamente.
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
 
             <div class="filter-section card">
                 <div class="card-body">
@@ -264,6 +245,33 @@ include __DIR__ . "/../../../layouts/_header.php";
         // Actualizar automáticamente el formulario cuando cambia el select
         document.getElementById('hospital').addEventListener('change', function () {
             this.form.submit();
+        });
+
+        // Mostrar notificaciones toast según los parámetros de la URL
+        document.addEventListener('DOMContentLoaded', function() {
+            <?php if ($success): ?>
+                <?php if ($success === 'deleted'): ?>
+                    ToastSystem.success('Éxito', 'Planta eliminada correctamente.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($success === 'created'): ?>
+                    ToastSystem.success('Éxito', 'Planta creada correctamente.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($success === 'updated'): ?>
+                    ToastSystem.success('Éxito', 'Planta actualizada correctamente.', null, {autoClose: true, closeDelay: 5000});
+                <?php endif; ?>
+            <?php endif; ?>
+            
+            <?php if ($error): ?>
+                <?php if ($error === 'id_invalid'): ?>
+                    ToastSystem.danger('Error', 'ID de planta no válido.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($error === 'id_not_found'): ?>
+                    ToastSystem.danger('Error', 'La planta no fue encontrada.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($error === 'hospital_no_encontrado'): ?>
+                    ToastSystem.danger('Error', 'No se encontró el hospital seleccionado.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($error === 'unexpected'): ?>
+                    ToastSystem.danger('Error', 'Ha ocurrido un error inesperado.', null, {autoClose: true, closeDelay: 5000});
+                <?php else: ?>
+                    ToastSystem.danger('Error', '<?= htmlspecialchars(urldecode($error)) ?>', null, {autoClose: true, closeDelay: 5000});
+                <?php endif; ?>
+            <?php endif; ?>
         });
     </script>
 

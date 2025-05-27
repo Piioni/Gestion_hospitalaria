@@ -8,6 +8,8 @@ $hospitalService = new HospitalService();
 
 $hospitals = $hospitalService->getAllHospitals();
 
+// Incluir el script de toasts
+$scripts = "toasts.js";
 $title = "Crear Planta";
 include __DIR__ . "/../../../layouts/_header.php";
 
@@ -26,13 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Intentar crear la planta con los datos sanitizados
         $plantasService->createPlanta($planta['id_hospital'], $planta['nombre']);
-        $success = true;
-
-        // Reiniciar el formulario después de un envío exitoso
-        $planta = [
-            'id_hospital' => '',
-            'nombre' => '',
-        ];
+        
+        // Redirigir al dashboard con mensaje de éxito
+        header('Location: ' . url('plantas.dashboard', ['success' => 'created']));
+        exit;
+        
     } catch (InvalidArgumentException $e) {
         // Capturar errores de validación
         $errors[] = $e->getMessage();
@@ -74,12 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </ul>
             </div>
         <?php endif; ?>
-        
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Planta creada correctamente.
-            </div>
-        <?php endif; ?>
 
         <div class="card">
             <div class="card-header">
@@ -115,6 +109,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if (!empty($errors)): ?>
+            <?php foreach ($errors as $error): ?>
+                ToastSystem.danger('Error', <?= json_encode($error) ?>, null, {autoClose: true, closeDelay: 5000});
+            <?php endforeach; ?>
+        <?php endif; ?>
+    });
+</script>
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

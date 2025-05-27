@@ -102,7 +102,7 @@ class HospitalService
         $existingHospital = $this->hospitalRepository->getById($id_hospital);
         if ($existingHospital->getNombre() === $nombre &&
             $existingHospital->getUbicacion() === $ubicacion) {
-            throw new InvalidArgumentException("No se han realizado cambios en el hospital.");
+            throw new InvalidArgumentException("Los datos proporcionados son los mismos registrados en el sistema.");
         }
 
         return $this->hospitalRepository->update($id_hospital, $nombre, $ubicacion);

@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Alerta que le informe al usuario que editar el hospital de una planta puede afectar
-
 use model\service\HospitalService;
 use model\service\PlantaService;
 
@@ -55,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$scripts = "toasts.js";
 $title = "Editar Planta";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
@@ -69,22 +68,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                 </p>
             </div>
         </div>
-
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger">
-                <ul class="error-list">
-                    <?php foreach ($errors as $error): ?>
-                        <li><?= htmlspecialchars($error) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Planta actualizada correctamente.
-            </div>
-        <?php endif; ?>
 
         <div class="card">
             <div class="card-content">
@@ -120,6 +103,16 @@ include __DIR__ . "/../../../layouts/_header.php";
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if (!empty($errors)): ?>
+            <?php foreach ($errors as $error): ?>
+                ToastSystem.danger('Error', <?= json_encode($error) ?>, null, {autoClose: true, closeDelay: 5000});
+            <?php endforeach; ?>
+        <?php endif; ?>
+    });
+</script>
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

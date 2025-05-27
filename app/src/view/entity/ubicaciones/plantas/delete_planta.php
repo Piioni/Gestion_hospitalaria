@@ -87,9 +87,6 @@ try {
                         <strong><?= htmlspecialchars($hospital->getNombre()) ?></strong>?
                     </p>
 
-                    <!-- Contenedor para las notificaciones toast -->
-                    <div class="toast-container"></div>
-
                     <form method="POST" action="<?= url('plantas.delete', ['id_planta' => $id_planta]) ?>">
                         <div class="text-center mt-5">
                             <!-- Los botones principales siempre visibles -->
@@ -112,13 +109,15 @@ try {
         </div>
     </div>
 
-    <!-- Script simplificado que utiliza toasts.js -->
+    <!-- Script que utiliza toasts.js -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Toast de advertencia
             ToastSystem.warning(
                 'Advertencia',
-                'Esta acción desactivará la planta, por lo que no podrá ser utilizada. Esta acción solo es reversible por un Administrador.'
+                'Esta acción desactivará la planta, por lo que no podrá ser utilizada. Esta acción solo es reversible por un Administrador.',
+                null,
+                {autoClose: true, closeDelay: 7000}
             );
 
             <?php if ($almacen): ?>
@@ -129,7 +128,8 @@ try {
                 `<a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>" 
                    class="btn btn-primary">
                     Eliminar almacén "<?= htmlspecialchars($almacen->getNombre()) ?>"
-                </a>`
+                </a>`,
+                {autoClose: false}
             );
             <?php endif; ?>
 
@@ -141,13 +141,14 @@ try {
                 `<a href="<?= url('botiquines.dashboard', ['planta' => $planta->getId()]) ?>" 
                    class="btn btn-primary">
                     Ver botiquines de la planta
-                </a>`
+                </a>`,
+                {autoClose: false}
             );
             <?php endif; ?>
 
             <?php if (isset($error)): ?>
             // Toast para errores de procesamiento
-            ToastSystem.danger('Error', '<?= htmlspecialchars($error) ?>');
+            ToastSystem.danger('Error', '<?= htmlspecialchars($error) ?>', null, {autoClose: false});
             <?php endif; ?>
         });
     </script>

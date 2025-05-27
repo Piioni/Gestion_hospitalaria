@@ -46,7 +46,7 @@ class PlantaService
         $existingPlanta = $this->plantaRepository->getById($id);
         if ($existingPlanta->getIdHospital() == $hospitalId &&
             $existingPlanta->getNombre() === $nombre) {
-            throw new InvalidArgumentException("No se han realizado cambios en la planta.");
+            throw new InvalidArgumentException("Los datos proporcionados son los mismos registrados.");
         }
 
         return $this->plantaRepository->update($id, $hospitalId, $nombre);
