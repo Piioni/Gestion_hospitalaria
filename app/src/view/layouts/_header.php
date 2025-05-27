@@ -21,11 +21,18 @@ $navTitle = $navTitle ?? "Pegasus Medical";
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?php if (isset($scripts)): ?>
-        <script src="/assets/js/<?= htmlspecialchars($scripts, ENT_QUOTES) ?>"></script>
-    <?php endif; ?>
     <script src="/assets/js/nav.js" defer></script>
+    <?php if (isset($scripts)): ?>
+        <?php 
+        // Si $scripts es un string, convertirlo a array para procesarlo de forma uniforme
+        $scriptsArray = is_array($scripts) ? $scripts : [$scripts];
+        foreach ($scriptsArray as $script): 
+        ?>
+            <script src="/assets/js/<?= htmlspecialchars($script, ENT_QUOTES) ?>" defer></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <body>
 <header class="header">

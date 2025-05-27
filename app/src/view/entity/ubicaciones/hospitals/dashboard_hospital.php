@@ -21,9 +21,11 @@ if ($filtroNombre) {
 $plantaService = new PlantaService();
 $almacenService = new AlmacenService();
 
-// Verificar si se ha enviado un mensaje de éxito
+// Verificar si se ha enviado un mensaje de éxito o error
 $success = $_GET['success'] ?? null;
+$error = $_GET['error'] ?? null;
 
+$scripts = "toasts.js";
 $title = "Sistema de Gestión Hospitalaria";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
@@ -42,21 +44,6 @@ include __DIR__ . "/../../../layouts/_header.php";
             </div>
 
             <div class="hospitals-section">
-                <?php if ($success): ?>
-                    <?php if ($_GET['success'] == 'deleted'): ?>
-                        <div class="alert alert-success">
-                            Hospital eliminado correctamente.
-                        </div>
-                    <?php elseif ($_GET['success'] == 'created'): ?>
-                        <div class="alert alert-success">
-                            Hospital creado correctamente.
-                        </div>
-                    <?php elseif ($_GET['success'] == 'updated'): ?>
-                        <div class="alert alert-success">
-                            Hospital actualizado correctamente.
-                        </div>
-                    <?php endif; ?>
-                <?php endif; ?>
 
                 <div class="filter-section card">
                     <div class="card-body">
@@ -239,6 +226,29 @@ include __DIR__ . "/../../../layouts/_header.php";
             content.classList.toggle('active');
             header.classList.toggle('active');
         }
+
+        // Mostrar notificaciones toast según los parámetros de la URL
+        document.addEventListener('DOMContentLoaded', function() {
+            <?php if ($success): ?>
+                <?php if ($success === 'deleted'): ?>
+                    ToastSystem.success('Éxito', 'Hospital eliminado correctamente.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($success === 'created'): ?>
+                    ToastSystem.success('Éxito', 'Hospital creado correctamente.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($success === 'updated'): ?>
+                    ToastSystem.success('Éxito', 'Hospital actualizado correctamente.', null, {autoClose: true, closeDelay: 5000});
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if ($error): ?>
+                <?php if ($error === 'id_invalid'): ?>
+                    ToastSystem.danger('Error', 'ID de hospital no válido.', null, {autoClose: true, closeDelay: 5000});
+                <?php elseif ($error === 'unexpected'): ?>
+                    ToastSystem.danger('Error', 'Ha ocurrido un error inesperado.', null, {autoClose: true, closeDelay: 5000});
+                <?php else: ?>
+                    ToastSystem.danger('Error', '<?= htmlspecialchars(urldecode($error)) ?>', null, {autoClose: true, closeDelay: 5000});
+                <?php endif; ?>
+            <?php endif; ?>
+        });
     </script>
 
 <?php

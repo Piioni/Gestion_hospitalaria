@@ -20,13 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Intentar crear el hospital con los datos sanitizados
         $hospitalService->createHospital($hospital['name'], $hospital['address']);
-        $success = true;
-
-        // Reiniciar el formulario después de un envío exitoso
-        $hospital = [
-            'name' => '',
-            'address' => '',
-        ];
+        
+        // Redirigir al dashboard con mensaje de éxito
+        header('Location: ' . url('hospitals.dashboard', ['success' => 'created']));
+        exit;
+        
     } catch (InvalidArgumentException $e) {
         // Capturar errores de validación
         $errors[] = $e->getMessage();
@@ -58,12 +56,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <li><?= $error ?></li>
                     <?php endforeach; ?>
                 </ul>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Hospital creado correctamente.
             </div>
         <?php endif; ?>
 

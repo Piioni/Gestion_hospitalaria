@@ -59,7 +59,9 @@ try {
         }
     }
 
+    // Incluir el script de toasts.js
     $title = "Confirmar Eliminación";
+    $scripts = "toasts.js";
     include __DIR__ . "/../../../layouts/_header.php";
 
 } catch (InvalidArgumentException $e) {
@@ -85,57 +87,12 @@ try {
                         <strong><?= htmlspecialchars($hospital->getNombre()) ?></strong>?
                     </p>
 
-                    <?php if (isset($error)): ?>
-                        <div class="alert alert-danger">
-                            <strong>Error:</strong> <?= htmlspecialchars($error) ?>
-                        </div>
-                    <?php endif; ?>
+                    <!-- Contenedor para las notificaciones toast -->
+                    <div class="toast-container"></div>
 
                     <form method="POST" action="<?= url('plantas.delete', ['id_planta' => $id_planta]) ?>">
                         <div class="text-center mt-5">
-                            <div class="alert alert-warning">
-                                <div class="alert-message">
-                                    <strong>Advertencia:</strong> Esta acción desactivará la planta, por lo que no podrá
-                                    ser utilizada.
-                                </div>
-                                <div class="alert-message">
-                                    Esta acción solo es reversible por un Administrador.
-                                </div>
-                            </div>
-                            <?php if ($almacen): ?>
-                                <div class="alert alert-danger">
-                                    <div class="alert-message">
-                                        <strong>No se puede eliminar la planta:</strong> Tiene un almacén asociado.
-                                        <p>Primero debes eliminar el almacén asociado a esta planta.</p>
-                                    </div>
-
-                                    <div class="alert-actions mb-3">
-                                        <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>"
-                                           class="btn btn-primary">
-                                            Eliminar almacén "<?= htmlspecialchars($almacen->getNombre()) ?>"
-                                        </a>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if (!empty($botiquines)): ?>
-                                <div class="alert alert-danger">
-                                    <div class="alert-message">
-                                        <strong>No se puede eliminar la planta:</strong> Tiene <?= count($botiquines) ?>
-                                        botiquín(es) asociado(s).
-                                        <p>Primero debes eliminar todos los botiquines asociados a esta planta.</p>
-                                    </div>
-
-                                    <div class="alert-actions mb-3">
-                                        <a href="<?= url('botiquines.dashboard', ['planta' => $planta->getId()]) ?>"
-                                           class="btn btn-primary">
-                                            Ver botiquines de la planta
-                                        </a>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-
-                            <!-- Botones principales en la parte inferior -->
+                            <!-- Los botones principales siempre visibles -->
                             <div class="action-buttons-row text-center mt-5">
                                 <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary mx-2">Cancelar</a>
                                 <?php if (!$almacen && empty($botiquines)): ?>
@@ -143,7 +100,8 @@ try {
                                         Eliminación
                                     </button>
                                 <?php else: ?>
-                                    <button type="button" class="btn btn-danger mx-2" disabled>Confirmar Eliminación
+                                    <button type="button" class="btn btn-danger mx-2" disabled>
+                                        Confirmar Eliminación
                                     </button>
                                 <?php endif; ?>
                             </div>
@@ -153,6 +111,46 @@ try {
             </div>
         </div>
     </div>
+
+    <!-- Script simplificado que utiliza toasts.js -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toast de advertencia
+            ToastSystem.warning(
+                'Advertencia',
+                'Esta acción desactivará la planta, por lo que no podrá ser utilizada. Esta acción solo es reversible por un Administrador.'
+            );
+
+            <?php if ($almacen): ?>
+            // Toast para el almacén
+            ToastSystem.danger(
+                'No se puede eliminar la planta',
+                'Tiene un almacén asociado. Primero debes eliminar el almacén asociado a esta planta.',
+                `<a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>" 
+                   class="btn btn-primary">
+                    Eliminar almacén "<?= htmlspecialchars($almacen->getNombre()) ?>"
+                </a>`
+            );
+            <?php endif; ?>
+
+            <?php if (!empty($botiquines)): ?>
+            // Toast para los botiquines
+            ToastSystem.danger(
+                'No se puede eliminar la planta',
+                'Tiene <?= count($botiquines) ?> botiquín(es) asociado(s). Primero debes eliminar todos los botiquines asociados a esta planta.',
+                `<a href="<?= url('botiquines.dashboard', ['planta' => $planta->getId()]) ?>" 
+                   class="btn btn-primary">
+                    Ver botiquines de la planta
+                </a>`
+            );
+            <?php endif; ?>
+
+            <?php if (isset($error)): ?>
+            // Toast para errores de procesamiento
+            ToastSystem.danger('Error', '<?= htmlspecialchars($error) ?>');
+            <?php endif; ?>
+        });
+    </script>
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

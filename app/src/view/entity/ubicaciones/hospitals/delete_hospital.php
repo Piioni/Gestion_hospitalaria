@@ -38,6 +38,7 @@ try {
     $hospital = $relationInfo['hospital'];
     $relatedPlants = $relationInfo['relatedPlants'];
 
+    $scripts = "toasts.js";
     $title = "Confirmar Eliminación";
     include __DIR__ . "/../../../layouts/_header.php";
 
@@ -85,7 +86,7 @@ try {
 
                 <div class="form-actions">
                     <form action="" method="get" class="confirmation-form">
-                        <input type="hidden" name="id" value="<?= htmlspecialchars($id_hospital) ?>">
+                        <input type="hidden" name="id_hospital" value="<?= htmlspecialchars($id_hospital) ?>">
                         <input type="hidden" name="force" value="1">
                         <button type="submit" class="btn btn-danger">Eliminar de todos modos</button>
                     </form>
@@ -95,6 +96,17 @@ try {
         </div>
     </div>
 </div>
+
+<script>
+    // Mostrar notificación de advertencia
+    document.addEventListener('DOMContentLoaded', function() {
+        ToastSystem.warning('Advertencia', 
+            'Está a punto de eliminar un hospital con dependencias. Esta acción podría afectar la integridad de los datos.',
+            null,
+            {autoClose: false}
+        );
+    });
+</script>
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

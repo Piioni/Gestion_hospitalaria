@@ -38,6 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Intentar actualizar el hospital con los datos sanitizados
         $success = $hospitalService->updateHospital($hospital['id'], $hospital['name'], $hospital['address']);
 
+        // Si la actualización fue exitosa, redirigir al dashboard
+        if ($success) {
+            header("Location: " . url('hospitals.dashboard', ['success' => 'updated']));
+            exit;
+        }
+
     } catch (InvalidArgumentException $e) {
         // Capturar errores de validación para desplegar el mensaje.
         $errors[] = $e->getMessage();
@@ -69,12 +75,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <li><?= $error ?></li>
                     <?php endforeach; ?>
                 </ul>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Hospital actualizado correctamente.
             </div>
         <?php endif; ?>
 
