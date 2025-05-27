@@ -48,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $botiquin['id_planta'] = $planta->getId();
 }
 
-
+// Añadir el script de toasts a los scripts que se cargarán
+$scripts = "toasts.js";
 $title = "Crear Botiquín";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
@@ -64,28 +65,12 @@ include __DIR__ . "/../../../layouts/_header.php";
             </div>
         </div>
 
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger">
-                <ul class="error-list">
-                    <?php foreach ($errors as $error): ?>
-                        <li><?= htmlspecialchars($error); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-        
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Botiquín creado correctamente.
-            </div>
-        <?php endif; ?>
-
         <div class="card">
             <div class="card-header">
                 <h3>Información del Botiquín</h3>
             </div>
             <div class="card-body">
-                <form method="POST" action="" class="form">
+                <form method="POST" action="" class="form" id="createBotiquinForm">
                     <div class="form-group">
                         <label for="id_planta" class="form-label">Planta</label>
                         <div class="form-field">
@@ -125,5 +110,65 @@ include __DIR__ . "/../../../layouts/_header.php";
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if (!empty($errors)): ?>
+            // Mostrar errores en un toast de tipo danger
+            ToastSystem.danger(
+                'Error al crear el botiquín',
+                `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
+                null,
+                { autoClose: false }
+            );
+        <?php endif; ?>
+
+        <?php if ($success): ?>
+            // Mostrar mensaje de éxito
+            ToastSystem.success(
+                'Botiquín creado',
+                'El botiquín se ha creado correctamente.',
+                null,
+                { autoClose: true, closeDelay: 5000 }
+            );
+        <?php endif; ?>
+
+        // Validación del formulario
+        document.getElementById('createBotiquinForm').addEventListener('submit', function(event) {
+            const planta = document.getElementById('id_planta').value;
+            const nombre = document.getElementById('nombre').value;
+            const capacidad = document.getElementById('capacidad').value;
+            
+            let isValid = true;
+            let errorMessages = [];
+
+            if (!planta) {
+                errorMessages.push('Debe seleccionar una planta');
+                isValid = false;
+            }
+            
+            if (!nombre.trim()) {
+                errorMessages.push('El nombre del botiquín es obligatorio');
+                isValid = false;
+            }
+            
+            if (!capacidad || capacidad <= 0) {
+                errorMessages.push('La capacidad debe ser un número mayor que cero');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                ToastSystem.warning(
+                    'Formulario incompleto',
+                    errorMessages.join('<br>'),
+                    null,
+                    { autoClose: true, closeDelay: 7000 }
+                );
+            }
+        });
+    });
+</script>
+
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

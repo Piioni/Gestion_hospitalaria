@@ -69,7 +69,7 @@ class BotiquinService
         return $this->botiquinRepository->getBotiquinById($id_botiquin);
     }
 
-    public function getBotiquinProducts($id_botiquin): int
+    public function getStockByBotiquinId($id_botiquin): int
     {
         return $this->botiquinRepository->countProductos($id_botiquin);
     }

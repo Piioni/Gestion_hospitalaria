@@ -33,13 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $success = $botiquinesService->updateBotiquin($id_botiquin, $id_planta, $nombre, $capacidad);
-        
+
         if ($success) {
             // Redirigir a la página de lista de botiquines con mensaje de éxito
             header('Location: ' . url('botiquines.dashboard', ['success' => 'updated']));
             exit;
         }
-        
+
     } catch (InvalidArgumentException $e) {
         $errors[] = $e->getMessage();
     } catch (Exception $e) {
@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Añadir el script de toasts a los scripts que se cargarán
+$scripts = "toasts.js";
 $title = "Editar Botiquín";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
@@ -61,22 +63,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                     </p>
                 </div>
             </div>
-            
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <ul class="error-list">
-                        <?php foreach ($errors as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($success): ?>
-                <div class="alert alert-success">
-                    Botiquín actualizado correctamente.
-                </div>
-            <?php endif; ?>
 
             <div class="card">
                 <div class="card-content">
@@ -97,29 +83,55 @@ include __DIR__ . "/../../../layouts/_header.php";
                             <label for="nombre" class="form-label">Nombre del Botiquín</label>
                             <div class="form-field">
                                 <input type="text" id="nombre" name="nombre" class="form-input"
-                                    value="<?= htmlspecialchars($botiquin->getNombre()) ?>" 
-                                    placeholder="Ingrese el nombre del botiquín" required>
+                                       value="<?= htmlspecialchars($botiquin->getNombre()) ?>"
+                                       placeholder="Ingrese el nombre del botiquín" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="capacidad" class="form-label">Capacidad</label>
                             <div class="form-field">
                                 <input type="number" id="capacidad" name="capacidad" class="form-input"
-                                    value="<?= htmlspecialchars($botiquin->getCapacidad()) ?>" 
-                                    placeholder="Ingrese la capacidad del botiquín" required>
+                                       value="<?= htmlspecialchars($botiquin->getCapacidad()) ?>"
+                                       placeholder="Ingrese la capacidad del botiquín" required>
                             </div>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                             <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Volver</a>
-                            <a href="<?= url('botiquines.delete', ['id_botiquin' => $botiquin->getId()]) ?>" class="btn btn-danger">Eliminar
-                                botiquín</a>
+                            <a href="<?= url('botiquines.delete', ['id_botiquin' => $botiquin->getId()]) ?>"
+                               class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Eliminar botiquín
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            <?php if (!empty($errors)): ?>
+            // Mostrar errores en un toast de tipo danger
+            ToastSystem.danger(
+                'Error al actualizar el botiquín',
+                `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
+                null,
+                {autoClose: false}
+            );
+            <?php endif; ?>
+
+            <?php if ($success): ?>
+            // Mostrar mensaje de éxito
+            ToastSystem.success(
+                'Botiquín actualizado',
+                'El botiquín se ha actualizado correctamente.',
+                null,
+                {autoClose: true, closeDelay: 5000}
+            );
+            <?php endif; ?>
+        });
+    </script>
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

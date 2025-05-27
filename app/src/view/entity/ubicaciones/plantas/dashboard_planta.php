@@ -205,7 +205,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                     <td>
                                                                         <?php
                                                                         try {
-                                                                            $stock = $botiquinService->getBotiquinProducts($botiquin->getId());
+                                                                            $stock = $botiquinService->getStockByBotiquinId($botiquin->getId());
                                                                             echo htmlspecialchars($stock) . ' productos.';
                                                                         } catch (Exception $e) {
                                                                             echo 'Error al cargar el stock';
