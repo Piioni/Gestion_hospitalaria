@@ -30,7 +30,7 @@ $navTitle = $navTitle ?? "Pegasus Medical";
 <body>
 <header class="header">
     <div class="container">
-        <a href="/" class="logo">
+        <a href="<?= url('home') ?>" class="logo">
             <span class="logo-icon">
                 <img src="/assets/img/pegasus_medical.png" alt="Logo Pegasus Medical" class="logo-image">
             </span>
@@ -47,10 +47,10 @@ $navTitle = $navTitle ?? "Pegasus Medical";
                 <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Infraestructura</a>
                     <ul class="dropdown-menu">
-                        <li><a href="/ubicaciones/hospitals">Hospitales</a></li>
-                        <li><a href="/ubicaciones/plantas">Plantas</a></li>
-                        <li><a href="/ubicaciones/almacenes">Almacenes</a></li>
-                        <li><a href="/ubicaciones/botiquines">Botiquines</a></li>
+                        <li><a href="<?= url('hospitals') ?>">Hospitales</a></li>
+                        <li><a href="<?= url('plantas') ?>">Plantas</a></li>
+                        <li><a href="<?= url('almacenes') ?>">Almacenes</a></li>
+                        <li><a href="<?= url('botiquines') ?>">Botiquines</a></li>
                     </ul>
                 </li>
 
@@ -58,10 +58,10 @@ $navTitle = $navTitle ?? "Pegasus Medical";
                 <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Inventario</a>
                     <ul class="dropdown-menu">
-                        <li><a href="/stocks">Stock</a></li>
-                        <li><a href="/stocks/botiquines">Stock Botiquines</a></li>
-                        <li><a href="/stocks/almacenes">Stock Almacenes</a></li>
-                        <li><a href="/productos">Productos</a></li>
+                        <li><a href="<?= url('stocks') ?>">Stock</a></li>
+                        <li><a href="<?= url('stocks.botiquines') ?>">Stock Botiquines</a></li>
+                        <li><a href="<?= url('stocks.almacenes') ?>">Stock Almacenes</a></li>
+                        <li><a href="<?= url('productos') ?>">Productos</a></li>
                     </ul>
                 </li>
 
@@ -80,8 +80,8 @@ $navTitle = $navTitle ?? "Pegasus Medical";
                 <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle">Usuarios</a>
                     <ul class="dropdown-menu">
-                        <li><a href="/users/dashboard">Dashboard</a></li>
-                        <li><a href="/users/create">Crear Usuario</a></li>
+                        <li><a href="<?= url('users') ?>">Dashboard</a></li>
+                        <li><a href="<?= url('users.create') ?>">Crear Usuario</a></li>
                     </ul>
                 </li>
 
@@ -95,13 +95,13 @@ $navTitle = $navTitle ?? "Pegasus Medical";
                             <?php if (isset($_SESSION['user']['is_admin']) && $_SESSION['user']['is_admin']): ?>
                                 <li><a href="/users/list">Gestionar usuarios</a></li>
                                 <li class="dropdown-divider"></li>
-                                <li><a href="/users/edit?id=<?= $_SESSION['user']['id'] ?>">Mi perfil</a></li>
+                                <li><a href="<?= url('users.edit', ['id' => $_SESSION['user']['id']]) ?>">Mi perfil</a></li>
                             <?php endif; ?>
-                            <li><a href="/logout">Cerrar sesión</a></li>
+                            <li><a href="<?= url('logout') ?>">Cerrar sesión</a></li>
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="/login" class="nav-link">Iniciar sesión</a></li>
+                    <li><a href="<?= url('login') ?>" class="nav-link">Iniciar sesión</a></li>
                 <?php endif; ?>
             </ul>
         </nav>

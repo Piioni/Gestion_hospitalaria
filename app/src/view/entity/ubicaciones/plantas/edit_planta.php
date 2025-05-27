@@ -14,7 +14,7 @@ $hospitals = $hospitalService->getAllHospitals();
 $id_planta = $_GET["id_planta"] ?? null;
 
 if (!$id_planta || !is_numeric($id_planta)) {
-    header("Location: /plantas");
+    header("Location: " . url('plantas.dashboard'));
     exit;
 }
 
@@ -106,8 +106,8 @@ include __DIR__ . "/../../../layouts/_header.php";
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        <a href="/plantas" class="btn btn-secondary">Volver</a>
-                        <a href="/plantas/delete?id_planta=<?= $planta['id'] ?>" class="btn btn-danger">Eliminar Planta</a>
+                        <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary">Volver</a>
+                        <a href="<?= url('plantas.delete', ['id_planta' => $planta['id']]) ?>" class="btn btn-danger">Eliminar Planta</a>
                     </div>
                 </form>
             </div>

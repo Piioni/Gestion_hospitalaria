@@ -88,7 +88,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Guardar Hospital</button>
-                        <a href="/hospitals" class="btn btn-secondary">Volver</a>
+                        <a href="<?= url('hospitals.dashboard') ?>" class="btn btn-secondary">Volver</a>
                     </div>
                 </form>
             </div>

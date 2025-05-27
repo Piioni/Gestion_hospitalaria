@@ -13,8 +13,7 @@ include(__DIR__ . '/../layouts/_header.php');
                 en entornos hospitalarios, optimizando recursos y mejorando la atención al paciente.
             </p>
             <div class="hero-buttons">
-                <a href="/hospitals/list" class="btn btn-primary">Ver Hospitales</a>
-                <a href="/hospitals/create" class="btn btn-secondary">Crear Hospital</a>
+                <a href="/ubicaciones/hospitals/" class="btn btn-primary">Ver Hospitales</a>
             </div>
         </div>
         <div class="hero-image">

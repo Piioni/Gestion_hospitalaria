@@ -42,7 +42,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                     Control y gestión de plantas hospitalarias, sus almacenes asociados y botiquines.
                 </p>
                 <div class="action-buttons">
-                    <a href="/plantas/create" class="btn btn-primary">Crear nueva planta</a>
+                    <a href="<?= url('plantas.create') ?>" class="btn btn-primary">Crear nueva planta</a>
                 </div>
             </div>
 
@@ -76,7 +76,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <div class="filter-actions">
                             <button type="submit" class="btn btn-primary">Filtrar</button>
                             <?php if ($filtroHospital || isset($_GET['nombre'])): ?>
-                                <a href="?" class="btn btn-secondary">Limpiar filtros</a>
+                                <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary">Limpiar filtros</a>
                             <?php endif; ?>
                         </div>
                     </form>
@@ -93,7 +93,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <?php else: ?>
                             No hay plantas registradas en el sistema.
                         <?php endif; ?>
-                        <a href="/plantas/create" class="btn btn-primary">Crear una planta</a>
+                        <a href="<?= url('plantas.create') ?>" class="btn btn-primary">Crear una planta</a>
                     </div>
                 <?php else: ?>
                     <div class="plantas-list">
@@ -132,28 +132,28 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                 <p><strong>Almacén:</strong> <?= $almacenInfo ?></p>
                                             </div>
                                             <div class="planta-actions">
-                                                <a href="/botiquines/create?id_planta=<?= $planta->getId() ?>"
+                                                <a href="<?= url('botiquines.create', ['id_planta' => $planta->getId()]) ?>"
                                                    class="btn btn-sm btn-primary">
                                                     Añadir botiquín
                                                 </a>
-                                                <a href="/plantas/edit?id_planta=<?= $planta->getId() ?>"
+                                                <a href="<?= url('plantas.edit', ['id_planta' => $planta->getId()]) ?>"
                                                    class="btn btn-sm btn-secondary">
                                                     Editar planta
                                                 </a>
                                                 <?php
                                                 $almacen = $almacenService->getAlmacenByPlantaId($planta->getId());
                                                 if ($almacen) :?>
-                                                    <a href="/almacenes/view?id_almacen=<?= $almacen->getId() ?>"
+                                                    <a href="<?= url('almacenes.edit', ['id_almacen' => $almacen->getId()]) ?>"
                                                        class="btn btn-sm btn-primary">
                                                         Editar almacén
                                                     </a>
                                                 <?php else: ?>
-                                                    <a href="/almacenes/create?id_planta=<?= $planta->getId() ?>"
+                                                    <a href="<?= url('almacenes.create', ['id_planta' => $planta->getId()]) ?>"
                                                        class="btn btn-sm btn-primary">
                                                         Crear almacén
                                                     </a>
                                                 <?php endif; ?>
-                                                <a href="/plantas/delete?id_planta=<?= $planta->getId() ?>"
+                                                <a href="<?= url('plantas.delete', ['id_planta' => $planta->getId()]) ?>"
                                                    class="btn btn-sm btn-danger">
                                                     Eliminar planta
                                                 </a>
@@ -171,7 +171,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                 if (empty($botiquines)): ?>
                                                     <div class="empty-plants">
                                                         Esta planta no tiene botiquines registrados.
-                                                        <a href="/botiquines/create?id_planta=<?= $planta->getId() ?>"
+                                                        <a href="<?= url('botiquines.create', ['id_planta' => $planta->getId()]) ?>"
                                                            class="btn btn-sm btn-primary">
                                                             Añadir un botiquín
                                                         </a>
@@ -192,11 +192,11 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                     <td><?= htmlspecialchars($botiquin->getNombre()) ?></td>
                                                                     <td><?= htmlspecialchars($botiquin->getCapacidad()) ?></td>
                                                                     <td class="actions-column">
-                                                                        <a href="/botiquines/edit?id_botiquin=<?= $botiquin->getId() ?>"
+                                                                        <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>"
                                                                            class="btn btn-sm btn-secondary">
                                                                             Editar
                                                                         </a>
-                                                                        <a href="/botiquines/view?id_botiquin=<?= $botiquin->getId() ?>"
+                                                                        <a href="<?= url('botiquines.dashboard', ['id_botiquin' => $botiquin->getId()]) ?>"
                                                                            class="btn btn-sm btn-info">
                                                                             Ver stock
                                                                         </a>

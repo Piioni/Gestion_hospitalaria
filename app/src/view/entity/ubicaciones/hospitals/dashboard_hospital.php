@@ -36,7 +36,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                 Aquí puedes gestionar los hospitales, sus plantas y almacenes asociados. Puedes crear, editar o eliminar hospitales y ver sus detalles.
             </p>
             <div class="action-buttons">
-                <a href="/hospitals/create" class="btn btn-primary">Crear hospital</a>
+                <a href="<?= url('hospitals.create') ?>" class="btn btn-primary">Crear hospital</a>
             </div>
         </div>
 
@@ -90,7 +90,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                     <?php else: ?>
                         No hay hospitales registrados en el sistema.
                     <?php endif; ?>
-                    <a href="/hospitals/create" class="btn btn-primary">Crear un hospital</a>
+                    <a href="<?= url('hospitals.create') ?>" class="btn btn-primary">Crear un hospital</a>
                 </div>
             <?php else: ?>
                 <div class="hospitals-list">
@@ -129,28 +129,28 @@ include __DIR__ . "/../../../layouts/_header.php";
                                             </p>
                                         </div>
                                         <div class="hospital-actions">
-                                            <a href="/hospitals/edit?id_hospital=<?= $hospital->getId() ?>"
+                                            <a href="<?= url('hospitals.edit', ['id_hospital' => $hospital->getId()]) ?>"
                                                class="btn btn-sm btn-secondary">
                                                 Editar hospital
                                             </a>
-                                            <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
+                                            <a href="<?= url('plantas.create', ['id_hospital' => $hospital->getId()]) ?>"
                                                class="btn btn-sm btn-primary">
                                                 Añadir planta
                                             </a>
                                             <!-- Check if the hospital has a general warehouse already to display the corresponding button -->
                                             <?php if (!$almacen): ?>
-                                                <a href="/almacenes/create?tipo=GENERAL&id_hospital=<?= $hospital->getId() ?>"
+                                                <a href="<?= url('almacenes.create', ['tipo' => 'GENERAL', 'id_hospital' => $hospital->getId()]) ?>"
                                                    class="btn btn-sm btn-secondary">
                                                     Añadir Almacén General
                                                 </a>
                                             <?php else: ?>
-                                                <a href="/almacenes/edit?id_almacen=<?= $almacen->getId() ?>"
+                                                <a href="<?= url('almacenes.edit', ['id_almacen' => $almacen->getId()]) ?>"
                                                    class="btn btn-sm btn-secondary">
                                                     Editar Almacén General
                                                 </a>
                                             <?php endif; ?>
 
-                                            <a href="/hospitals/delete?id_hospital=<?= $hospital->getId() ?>"
+                                            <a href="<?= url('hospitals.delete', ['id_hospital' => $hospital->getId()]) ?>"
                                                class="btn btn-sm btn-danger">
                                                 Eliminar
                                             </a>
@@ -171,7 +171,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                     <p>
                                                         Este hospital no tiene plantas registradas.
                                                     </p>
-                                                    <a href="/plantas/create?id_hospital=<?= $hospital->getId() ?>"
+                                                    <a href="<?= url('plantas.create', ['id_hospital' => $hospital->getId()]) ?>"
                                                        class="btn btn-sm btn-primary">
                                                         Añadir una planta
                                                     </a>
@@ -199,11 +199,11 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                     }
                                                                     ?>
                                                                 <td class="actions-column">
-                                                                    <a href="/plants/edit?id=<?= $planta->getId() ?>"
+                                                                    <a href="<?= url('plantas.edit', ['id_planta' => $planta->getId()]) ?>"
                                                                        class="btn btn-sm btn-secondary">
                                                                         Editar
                                                                     </a>
-                                                                    <a href="/plants/view?id=<?= $planta->getId() ?>"
+                                                                    <a href="<?= url('plantas.dashboard', ['id' => $planta->getId()]) ?>"
                                                                        class="btn btn-sm btn-info">
                                                                         Ver stock
                                                                     </a>

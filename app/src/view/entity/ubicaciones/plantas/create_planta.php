@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($hospital) {
         $planta['id_hospital'] = $hospital->getId();
     } else {
-        header('Location: /plantas/list?error=hospital_no_encontrado');
+        header('Location: ' . url('plantas.dashboard', ['error' => 'hospital_no_encontrado']));
         exit;
     }
 }
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Crear Planta</button>
-                        <a href="/plantas" class="btn btn-secondary">Cancelar</a>
+                        <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>

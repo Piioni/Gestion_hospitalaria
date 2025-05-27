@@ -8,14 +8,14 @@ $hospitalService = new HospitalService();
 $id_hospital = $_GET["id_hospital"] ?? null;
 
 if (!$id_hospital || !is_numeric($id_hospital)) {
-    header("Location: /hospitals");
+    header("Location: " . url('hospitals.dashboard'));
     exit;
 }
 
 // Obtener los datos del hospital
 $hospitalData = $hospitalService->getHospitalById($id_hospital);
 if (empty($hospitalData)) {
-    header("Location: /hospitals");
+    header("Location: " . url('hospitals.dashboard'));
     exit;
 }
 
@@ -100,7 +100,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Actualizar Hospital</button>
-                        <a href="/hospitals" class="btn btn-secondary">Volver</a>
+                        <a href="<?= url('hospitals.dashboard') ?>" class="btn btn-secondary">Volver</a>
                     </div>
                 </form>
             </div>

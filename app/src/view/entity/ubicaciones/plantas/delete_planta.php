@@ -6,7 +6,7 @@ use model\service\PlantaService;
 $id_planta = $_GET["id_planta"] ?? null;
 
 if (!$id_planta || !is_numeric($id_planta)) {
-    header('Location: /plantas?error=id_invalid');
+    header('Location: ' . url('plantas.dashboard', ['error' => 'id_invalid']));
     exit;
 }
 
@@ -18,7 +18,7 @@ try {
     // Sí es una solicitud de confirmación, eliminar directamente
     if ($force || isset($_GET["confirm"])) {
         $result = $plantaService->deletePlanta($id_planta);
-        header('Location: /plantas/dashboard?success=deleted');
+        header('Location: ' . url('plantas.dashboard', ['success' => 'deleted']));
         exit;
     }
 
@@ -28,7 +28,7 @@ try {
     // Si no hay relaciones, eliminar directamente
     if ($relationInfo['canDelete']) {
         $result = $plantaService->deletePlanta($id_planta);
-        header('Location: /plantas?success=deleted');
+        header('Location: ' . url('plantas.dashboard', ['success' => 'deleted']));
         exit;
     }
 
@@ -41,12 +41,12 @@ try {
 
 } catch (InvalidArgumentException $e) {
     // Error de validación
-    header('Location: /plantas?error=' . urlencode($e->getMessage()));
+    header('Location: ' . url('plantas.dashboard', ['error' => urlencode($e->getMessage())]));
     exit;
 } catch (Exception $e) {
     // Error inesperado
     error_log("Error al procesar eliminación: " . $e->getMessage());
-    header('Location: /plantas?error=unexpected');
+    header('Location: ' . url('plantas.dashboard', ['error' => 'unexpected']));
     exit;
 }
 
@@ -60,8 +60,8 @@ try {
                 <p class="text-center">¿Estás seguro de que deseas eliminar la planta <strong><?= htmlspecialchars($planta->getNombre()) ?></strong>?</p>
                 <!-- TODO: Mostrar Almacen y Botiquines Dependientes.                -->
                 <div class="text-center mt-4">
-                    <a href="/plantas/dashboard" class="btn btn-secondary">Cancelar</a>
-                    <a href="?id_planta=<?= urlencode($id_planta) ?>&confirm=1" class="btn btn-danger">Confirmar Eliminación</a>
+                    <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
+                    <a href="<?= url('plantas.delete', ['id_planta' => $id_planta, 'confirm' => 1]) ?>" class="btn btn-danger">Confirmar Eliminación</a>
                 </div>
             </div>
         </div>
@@ -69,4 +69,3 @@ try {
 </div>
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";
-
