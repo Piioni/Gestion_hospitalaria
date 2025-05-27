@@ -124,7 +124,7 @@ class StockRepository
     }
 
     /**
-     * Método interno para añadir producto al stock según tipo de ubicación
+     * Method interno para añadir producto al stock según tipo de ubicación
      */
     private function addProductToStock(string $tipoUbicacion, int $idUbicacion, int $idProducto, int $cantidad, int $cantidadMinima): bool
     {

@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Incorporar acciones de editar y eliminar botiquines.
-
 use model\service\PlantaService;
 use model\service\HospitalService;
 use model\service\AlmacenService;
@@ -115,7 +113,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                             // Obtener el almacén asociado
                             try {
                                 $almacen = $almacenService->getAlmacenByPlantaId($planta->getId());
-                                $almacenInfo = $almacen ?  $almacen->getNombre() : "Sin almacén asignado";
+                                $almacenInfo = $almacen ? $almacen->getNombre() : "Sin almacén asignado";
                             } catch (Exception $e) {
                                 $almacenInfo = "Error al cargar el almacén";
                             }
@@ -197,14 +195,16 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                     <td><?= htmlspecialchars($botiquin->getNombre()) ?></td>
                                                                     <td><?= htmlspecialchars($botiquin->getCapacidad()) ?></td>
                                                                     <td class="actions-column">
-                                                                        <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>"
-                                                                           class="btn btn-sm btn-secondary">
-                                                                            Editar
-                                                                        </a>
-                                                                        <a href="<?= url('stocks.botiquines', ['id_botiquin' => $botiquin->getId()]) ?>"
-                                                                           class="btn btn-sm btn-info">
-                                                                            Ver stock
-                                                                        </a>
+                                                                        <div class="btn-container">
+                                                                            <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>"
+                                                                               class="btn btn-sm btn-secondary">
+                                                                                Editar
+                                                                            </a>
+                                                                            <a href="<?= url('stocks.botiquines', ['id_botiquin' => $botiquin->getId()]) ?>"
+                                                                               class="btn btn-sm btn-info">
+                                                                                Ver stock
+                                                                            </a>
+                                                                        </div>
                                                                     </td>
                                                                 </tr>
                                                             <?php endforeach; ?>

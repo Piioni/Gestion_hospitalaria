@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Implementar filtrado por nombre de botiquin
-
 use model\service\BotiquinService;
 use model\service\PlantaService;
 use model\service\HospitalService;
@@ -143,6 +141,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                                         <td><?= htmlspecialchars($hospitalNombre) ?></td>
                                         <td><?= $botiquin->getCapacidad() ?> medicamentos</td>
                                         <td class="actions-column">
+                                            <div class="btn-container">
                                             <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>"
                                                 class="btn btn-sm btn-secondary">
                                                 <i class="bi bi-pencil"></i> Editar
@@ -155,6 +154,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                                                 class="btn btn-sm btn-danger">
                                                 <i class="bi bi-trash"></i> Eliminar
                                             </a>
+                                            </div>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>

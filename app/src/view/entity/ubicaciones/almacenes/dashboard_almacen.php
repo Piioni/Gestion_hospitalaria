@@ -168,15 +168,17 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <td><?= htmlspecialchars($hospitalNombre) ?></td>
                                 <td><?= htmlspecialchars($plantaNombre) ?></td>
                                 <td class="actions-column">
-                                    <a href="<?= url('almacenes.edit', ['id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-secondary">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <a href="<?= url('stocks.almacenes', ['id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-box-seam"></i> Ver stock
-                                    </a>
-                                    <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </a>
+                                    <div class="btn-container">
+                                        <a href="<?= url('almacenes.edit', ['id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-secondary">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <a href="<?= url('stocks.almacenes', ['id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-box-seam"></i> Ver stock
+                                        </a>
+                                        <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
