@@ -109,7 +109,6 @@
 /* Filtros específicos */
 .filter-section {
     margin-bottom: 1.75rem;
-    margin-top: 1.5rem;
     background-color: var(--light-bg);
     padding: 1.5rem;
     border-radius: var(--border-radius);

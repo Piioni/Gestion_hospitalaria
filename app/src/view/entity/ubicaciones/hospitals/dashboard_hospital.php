@@ -10,6 +10,9 @@ $hospitalService = new HospitalService();
 // Obtener filtro de nombre si existe
 $filtroNombre = $_GET['nombre'] ?? null;
 
+// Obtener si el filtro está activo
+$filtrarActivo = isset($_GET['filtrar']) || $filtroNombre;
+
 // Obtener hospitales filtrados por nombre si se proporciona un filtro
 if ($filtroNombre) {
     $hospitals = $hospitalService->getHospitalsByNombre($filtroNombre);
@@ -27,49 +30,53 @@ $error = $_GET['error'] ?? null;
 
 $scripts = "toasts.js";
 $title = "Sistema de Gestión Hospitalaria";
+$navTitle = "Gestión de Hospitales";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
     <div class="page-section">
         <div class="container">
-            <div class="overview-section">
-                <h1 class="page-title">Gestión de Hospitales</h1>
-                <p class="lead-text">
-                    Aquí puedes gestionar los hospitales, sus plantas y almacenes asociados. Puedes crear, editar o
-                    eliminar hospitales y ver sus detalles.
-                </p>
-                <div class="action-buttons">
-                    <a href="<?= url('hospitals.create') ?>" class="btn btn-primary">Crear hospital</a>
-                </div>
-            </div>
-
             <div class="hospitals-section">
-
-                <div class="filter-section card">
-                    <div class="card-body">
-                        <h3 class="filter-title">Filtrar hospitales</h3>
-                        <form action="" method="GET" class="filter-form">
-                            <div class="filter-fields">
-                                <div class="filter-field">
-                                    <label for="nombre" class="form-label">Nombre:</label>
-                                    <div class="form-field">
-                                        <input type="text" name="nombre" id="nombre" class="form-input"
-                                               placeholder="Buscar por nombre de hospital"
-                                               value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
+                <?php if ($filtrarActivo): ?>
+                    <div class="filter-section card">
+                        <div class="card-body">
+                            <h3 class="filter-title">Filtrar hospitales</h3>
+                            <form action="" method="GET" class="filter-form">
+                                <input type="hidden" name="filtrar" value="1">
+                                <div class="filter-fields">
+                                    <div class="filter-field">
+                                        <label for="nombre" class="form-label">Nombre:</label>
+                                        <div class="form-field">
+                                            <input type="text" name="nombre" id="nombre" class="form-input"
+                                                placeholder="Buscar por nombre de hospital"
+                                                value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="filter-actions">
-                                <button type="submit" class="btn btn-primary">Filtrar</button>
-                                <?php if (isset($_GET['nombre'])): ?>
-                                    <a href="?" class="btn btn-secondary">Limpiar filtros</a>
-                                <?php endif; ?>
-                            </div>
-                        </form>
+                                <div class="filter-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search"></i> Filtrar
+                                    </button>
+                                    <a href="?" class="btn btn-secondary">
+                                        <i class="bi bi-x-circle"></i> Limpiar filtros
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
+                    <h2 class="section-title">Hospitales y sus plantas</h2>
+                    <div class="action-buttons">
+                        <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
+                            <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
+                        </a>
+                        <a href="<?= url('hospitals.create') ?>" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Crear hospital
+                        </a>
                     </div>
                 </div>
-
-                <h2 class="section-title">Hospitales y sus plantas</h2>
 
                 <?php if (empty($hospitals)): ?>
                     <div class="empty-state">
@@ -78,7 +85,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                         <?php else: ?>
                             No hay hospitales registrados en el sistema.
                         <?php endif; ?>
-                        <a href="<?= url('hospitals.create') ?>" class="btn btn-primary">Crear un hospital</a>
+                        <a href="<?= url('hospitals.create') ?>" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Crear un hospital
+                        </a>
                     </div>
                 <?php else: ?>
                     <div class="hospitals-list">
@@ -158,7 +167,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                         </p>
                                                         <a href="<?= url('plantas.create', ['id_hospital' => $hospital->getId()]) ?>"
                                                            class="btn btn-sm btn-primary">
-                                                            Añadir una planta
+                                                            <i class="bi bi-plus-circle"></i> Añadir una planta
                                                         </a>
                                                     </div>
                                                 <?php else: ?>
@@ -187,7 +196,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                         <div class="btn-container">
                                                                             <a href="<?= url('plantas.edit', ['id_planta' => $planta->getId()]) ?>"
                                                                                class="btn btn-sm btn-secondary">
-                                                                                <i class="bi bi-pencil"></i>Editar
+                                                                                <i class="bi bi-pencil"></i> Editar
                                                                             </a>
                                                                             <a href="<?= url('plantas.dashboard', ['id' => $planta->getId()]) ?>"
                                                                                class="btn btn-sm btn-info">

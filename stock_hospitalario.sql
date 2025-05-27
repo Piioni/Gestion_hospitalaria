@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: mysql
--- Tiempo de generación: 27-05-2025 a las 04:15:16
+-- Tiempo de generación: 27-05-2025 a las 19:14:46
 -- Versión del servidor: 8.0.42
 -- Versión de PHP: 8.2.27
 
@@ -42,7 +42,8 @@ CREATE TABLE `almacenes` (
 INSERT INTO `almacenes` (`id_almacen`, `nombre`, `tipo`, `id_hospital`, `id_planta`) VALUES
 (1, 'Almacen Central Importante', 'GENERAL', 1, NULL),
 (5, 'Almacen de Enfermeria', 'PLANTA', 1, 4),
-(6, 'Almace Nacional ', 'GENERAL', 6, NULL);
+(6, 'Almace Nacional ', 'GENERAL', 6, NULL),
+(8, 'Almacen de pana', 'PLANTA', 1, 5);
 
 -- --------------------------------------------------------
 
@@ -62,7 +63,8 @@ CREATE TABLE `botiquines` (
 --
 
 INSERT INTO `botiquines` (`id_botiquin`, `id_planta`, `nombre`, `capacidad`) VALUES
-(1, 4, 'Botiquin de Paracetamols ', 50);
+(1, 4, 'Botiquin de Paracetamols ', 50),
+(2, 5, 'Botiquin de ibuprofenos', 100);
 
 -- --------------------------------------------------------
 
@@ -110,7 +112,9 @@ CREATE TABLE `hospitales` (
 
 INSERT INTO `hospitales` (`id_hospital`, `nombre`, `ubicacion`, `activo`) VALUES
 (1, 'Hospital de Fuentenueva 2', 'Calle fuentenueva 2', 1),
-(6, 'Hospsital Nacional', 'Gran Via', 0);
+(6, 'Hospsital Nacional', 'Gran Via', 0),
+(7, 'Hospital Nacional', 'Gran via del colon', 1),
+(8, 'Hospital de prueba', 'Prueba', 0);
 
 -- --------------------------------------------------------
 
@@ -147,10 +151,11 @@ CREATE TABLE `plantas` (
 --
 
 INSERT INTO `plantas` (`id_planta`, `id_hospital`, `nombre`, `activo`) VALUES
-(1, 1, 'Planta de pediatria ', 1),
+(1, 1, 'Planta de pediatria ', 0),
 (2, 1, 'Planta de Enfermeria ', 1),
-(3, 1, 'Planta del mamapinga', 1),
-(4, 1, 'Planta de Enfermeria 2', 1);
+(3, 1, 'Planta del mamapinga', 0),
+(4, 1, 'Planta de Enfermeria 2', 1),
+(5, 1, 'Planta de Manuel', 1);
 
 -- --------------------------------------------------------
 
@@ -391,13 +396,13 @@ ALTER TABLE `user_planta`
 -- AUTO_INCREMENT de la tabla `almacenes`
 --
 ALTER TABLE `almacenes`
-  MODIFY `id_almacen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_almacen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `botiquines`
 --
 ALTER TABLE `botiquines`
-  MODIFY `id_botiquin` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_botiquin` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `catalogo_productos`
@@ -415,7 +420,7 @@ ALTER TABLE `consumos`
 -- AUTO_INCREMENT de la tabla `hospitales`
 --
 ALTER TABLE `hospitales`
-  MODIFY `id_hospital` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_hospital` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `movimientos`
@@ -427,7 +432,7 @@ ALTER TABLE `movimientos`
 -- AUTO_INCREMENT de la tabla `plantas`
 --
 ALTER TABLE `plantas`
-  MODIFY `id_planta` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_planta` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
