@@ -36,17 +36,24 @@ try {
     }
     
     // Verificar si tiene stock asociado
-    // Por simplicidad, simularemos esta verificación
     $tieneStock = false; // Aquí se implementaría la lógica real para verificar si tiene stock
+    
+    // Capturar errores si los hay
+    $error = null;
 
     // Si es una solicitud de confirmación, eliminar el almacén
     if (isset($_GET["confirm"])) {
-        $result = $almacenService->deleteAlmacen($id_almacen);
-        header('Location: ' . url('almacenes.dashboard', ['success' => 'deleted']));
-        exit;
+        try {
+            $result = $almacenService->deleteAlmacen($id_almacen);
+            header('Location: ' . url('almacenes.dashboard', ['success' => 'deleted']));
+            exit;
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
     }
 
     $title = "Confirmar Eliminación de Almacén";
+    $scripts = "toasts.js";
     include __DIR__ . "/../../../layouts/_header.php";
 } catch (Exception $e) {
     // Error inesperado
@@ -78,19 +85,50 @@ try {
                         <p><strong>Planta:</strong> <?= htmlspecialchars($planta->getNombre()) ?></p>
                     <?php endif; ?>
                 </div>
-
-                <div class="alert alert-warning">
-                    <strong>Advertencia:</strong> Esta acción eliminará el almacén y todos sus registros asociados. Esta acción no se puede deshacer.
-                </div>
                 
                 <div class="text-center mt-4">
                     <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
-                    <a href="<?= url('almacenes.delete', ['id_almacen' => $id_almacen, 'confirm' => 1]) ?>" class="btn btn-danger">Confirmar Eliminación</a>
+                    <a href="<?= url('almacenes.delete', ['id_almacen' => $id_almacen, 'confirm' => 1]) ?>" 
+                       class="btn btn-danger" 
+                       id="confirmDelete">Confirmar Eliminación</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mostrar un toast de advertencia sobre la eliminación
+        ToastSystem.warning(
+            'Advertencia',
+            'Esta acción eliminará el almacén y todos sus registros asociados. Esta acción no se puede deshacer.',
+            null,
+            { autoClose: false }
+        );
+        
+        <?php if ($tieneStock): ?>
+            // Mostrar una advertencia adicional si el almacén tiene stock
+            ToastSystem.info(
+                'Información importante',
+                'Este almacén tiene productos en stock. Al eliminarlo, todo el stock asociado también será eliminado.',
+                null,
+                { autoClose: false }
+            );
+        <?php endif; ?>
+        
+        <?php if ($error): ?>
+            // Mostrar error si existe
+            ToastSystem.danger(
+                'Error al eliminar',
+                '<?= htmlspecialchars($error) ?>',
+                null,
+                { autoClose: false }
+            );
+        <?php endif; ?>
+
+    });
+</script>
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";

@@ -38,6 +38,7 @@ $success = $_GET['success'] ?? null;
 $error = $_GET['error'] ?? null;
 
 $title = "Gestión de Almacenes";
+$scripts = "toasts.js";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -49,37 +50,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                 Control y administración de almacenes generales y de planta del sistema hospitalario.
             </p>
             <div class="action-buttons">
-                <a href="<?= url('almacenes.create') ?>" class="btn btn-primary">Crear nuevo almacén</a>
+                <a href="<?= url('almacenes.create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear nuevo almacén</a>
             </div>
         </div>
-
-        <?php if ($success): ?>
-            <?php if ($success == 'created'): ?>
-                <div class="alert alert-success">
-                    Almacén creado correctamente.
-                </div>
-            <?php elseif ($success == 'updated'): ?>
-                <div class="alert alert-success">
-                    Almacén actualizado correctamente.
-                </div>
-            <?php elseif ($success == 'deleted'): ?>
-                <div class="alert alert-success">
-                    Almacén eliminado correctamente.
-                </div>
-            <?php endif; ?>
-        <?php endif; ?>
-
-        <?php if ($error): ?>
-            <div class="alert alert-danger">
-                <?php if ($error == 'not_found'): ?>
-                    El almacén no existe.
-                <?php elseif ($error == 'no_id'): ?>
-                    No se proporcionó un ID de almacén.
-                <?php else: ?>
-                    Ha ocurrido un error: <?= htmlspecialchars($error) ?>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
 
         <div class="filter-section card">
             <div class="card-body">
@@ -113,9 +86,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                     </div>
                     
                     <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
                         <?php if ($filtroHospital || $filtroTipo): ?>
-                            <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary">Limpiar filtros</a>
+                            <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
                         <?php endif; ?>
                     </div>
                 </form>
@@ -132,7 +105,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                     <?php else: ?>
                         No hay almacenes registrados en el sistema.
                     <?php endif; ?>
-                    <a href="<?= url('almacenes.create') ?>" class="btn btn-primary">Crear un almacén</a>
+                    <a href="<?= url('almacenes.create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear un almacén</a>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -197,6 +170,74 @@ include __DIR__ . "/../../../layouts/_header.php";
     });
     document.getElementById('tipo').addEventListener('change', function() {
         this.form.submit();
+    });
+
+    // Notificaciones Toast
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mostrar notificaciones según los parámetros
+        <?php if ($success): ?>
+            <?php if ($success === 'created'): ?>
+                ToastSystem.success(
+                    'Almacén creado', 
+                    'El almacén ha sido creado correctamente.',
+                    null,
+                    { autoClose: true, closeDelay: 5000 }
+                );
+            <?php elseif ($success === 'updated'): ?>
+                ToastSystem.success(
+                    'Almacén actualizado', 
+                    'El almacén ha sido actualizado correctamente.',
+                    null,
+                    { autoClose: true, closeDelay: 5000 }
+                );
+            <?php elseif ($success === 'deleted'): ?>
+                ToastSystem.success(
+                    'Almacén eliminado', 
+                    'El almacén ha sido eliminado correctamente.',
+                    null,
+                    { autoClose: true, closeDelay: 5000 }
+                );
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+            <?php if ($error === 'not_found'): ?>
+                ToastSystem.danger(
+                    'Error', 
+                    'El almacén no existe.',
+                    null,
+                    { autoClose: true, closeDelay: 7000 }
+                );
+            <?php elseif ($error === 'no_id'): ?>
+                ToastSystem.danger(
+                    'Error', 
+                    'No se proporcionó un ID de almacén.',
+                    null,
+                    { autoClose: true, closeDelay: 7000 }
+                );
+            <?php elseif ($error === 'id_invalid'): ?>
+                ToastSystem.danger(
+                    'Error', 
+                    'El ID del almacén no es válido.',
+                    null,
+                    { autoClose: true, closeDelay: 7000 }
+                );
+            <?php elseif ($error === 'unexpected'): ?>
+                ToastSystem.danger(
+                    'Error inesperado', 
+                    'Ha ocurrido un error inesperado al procesar su solicitud.',
+                    null,
+                    { autoClose: true, closeDelay: 7000 }
+                );
+            <?php else: ?>
+                ToastSystem.danger(
+                    'Error', 
+                    'Ha ocurrido un error: <?= htmlspecialchars($error) ?>',
+                    null,
+                    { autoClose: true, closeDelay: 7000 }
+                );
+            <?php endif; ?>
+        <?php endif; ?>
     });
 </script>
 

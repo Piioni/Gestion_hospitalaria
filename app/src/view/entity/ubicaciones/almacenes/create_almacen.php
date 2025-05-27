@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $title = "Crear Almacen";
-$scripts = "almacenes.js";
+$scripts = ["almacenes.js", "toasts.js"];
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -76,29 +76,13 @@ include __DIR__ . "/../../../layouts/_header.php";
                 </div>
             </div>
 
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <strong>Error al crear el almacen</strong>
-                        <ul class="error-list">
-                            <?php foreach ($errors as $error): ?>
-                                <li><?= $error ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </div>
-            <?php endif; ?>
-
             <div class="almacen-form-container">
                 <div class="card almacen-card">
                     <div class="card-header">
                         <h3>Información del Almacen</h3>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="" class="form almacen-form">
+                        <form method="POST" action="" class="form almacen-form" id="createAlmacenForm">
                             <div class="form-group">
                                 <label for="nombre" class="form-label field-required">Nombre del Almacen</label>
                                 <div class="form-field">
@@ -179,6 +163,19 @@ include __DIR__ . "/../../../layouts/_header.php";
     <script>
         // Inicializar variables globales necesarias para el script
         window.allPlantas = <?= json_encode($plantas, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            <?php if (!empty($errors)): ?>
+                // Mostrar errores en un toast de tipo danger
+                ToastSystem.danger(
+                    'Error al crear el almacén',
+                    `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
+                    null,
+                    { autoClose: false }
+                );
+            <?php endif; ?>
+
+        });
     </script>
 
 <?php

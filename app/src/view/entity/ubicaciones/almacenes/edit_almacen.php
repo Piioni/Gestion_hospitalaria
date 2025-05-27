@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $title = "Editar Almacén";
-$scripts = "almacenes.js"; // Reutilizamos el mismo JS
+$scripts = ["almacenes.js", "toasts.js"];
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -97,29 +97,13 @@ include __DIR__ . "/../../../layouts/_header.php";
                 </div>
             </div>
 
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <strong>Error al actualizar el almacén</strong>
-                        <ul class="error-list">
-                            <?php foreach ($errors as $error): ?>
-                                <li><?= $error ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </div>
-            <?php endif; ?>
-
             <div class="almacen-form-container">
                 <div class="card almacen-card">
                     <div class="card-header">
                         <h3>Información del Almacén</h3>
                     </div>
                     <div class="card-body">
-                        <form method="POST" class="form almacen-form">
+                        <form method="POST" class="form almacen-form" id="editAlmacenForm">
                             <!-- Campo oculto para el ID -->
                             <input type="hidden" name="id" value="<?= htmlspecialchars($almacen['id']) ?>">
 
@@ -205,6 +189,70 @@ include __DIR__ . "/../../../layouts/_header.php";
 
         // Para preseleccionar la planta en edición
         window.selectedPlantaId = '<?= $almacen['id_planta'] ?? '' ?>';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            <?php if (!empty($errors)): ?>
+                // Mostrar errores en un toast de tipo danger
+                ToastSystem.danger(
+                    'Error al actualizar el almacén',
+                    `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
+                    null,
+                    { autoClose: false }
+                );
+            <?php endif; ?>
+            
+            <?php if ($success): ?>
+                // Mostrar mensaje de éxito
+                ToastSystem.success(
+                    'Almacén actualizado',
+                    'El almacén se ha actualizado correctamente.',
+                    null,
+                    { autoClose: true, closeDelay: 5000 }
+                );
+            <?php endif; ?>
+            
+            // Validar el formulario antes de enviar
+            document.getElementById('editAlmacenForm').addEventListener('submit', function(event) {
+                const nombre = document.getElementById('nombre').value.trim();
+                const tipo = document.getElementById('tipo').value;
+                const hospital = document.getElementById('id_hospital').value;
+                const planta = document.getElementById('id_planta').value;
+                
+                let isValid = true;
+                let errorMessages = [];
+                
+                if (!nombre) {
+                    errorMessages.push('Debe ingresar un nombre para el almacén');
+                    isValid = false;
+                }
+                
+                if (!tipo) {
+                    errorMessages.push('Debe seleccionar un tipo de almacén');
+                    isValid = false;
+                }
+                
+                if (!hospital) {
+                    errorMessages.push('Debe seleccionar un hospital');
+                    isValid = false;
+                }
+                
+                // Si es de tipo PLANTA, validar que se haya seleccionado una planta
+                if (tipo === 'PLANTA' && !planta) {
+                    errorMessages.push('Para almacenes de tipo PLANTA, debe seleccionar una planta');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    event.preventDefault();
+                    ToastSystem.warning(
+                        'Formulario incompleto',
+                        errorMessages.join('<br>'),
+                        null,
+                        { autoClose: true, closeDelay: 7000 }
+                    );
+                }
+            });
+        });
     </script>
 
 <?php

@@ -97,9 +97,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                                         <div class="hospital-details">
                                             <div class="hospital-info">
                                                 <p>
-                                                    <strong>Nombre:</strong> <?= htmlspecialchars($hospital->getNombre()) ?>
-                                                </p>
-                                                <p>
                                                     <strong>Dirección:</strong> <?= htmlspecialchars($hospital->getUbicacion()) ?>
                                                 </p>
                                                 <p>
@@ -183,7 +180,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                         if ($almacenService->getAlmacenByPlantaId($planta->getId()) == null) {
                                                                             echo "No asignado";
                                                                         } else {
-                                                                            htmlspecialchars($almacenService->getAlmacenByPlantaId($planta->getId())->getNombre());
+                                                                            echo htmlspecialchars($almacenService->getAlmacenByPlantaId($planta->getId())->getNombre());
                                                                         }
                                                                         ?>
                                                                     <td class="actions-column">
