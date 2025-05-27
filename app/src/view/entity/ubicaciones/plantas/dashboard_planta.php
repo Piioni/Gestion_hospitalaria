@@ -49,6 +49,30 @@ include __DIR__ . "/../../../layouts/_header.php";
                 </div>
             </div>
 
+            <?php if (isset($_GET['error'])) :
+                if ($_GET['error'] == 'id_not_found') : ?>
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> No se encontró la planta con el ID especificado.
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['success'])) :
+                if ($_GET['success'] == 'created') : ?>
+                    <div class="alert alert-success">
+                        Planta creada correctamente.
+                    </div>
+                <?php elseif ($_GET['success'] == 'updated') : ?>
+                    <div class="alert alert-success">
+                        Planta actualizada correctamente.
+                    </div>
+                <?php elseif ($_GET['success'] == 'deleted') : ?>
+                    <div class="alert alert-success">
+                        Planta eliminada correctamente.
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <div class="filter-section card">
                 <div class="card-body">
                     <h3 class="filter-title">Filtrar plantas</h3>

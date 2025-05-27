@@ -359,6 +359,19 @@
     margin-top: 1.5rem;
 }
 
+.action-buttons-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.action-buttons-row .btn {
+    min-width: 200px;
+    margin: 0.5rem;
+}
+
 .hero-buttons {
     display: flex;
     flex-wrap: wrap;

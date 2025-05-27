@@ -1,6 +1,6 @@
 <?php
 
-// TODO: Implemetar funcion que le permita al usuario escoger un almacen destino para transferir los productos del botiquín
+// TODO: Implementar function que le permita al usuario escoger un almacen destino para transferir los productos del botiquín
 
 use model\service\BotiquinService;
 use model\service\PlantaService;
@@ -87,8 +87,12 @@ try {
                     <form method="POST" action="<?= url('botiquines.delete', ['id_botiquin' => $id_botiquin]) ?>">
                         <div class="text-center mt-4">
                             <div class="alert alert-warning">
-                                <strong>Advertencia:</strong> Esta acción eliminará el botiquín y todos sus registros
-                                asociados. Esta acción no se puede deshacer.
+                                <div class="alert-message">
+                                    <strong>Advertencia:</strong> Esta acción eliminará el botiquín y no podrá ser recuperado.
+                                </div>
+                                <div class="alert-message">
+                                    Esta acción no es reversible.
+                                </div>
                             </div>
                             
                             <?php if ($hasProducts): ?>

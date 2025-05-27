@@ -40,6 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Intentar actualizar la planta con los datos sanitizados
         $success = $plantaService->updatePlanta($planta['id'], $planta['hospital_id'], $planta['name']);
 
+        if ($success) {
+            // Redirigir a la página de lista de plantas con mensaje de éxito
+            header('Location: ' . url('plantas.dashboard', ['success' => 'updated']));
+            exit;
+        }
+
     } catch (InvalidArgumentException $e) {
         // Capturar errores de validación para desplegar el mensaje.
         $errors[] = $e->getMessage();
