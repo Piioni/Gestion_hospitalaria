@@ -16,6 +16,9 @@ $hospitals = $hospitalService->getAllHospitals();
 $filtroHospital = isset($_GET['hospital']) ? (int)$_GET['hospital'] : null;
 $filtroTipo = $_GET['tipo'] ?? null;
 
+// Obtener si el filtro está activo
+$filtrarActivo = isset($_GET['filtrar']) || $filtroHospital || $filtroTipo;
+
 // Aplicar los filtros a la lista de almacenes
 $almacenes = $almacenService->getAllAlmacenes();
 
@@ -37,66 +40,68 @@ if ($filtroTipo) {
 $success = $_GET['success'] ?? null;
 $error = $_GET['error'] ?? null;
 
-$title = "Gestión de Almacenes";
+$title = "Sistema de Gestión Hospitalaria";
+$navTitle = "Gestión de Almacenes";
 $scripts = "toasts.js";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
 <div class="page-section">
     <div class="container">
-        <div class="overview-section">
-            <h1 class="page-title">Gestión de Almacenes</h1>
-            <p class="lead-text">
-                Control y administración de almacenes generales y de planta del sistema hospitalario.
-            </p>
-            <div class="action-buttons">
-                <a href="<?= url('almacenes.create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear nuevo almacén</a>
-            </div>
-        </div>
-
-        <div class="filter-section card">
-            <div class="card-body">
-                <h3 class="filter-title">Filtrar almacenes</h3>
-                <form action="" method="GET" class="filter-form">
-                    <div class="filter-fields">
-                        <div class="filter-field">
-                            <label for="hospital" class="form-label">Hospital:</label>
-                            <div class="form-field">
-                                <select name="hospital" id="hospital" class="form-select">
-                                    <option value="">Todos los hospitales</option>
-                                    <?php foreach ($hospitals as $hospital): ?>
-                                        <option value="<?= $hospital->getId() ?>" <?= $filtroHospital == $hospital->getId() ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($hospital->getNombre()) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-field">
-                            <label for="tipo" class="form-label">Tipo:</label>
-                            <div class="form-field">
-                                <select name="tipo" id="tipo" class="form-select">
-                                    <option value="">Todos los tipos</option>
-                                    <option value="GENERAL" <?= $filtroTipo === 'GENERAL' ? 'selected' : '' ?>>General</option>
-                                    <option value="PLANTA" <?= $filtroTipo === 'PLANTA' ? 'selected' : '' ?>>Planta</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
-                        <?php if ($filtroHospital || $filtroTipo): ?>
-                            <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
-                        <?php endif; ?>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="almacenes-section">
-            <h2 class="section-title">Almacenes registrados</h2>
+            <?php if ($filtrarActivo): ?>
+                <div class="filter-section card">
+                    <div class="card-body">
+                        <h3 class="filter-title">Filtrar almacenes</h3>
+                        <form action="" method="GET" class="filter-form">
+                            <input type="hidden" name="filtrar" value="1">
+                            <div class="filter-fields">
+                                <div class="filter-field">
+                                    <label for="hospital" class="form-label">Hospital:</label>
+                                    <div class="form-field">
+                                        <select name="hospital" id="hospital" class="form-select">
+                                            <option value="">Todos los hospitales</option>
+                                            <?php foreach ($hospitals as $hospital): ?>
+                                                <option value="<?= $hospital->getId() ?>" <?= $filtroHospital == $hospital->getId() ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($hospital->getNombre()) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="filter-field">
+                                    <label for="tipo" class="form-label">Tipo:</label>
+                                    <div class="form-field">
+                                        <select name="tipo" id="tipo" class="form-select">
+                                            <option value="">Todos los tipos</option>
+                                            <option value="GENERAL" <?= $filtroTipo === 'GENERAL' ? 'selected' : '' ?>>General</option>
+                                            <option value="PLANTA" <?= $filtroTipo === 'PLANTA' ? 'selected' : '' ?>>Planta</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-actions">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
+                                <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
+                <h2 class="section-title">Almacenes registrados</h2>
+                <div class="action-buttons">
+                    <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
+                        <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
+                    </a>
+                    <a href="<?= url('almacenes.create') ?>" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Crear almacén
+                    </a>
+                </div>
+            </div>
 
             <?php if (empty($almacenes)): ?>
                 <div class="empty-state">
@@ -164,15 +169,7 @@ include __DIR__ . "/../../../layouts/_header.php";
 </div>
 
 <script>
-    // Actualizar automáticamente el formulario cuando cambian los campos del filtro
-    document.getElementById('hospital').addEventListener('change', function() {
-        this.form.submit();
-    });
-    document.getElementById('tipo').addEventListener('change', function() {
-        this.form.submit();
-    });
-
-    // Notificaciones Toast
+    // Mostrar notificaciones Toast
     document.addEventListener('DOMContentLoaded', function() {
         // Mostrar notificaciones según los parámetros
         <?php if ($success): ?>

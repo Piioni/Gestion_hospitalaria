@@ -48,8 +48,8 @@ include __DIR__ . "/../../../layouts/_header.php";
                                         <label for="nombre" class="form-label">Nombre:</label>
                                         <div class="form-field">
                                             <input type="text" name="nombre" id="nombre" class="form-input"
-                                                placeholder="Buscar por nombre de hospital"
-                                                value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
+                                                   placeholder="Buscar por nombre de hospital"
+                                                   value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -201,6 +201,10 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                             <a href="<?= url('plantas.dashboard', ['id' => $planta->getId()]) ?>"
                                                                                class="btn btn-sm btn-info">
                                                                                 <i class="bi bi-box-seam"></i> Ver stock
+                                                                            </a>
+                                                                            <a href="<?= url('plantas.delete', ['id_planta' => $planta->getId()]) ?>"
+                                                                               class="btn btn-sm btn-danger">
+                                                                                <i class="bi bi-trash"></i> Eliminar
                                                                             </a>
                                                                         </div>
                                                                     </td>
