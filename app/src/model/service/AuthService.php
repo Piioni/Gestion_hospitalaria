@@ -18,12 +18,27 @@ class AuthService
     {
         $user = $this->userService->getUserByEmail($email);
         if ($user) {
-            if (password_verify($password, $user['password'])) {
-                $_SESSION['user'] = $user;
-
-                if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+            // Verificar la contraseña con el hash almacenado
+            if (password_verify($password, $user->getPassword())) {
+                // Iniciar la sesión si no está ya iniciada
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+                
+                // Almacenar información del usuario en la sesión
+                $_SESSION['user_id'] = $user->getId();
+                $_SESSION['user_name'] = $user->getNombre();
+                $_SESSION['user_email'] = $user->getEmail();
+                $_SESSION['user_role'] = $user->getRol();
+                
+                // Guardar la hora de inicio de sesión
+                $_SESSION['login_time'] = time();
+                
+                // Si la contraseña necesita rehashing (por cambios en algoritmo)
+                if (password_needs_rehash($user->getPassword(), PASSWORD_DEFAULT)) {
                     $newHash = password_hash($password, PASSWORD_DEFAULT);
-                    $this->userModel->updatePassword($user['id'], $newHash);
+                    // Actualizar la contraseña en la base de datos (deberíamos implementar este método)
+                    // $this->userService->updateUserPassword($user->getId(), $newHash);
                 }
 
                 return true;
@@ -72,6 +87,6 @@ class AuthService
 
     public function isAuthenticated() : bool
     {
-        return isset($_SESSION['user']);
+        return isset($_SESSION['user_id']);
     }
 }

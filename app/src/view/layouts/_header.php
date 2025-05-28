@@ -10,6 +10,13 @@ $scripts = $scripts ?? null;
 // Variable para el título de la barra de navegación
 $navTitle = $navTitle ?? "Pegasus Medical";
 
+// Verificar si el usuario está autenticado
+$isAuthenticated = isset($_SESSION['user_id']);
+$userName = $_SESSION['user_name'] ?? 'Usuario';
+$userRole = $_SESSION['user_role'] ?? null;
+
+// Verificar si es administrador (rol 1)
+$isAdmin = $userRole == 1;
 ?>
 
 <!DOCTYPE html>
@@ -25,11 +32,11 @@ $navTitle = $navTitle ?? "Pegasus Medical";
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="/assets/js/nav.js" defer></script>
     <?php if (isset($scripts)): ?>
-        <?php 
+        <?php
         // Si $scripts es un string, convertirlo a array para procesarlo de forma uniforme
         $scriptsArray = is_array($scripts) ? $scripts : [$scripts];
-        foreach ($scriptsArray as $script): 
-        ?>
+        foreach ($scriptsArray as $script):
+            ?>
             <script src="/assets/js/<?= htmlspecialchars($script, ENT_QUOTES) ?>" defer></script>
         <?php endforeach; ?>
     <?php endif; ?>
@@ -50,65 +57,74 @@ $navTitle = $navTitle ?? "Pegasus Medical";
 
         <nav class="main-nav">
             <ul class="nav-links">
-                <!-- Categoría: Gestión de Infraestructura -->
-                <li class="dropdown">
-                    <a href="#" class="nav-link dropdown-toggle">Infraestructura</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<?= url('hospitals') ?>">Hospitales</a></li>
-                        <li><a href="<?= url('plantas') ?>">Plantas</a></li>
-                        <li><a href="<?= url('almacenes') ?>">Almacenes</a></li>
-                        <li><a href="<?= url('botiquines') ?>">Botiquines</a></li>
-                    </ul>
-                </li>
+                <?php if ($isAuthenticated): ?>
+                    <!-- Categoría: Gestión de Infraestructura -->
+                    <li class="dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Infraestructura</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?= url('hospitals') ?>">Hospitales</a></li>
+                            <li><a href="<?= url('plantas') ?>">Plantas</a></li>
+                            <li><a href="<?= url('almacenes') ?>">Almacenes</a></li>
+                            <li><a href="<?= url('botiquines') ?>">Botiquines</a></li>
+                        </ul>
+                    </li>
 
-                <!-- Categoría: Gestión de Inventario -->
-                <li class="dropdown">
-                    <a href="#" class="nav-link dropdown-toggle">Inventario</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<?= url('stocks') ?>">Stock</a></li>
-                        <li><a href="<?= url('stocks.botiquines') ?>">Stock Botiquines</a></li>
-                        <li><a href="<?= url('stocks.almacenes') ?>">Stock Almacenes</a></li>
-                        <li><a href="<?= url('productos') ?>">Productos</a></li>
-                    </ul>
-                </li>
+                    <!-- Categoría: Gestión de Inventario -->
+                    <li class="dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Inventario</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?= url('stocks') ?>">Stock</a></li>
+                            <li><a href="<?= url('stocks.botiquines') ?>">Stock Botiquines</a></li>
+                            <li><a href="<?= url('stocks.almacenes') ?>">Stock Almacenes</a></li>
+                            <li><a href="<?= url('productos') ?>">Productos</a></li>
+                        </ul>
+                    </li>
 
-                <!-- Categoría: Logística -->
-                <li class="dropdown">
-                    <a href="#" class="nav-link dropdown-toggle">Logística</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/reposiciones">Reposiciones</a></li>
-                        <li><a href="/movimientos">Movimientos</a></li>
-                        <li><a href="/etiquetas">Etiquetas</a></li>
-                        <li><a href="/lecturas">Lecturas</a></li>
-                    </ul>
-                </li>
-                
-                <!-- Section de gestión de Usuarios -->
-                <li class="dropdown">
-                    <a href="#" class="nav-link dropdown-toggle">Usuarios</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<?= url('users') ?>">Dashboard</a></li>
-                        <li><a href="<?= url('users.create') ?>">Crear Usuario</a></li>
-                    </ul>
-                </li>
+                    <!-- Categoría: Logística -->
+                    <li class="dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Logística</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/reposiciones">Reposiciones</a></li>
+                            <li><a href="/movimientos">Movimientos</a></li>
+                            <li><a href="/etiquetas">Etiquetas</a></li>
+                            <li><a href="/lecturas">Lecturas</a></li>
+                        </ul>
+                    </li>
 
-                <!-- Sección de usuario -->
-                <?php if (isset($_SESSION['user'])): ?>
+                    <?php if ($isAdmin): ?>
+                        <!-- Section de gestión de Usuarios (solo para administradores) -->
+                        <li class="dropdown">
+                            <a href="#" class="nav-link dropdown-toggle">Usuarios</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= url('users') ?>">Dashboard</a></li>
+                                <li><a href="<?= url('users.create') ?>">Crear Usuario</a></li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- Sección de usuario/autenticación -->
+                <?php if ($isAuthenticated): ?>
                     <li class="dropdown user-dropdown">
                         <a href="#" class="nav-link dropdown-toggle">
-                            <?= htmlspecialchars($_SESSION['user']['username'] ?? 'Usuario') ?>
+                            <i class="bi bi-person-circle me-1"></i>
+                            <?= htmlspecialchars($userName) ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <?php if (isset($_SESSION['user']['is_admin']) && $_SESSION['user']['is_admin']): ?>
-                                <li><a href="/users/list">Gestionar usuarios</a></li>
+                            <?php if ($isAdmin): ?>
+                                <li><a href="<?= url('users') ?>">Gestionar usuarios</a></li>
                                 <li class="dropdown-divider"></li>
-                                <li><a href="<?= url('users.edit', ['id' => $_SESSION['user']['id']]) ?>">Mi perfil</a></li>
                             <?php endif; ?>
-                            <li><a href="<?= url('logout') ?>">Cerrar sesión</a></li>
+                            <!-- TODO: Implementar logica para modificar perfil propio. -->
+                            <!--                            <li><a href="-->
+                            <?php //= url('profile') ?><!--">Mi perfil</a></li>-->
+                            <li><a href="<?= url('logout') ?>"><i class="bi bi-box-arrow-right me-1"></i>Cerrar
+                                    sesión</a></li>
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="<?= url('login') ?>" class="nav-link">Iniciar sesión</a></li>
+                    <li><a href="<?= url('login') ?>" class="nav-link"><i class="bi bi-box-arrow-in-right me-1">
+                            </i>Iniciar sesión</a></li>
                 <?php endif; ?>
             </ul>
         </nav>
