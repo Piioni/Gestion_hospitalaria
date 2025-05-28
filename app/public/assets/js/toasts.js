@@ -31,7 +31,7 @@ let ToastSystem = {
         // Crear contenido del toast
         let toastContent = `
             <div class="toast-header">
-                <i class="toast-icon fas fa-${iconClass}"></i>
+                <div class="toast-icon"><i class="fas fa-${iconClass}"></i></div>
                 <h4 class="toast-title">${title}</h4>
                 <button type="button" class="toast-close">&times;</button>
             </div>
@@ -59,8 +59,7 @@ let ToastSystem = {
         const closeBtn = toast.querySelector('.toast-close');
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
+                this.hideToast(toast);
             });
         }
         
@@ -68,14 +67,22 @@ let ToastSystem = {
         if (options.autoClose) {
             const closeDelay = options.closeDelay || 5000;
             setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                }
+                this.hideToast(toast);
             }, closeDelay);
         }
         
         return toast;
+    },
+    
+    /**
+     * Oculta una notificación toast con animación
+     * @param {HTMLElement} toast - El elemento toast a ocultar
+     */
+    hideToast: function(toast) {
+        if (toast && toast.parentNode) {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }
     },
     
     /**
@@ -84,8 +91,7 @@ let ToastSystem = {
     clearAll: function() {
         const toasts = document.querySelectorAll('.toast');
         toasts.forEach(toast => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
+            this.hideToast(toast);
         });
     },
 

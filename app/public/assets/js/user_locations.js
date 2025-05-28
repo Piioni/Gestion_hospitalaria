@@ -3,6 +3,38 @@ document.addEventListener('DOMContentLoaded', function() {
     initLocationManagement();
 });
 
+// Objeto para manejar las notificaciones toast
+const Toast = {
+    success: function(message) {
+        if (typeof ToastSystem !== 'undefined') {
+            ToastSystem.success('Éxito', message, null, { autoClose: true });
+        } else {
+            console.log('Éxito:', message);
+        }
+    },
+    warning: function(message) {
+        if (typeof ToastSystem !== 'undefined') {
+            ToastSystem.warning('Advertencia', message, null, { autoClose: true });
+        } else {
+            console.log('Advertencia:', message);
+        }
+    },
+    error: function(message) {
+        if (typeof ToastSystem !== 'undefined') {
+            ToastSystem.danger('Error', message, null, { autoClose: true });
+        } else {
+            console.log('Error:', message);
+        }
+    },
+    info: function(message) {
+        if (typeof ToastSystem !== 'undefined') {
+            ToastSystem.info('Información', message, null, { autoClose: true });
+        } else {
+            console.log('Info:', message);
+        }
+    }
+};
+
 function initLocationManagement() {
     // Configurar manejo de ubicaciones según el tipo de rol
     if (locationType === 'admin') {

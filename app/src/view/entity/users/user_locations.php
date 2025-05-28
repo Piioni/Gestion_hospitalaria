@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_locations'])) {
     }
 }
 
-$scripts = "user_locations.js";
+$scripts = ["toasts.js", "user_locations.js"];
 $title = 'Asignar Ubicaciones';
 include(__DIR__ . '/../../layouts/_header.php');
 ?>
@@ -149,18 +149,20 @@ include(__DIR__ . '/../../layouts/_header.php');
             </div>
         </div>
 
-        <?php if ($success): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> Ubicaciones asignadas correctamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($error): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> Error: <?= htmlspecialchars($error) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <!-- Script para mostrar notificaciones de éxito o error del procesamiento del formulario -->
+        <?php if ($success || $error): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof ToastSystem !== 'undefined') {
+                    <?php if ($success): ?>
+                    ToastSystem.success('Éxito', 'Ubicaciones asignadas correctamente', null, { autoClose: true });
+                    <?php endif; ?>
+                    <?php if ($error): ?>
+                    ToastSystem.danger('Error', '<?= addslashes(htmlspecialchars($error)) ?>', null, { autoClose: true });
+                    <?php endif; ?>
+                }
+            });
+        </script>
         <?php endif; ?>
 
         <!-- Contenido según el rol -->
