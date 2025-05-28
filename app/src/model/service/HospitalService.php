@@ -155,4 +155,5 @@ class HospitalService
 
         return $this->hospitalRepository->getByNombre($filtroNombre);
     }
+
 }

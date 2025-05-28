@@ -2,8 +2,8 @@
 
 namespace controllers;
 
-use http\Exception\RuntimeException;
 use JetBrains\PhpStorm\NoReturn;
+use RuntimeException;
 
 class BaseController
 {

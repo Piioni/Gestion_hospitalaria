@@ -7,7 +7,7 @@ use PDO;
 
 class AuthMiddleware
 {
-    private static $session_started = false;
+    private static bool $session_started = false;
 
     public static function requireAuth(): void
     {
@@ -39,7 +39,7 @@ class AuthMiddleware
         $userRole = $_SESSION['user_role'];
         $userId = $_SESSION['user_id'];
 
-        // Administradores y gestores generales pueden acceder a todo
+        // Administradores y gestores generales pueden acceder a to do
         if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL'])) {
             return;
         }
@@ -67,7 +67,7 @@ class AuthMiddleware
         $userRole = $_SESSION['user_role'];
         $userId = $_SESSION['user_id'];
 
-        // Administradores y gestores generales pueden acceder a todo
+        // Administradores y gestores generales pueden acceder a to do
         if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL'])) {
             return;
         }

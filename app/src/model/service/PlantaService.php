@@ -66,6 +66,7 @@ class PlantaService
         return $this->plantaRepository->getAll();
     }
 
+    // metodo para obtener todas las plantas como un array asociativo para darselo a javascript
     public function getAllArray(): array
     {
         return $this->plantaRepository->getAllArray();

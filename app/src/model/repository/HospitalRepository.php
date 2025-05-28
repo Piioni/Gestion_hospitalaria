@@ -228,4 +228,36 @@ class HospitalRepository
             throw $e;
         }
     }
+
+    public function getHospitalsByUserId(int $userId): array
+    {
+
+        $sql = "SELECT h.* FROM hospitales h 
+                INNER JOIN user_hospital uh ON h.id_hospital = uh.id_hospital 
+                WHERE uh.id_usuario = ? AND h.activo = 1
+                ORDER BY h.nombre";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$userId]);
+
+        $hospitals = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $hospitals[] = $this->createHospitalFromData($row);
+        }
+        return $hospitals;
+    }
+
+    /**
+     * Verifica si un usuario tiene acceso a un hospital específico
+     */
+    public function userHasAccessToHospital(int $userId, int $hospitalId): bool
+    {
+
+        $sql = "SELECT COUNT(*) FROM user_hospital 
+                WHERE id_usuario = ? AND id_hospital = ?";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$userId, $hospitalId]);
+        return $stmt->fetchColumn() > 0;
+    }
 }
