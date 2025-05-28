@@ -1,5 +1,6 @@
 <?php
-include(__DIR__ . '/../../../../config/bootstrap.php');
+
+//TODO: Implementar funcinalidad para que para asignar plantas se deba asignar un hospital primero.
 
 use model\service\UserService;
 use model\service\HospitalService;
