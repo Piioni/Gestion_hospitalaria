@@ -38,44 +38,44 @@ class UserService
     }
     
     /**
-     * Guarda las ubicaciones asignadas a un usuario
-     * Implementa la regla de que solo se puede asignar un tipo de ubicación por usuario
+     * Obtiene los hospitales asignados a un usuario
      */
-    public function saveUserLocations($userId, $hospitales, $plantas, $botiquines): bool
+    public function getUserHospitals($userId): array
     {
-        // Verificar que solo hay un tipo de ubicación asignado
-        $hasHospitales = !empty($hospitales);
-        $hasPlantas = !empty($plantas);
-        $hasBotiquines = !empty($botiquines);
-        
-        $selectedTypes = ($hasHospitales ? 1 : 0) + ($hasPlantas ? 1 : 0) + ($hasBotiquines ? 1 : 0);
-        
-        if ($selectedTypes > 1) {
-            throw new \Exception("Solo puede asignar un tipo de ubicación: hospitales, plantas o botiquines.");
-        }
-        
-        // Eliminar todas las ubicaciones actuales
-        $this->userLocationRepository->deleteAllUserLocations($userId);
-        
-        // Asignar nuevas ubicaciones
-        if ($hasHospitales) {
-            foreach ($hospitales as $hospitalId) {
-                $this->userLocationRepository->addUserHospital($userId, $hospitalId);
-            }
-        }
-        
-        if ($hasPlantas) {
-            foreach ($plantas as $plantaId) {
-                $this->userLocationRepository->addUserPlanta($userId, $plantaId);
-            }
-        }
-        
-        if ($hasBotiquines) {
-            foreach ($botiquines as $botiquinId) {
-                $this->userLocationRepository->addUserBotiquin($userId, $botiquinId);
-            }
-        }
-        
-        return true;
+        return $this->userLocationRepository->getUserHospitales($userId);
     }
+    
+    /**
+     * Obtiene las plantas asignadas a un usuario
+     */
+    public function getUserPlantas($userId): array
+    {
+        return $this->userLocationRepository->getUserPlantas($userId);
+    }
+    
+    /**
+     * Obtiene los botiquines asignados a un usuario
+     */
+    public function getUserBotiquines($userId): array
+    {
+        return $this->userLocationRepository->getUserBotiquines($userId);
+    }
+    
+    /**
+     * Verifica si el usuario tiene alguna ubicación asignada
+     */
+    public function hasLocations($userId): bool
+    {
+        $hospitales = $this->getUserHospitals($userId);
+        $plantas = $this->getUserPlantas($userId);
+        $botiquines = $this->getUserBotiquines($userId);
+        
+        return !empty($hospitales) || !empty($plantas) || !empty($botiquines);
+    }
+
+    public function addUserLocation($userId, $locationId, $locationType): bool
+    {
+        return $this->userLocationRepository->addUserLocation($userId, $locationId, $locationType);
+    }
+
 }
