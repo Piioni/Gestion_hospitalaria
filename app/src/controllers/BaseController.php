@@ -32,16 +32,30 @@ class BaseController
 
     /**
      * Redirige a una URL específica con parámetros opcionales
-     * @param string $url URL a la que redirigir
+     * 
+     * @param string $url Nombre de la ruta o URL absoluta (comenzando con '/')
      * @param array $params Parámetros de consulta opcionales para agregar a la URL
      * @return void
      */
     #[NoReturn]
     protected function redirect(string $url, array $params = []): void
     {
+        // Si $url no comienza con '/', asumimos que es un nombre de ruta y usamos la función url()
+        if ($url[0] !== '/') {
+            try {
+                $url = url($url);
+            } catch (Exception $e) {
+                // Si falla la generación de URL, usar la URL tal como está
+                // y añadir una barra al principio para que sea absoluta
+                $url = '/' . $url;
+            }
+        }
+        
+        // Agregar parámetros como query string si existen
         if (!empty($params)) {
             $url .= '?' . http_build_query($params);
         }
+        
         header("Location: $url");
         exit;
     }

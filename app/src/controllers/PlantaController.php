@@ -102,11 +102,6 @@ class PlantaController extends BaseController
             $planta['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
             
             try {
-                // Verificar acceso al hospital seleccionado
-                if (!$this->isAdminOrGestor($userRole)) {
-                    AuthMiddleware::requireHospitalAccess((int)$planta['id_hospital']);
-                }
-                
                 // Intentar crear la planta
                 $this->plantaService->createPlanta($planta['id_hospital'], $planta['nombre']);
                 
@@ -154,7 +149,6 @@ class PlantaController extends BaseController
 
         if (!$plantaId || !is_numeric($plantaId)) {
             $this->redirect('plantas', ['error' => 'id_invalid']);
-            return;
         }
 
         // Verificar acceso a la planta
@@ -170,7 +164,6 @@ class PlantaController extends BaseController
         $plantaObj = $this->plantaService->getPlantaById((int)$plantaId);
         if (!$plantaObj) {
             $this->redirect('plantas', ['error' => 'id_not_found']);
-            return;
         }
         
         // Obtener hospitales permitidos según el rol
@@ -228,7 +221,6 @@ class PlantaController extends BaseController
 
         if (!$plantaId || !is_numeric($plantaId)) {
             $this->redirect('plantas', ['error' => 'id_invalid']);
-            return;
         }
 
         // Solo admin y gestores generales pueden eliminar
@@ -239,7 +231,6 @@ class PlantaController extends BaseController
             $planta = $this->plantaService->getPlantaById((int)$plantaId);
             if (!$planta) {
                 $this->redirect('plantas', ['error' => 'id_not_found']);
-                return;
             }
             
             // Obtener hospital relacionado
@@ -265,7 +256,6 @@ class PlantaController extends BaseController
                 
                 if ($success) {
                     $this->redirect('plantas', ['success' => 'deleted']);
-                    return;
                 } else {
                     throw new Exception("No se pudo eliminar la planta.");
                 }
@@ -290,10 +280,7 @@ class PlantaController extends BaseController
             $this->redirect('plantas', ['error' => 'unexpected']);
         }
     }
-    
-    /**
-     * Verifica si el usuario es administrador o gestor general
-     */
+
     private function isAdminOrGestor(string $userRole): bool
     {
         return in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL']);

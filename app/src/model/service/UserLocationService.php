@@ -135,4 +135,57 @@ class UserLocationService
         
         return !empty($hospitales) || !empty($plantas) || !empty($botiquines);
     }
+
+    /**
+     * Verifica si un usuario tiene acceso a un hospital específico
+     *
+     * @param int $userId ID del usuario
+     * @param int $hospitalId ID del hospital
+     * @return bool True si el usuario tiene acceso
+     */
+    public function userHasHospitalAccess(int $userId, int $hospitalId): bool
+    {
+        $hospitales = $this->getAssignedHospitals($userId);
+        foreach ($hospitales as $hospital) {
+            if ($hospital->getId() === $hospitalId) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Verifica si un usuario tiene acceso a una planta específica
+     *
+     * @param int $userId ID del usuario
+     * @param int $plantaId ID de la planta
+     * @return bool True si el usuario tiene acceso
+     */
+    public function userHasPlantaAccess(int $userId, int $plantaId): bool
+    {
+        $plantas = $this->getAssignedPlantas($userId);
+        foreach ($plantas as $planta) {
+            if ($planta->getId() === $plantaId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si un usuario tiene acceso a un botiquín específico
+     *
+     * @param int $userId ID del usuario
+     * @param int $botiquinId ID del botiquín
+     * @return bool True si el usuario tiene acceso
+     */
+    public function userHasBotiquinAccess(int $userId, int $botiquinId): bool
+    {
+        $botiquines = $this->getAssignedBotiquines($userId);
+        foreach ($botiquines as $botiquin) {
+            if ($botiquin->getId() === $botiquinId) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
