@@ -53,7 +53,8 @@ class HospitalController extends BaseController
             'navTitle' => 'Gestión de Hospitales'
         ];
 
-        $this->render('entity/ubicaciones/hospitals/dashboard_hospital.php', $data);
+        // Usando la notación de punto para referenciar la vista
+        $this->render('entity.hospitals.dashboard_hospital', $data);
     }
 
     public function create(): void
@@ -64,7 +65,8 @@ class HospitalController extends BaseController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleCreate();
         } else {
-            $this->render('entity/ubicaciones/hospitals/create_hospital.php');
+            // Usando la notación de punto para referenciar la vista
+            $this->render('entity.hospitals.create_hospital');
         }
     }
 
@@ -84,7 +86,8 @@ class HospitalController extends BaseController
             $this->handleEdit((int)$hospitalId);
         } else {
             $hospital = $this->hospitalService->getHospitalById((int)$hospitalId);
-            $this->render('entity/ubicaciones/hospitals/edit_hospital.php', ['hospital' => $hospital]);
+            // Usando la notación de punto para referenciar la vista
+            $this->render('entity.hospitals.edit_hospital', ['hospital' => $hospital]);
         }
     }
 
@@ -104,7 +107,8 @@ class HospitalController extends BaseController
             $this->handleDelete((int)$hospitalId);
         } else {
             $hospital = $this->hospitalService->getHospitalById((int)$hospitalId);
-            $this->render('entity/ubicaciones/hospitals/delete_hospital.php', ['hospital' => $hospital]);
+            // Usando la notación de punto para referenciar la vista
+            $this->render('entity.hospitals.delete_hospital', ['hospital' => $hospital]);
         }
     }
 
