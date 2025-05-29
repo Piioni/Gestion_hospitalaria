@@ -38,6 +38,18 @@ class UserService
     }
     
     /**
+     * Actualiza la contraseña de un usuario
+     * 
+     * @param int $userId ID del usuario
+     * @param string $newPasswordHash Hash de la nueva contraseña
+     * @return bool True si la actualización fue exitosa, false en caso contrario
+     */
+    public function updatePassword(int $userId, string $newPasswordHash): bool
+    {
+        return $this->userRepository->updatePassword($userId, $newPasswordHash);
+    }
+    
+    /**
      * Obtiene los hospitales asignados a un usuario
      */
     public function getUserHospitals($userId): array
@@ -77,5 +89,4 @@ class UserService
     {
         return $this->userLocationRepository->addUserLocation($userId, $locationId, $locationType);
     }
-
 }

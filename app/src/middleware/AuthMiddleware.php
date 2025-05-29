@@ -11,7 +11,7 @@ class AuthMiddleware
 
     public static function requireAuth(): void
     {
-        self::ensureSession();
+        // La sesión ya se inició en index.php
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: /login?redirect=' . urlencode($_SERVER['REQUEST_URI']));

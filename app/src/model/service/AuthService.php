@@ -2,19 +2,28 @@
 
 namespace model\service;
 
-use http\Exception\InvalidArgumentException;
+use Exception;
 use JetBrains\PhpStorm\NoReturn;
 
 class AuthService
 {
-    private $userService;
+    private UserService $userService;
+    private RoleService $roleService;
 
     public function __construct()
     {
         $this->userService = new UserService();
+        $this->roleService = new RoleService();
     }
 
-    public function login($email, $password): bool
+    /**
+     * Autentica a un usuario con su email y contraseña
+     * 
+     * @param string $email Email del usuario
+     * @param string $password Contraseña del usuario
+     * @return bool True si la autenticación fue exitosa, false en caso contrario
+     */
+    public function login(string $email, string $password): bool
     {
         $user = $this->userService->getUserByEmail($email);
         if ($user) {
@@ -29,7 +38,9 @@ class AuthService
                 $_SESSION['user_id'] = $user->getId();
                 $_SESSION['user_name'] = $user->getNombre();
                 $_SESSION['user_email'] = $user->getEmail();
-                $_SESSION['user_role'] = $user->getRol();
+                // Almacenar el rol del usuario llamando al meto do getRolById del RoleService
+                $rol = $this->roleService->getRoleById($user->getRol());
+                $_SESSION['user_role'] = $rol ? $rol->getNombre() : 'Invitado';
                 
                 // Guardar la hora de inicio de sesión
                 $_SESSION['login_time'] = time();
@@ -37,8 +48,8 @@ class AuthService
                 // Si la contraseña necesita rehashing (por cambios en algoritmo)
                 if (password_needs_rehash($user->getPassword(), PASSWORD_DEFAULT)) {
                     $newHash = password_hash($password, PASSWORD_DEFAULT);
-                    // Actualizar la contraseña en la base de datos (deberíamos implementar este método)
-                    // $this->userService->updateUserPassword($user->getId(), $newHash);
+                    // Actualizar la contraseña en la base de datos
+                    $this->userService->updatePassword($user->getId(), $newHash);
                 }
 
                 return true;
@@ -47,22 +58,32 @@ class AuthService
         return false;
     }
 
+    /**
+     * Registra un nuevo usuario en el sistema
+     * 
+     * @param string $nombre Nombre del usuario
+     * @param string $email Email del usuario
+     * @param string $password Contraseña del usuario
+     * @param string $rol Rol del usuario
+     * @return bool True si el registro fue exitoso, false en caso contrario
+     * @throws Exception Si hay un error en la validación de datos
+     */
     public function register($nombre, $email, $password, $rol): bool
     {
         if (empty($nombre) || empty($email) || empty($password)) {
-            throw new InvalidArgumentException("Todos los campos son obligatorios."); // All fields are required
+            throw new Exception("Todos los campos son obligatorios.");
         }
 
         if ($this->userService->getUserByEmail($email)) {
-            throw new InvalidArgumentException("Ya existe un usuario con ese email."); // User already exists
+            throw new Exception("Ya existe un usuario con ese email.");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException("El email no es válido."); // Invalid email
+            throw new Exception("El email no es válido.");
         }
 
         if (strlen($password) < 6) {
-            throw new InvalidArgumentException("La contraseña debe tener al menos 6 caracteres."); // Password must be at least 6 characters
+            throw new Exception("La contraseña debe tener al menos 6 caracteres.");
         }
 
         // Hash the password before saving
@@ -71,21 +92,26 @@ class AuthService
         return $this->userService->addUser($nombre, $email, $passwordHash, $rol);
     }
 
+    /**
+     * Cierra la sesión del usuario y lo redirige a la página de inicio de sesión
+     */
     #[NoReturn]
     public function logout(): void
     {
+        // Destruir la sesión
         session_destroy();
-        header("Location: /");
+        
+        // Redirigir a la página de inicio de sesión con mensaje de éxito
+        header("Location: /login?success=logout_success");
         exit();
     }
 
-    public function getUserIdByEmail($email): ?int
-    {
-        $user = $this->userService->getUserByEmail($email);
-        return $user?->getId();
-    }
-
-    public function isAuthenticated() : bool
+    /**
+     * Verifica si hay un usuario autenticado en la sesión actual
+     * 
+     * @return bool True si hay un usuario autenticado, false en caso contrario
+     */
+    public function isAuthenticated(): bool
     {
         return isset($_SESSION['user_id']);
     }
