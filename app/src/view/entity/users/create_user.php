@@ -1,5 +1,4 @@
 <?php
-include(__DIR__ . '/../../../../config/bootstrap.php');
 
 use model\service\AuthService;
 use model\service\RoleService;

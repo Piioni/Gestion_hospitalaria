@@ -1,55 +1,4 @@
 <?php
-
-use model\service\AuthService;
-
-$auth = new AuthService();
-$errors = [];
-$input = [];
-
-$request = $_SERVER['REQUEST_METHOD'];
-
-if ($request == 'POST') {
-    // Obtener datos del formulario
-    $input['identifier'] = $_POST['identifier'] ?? '';
-    $input['password'] = $_POST['password'] ?? '';
-    
-    // Validar datos
-    if (empty($input['identifier'])) {
-        $errors['identifier'] = 'El email es obligatorio';
-    }
-    
-    if (empty($input['password'])) {
-        $errors['password'] = 'La contraseña es obligatoria';
-    }
-    
-    // Si no hay errores, intentar iniciar sesión
-    if (empty($errors)) {
-        try {
-            // Iniciar la sesión si no está iniciada
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            
-            // Intentar autenticar al usuario
-            if ($auth->login($input['identifier'], $input['password'])) {
-                // Redirigir a la página principal o a la URL de redirección
-                $redirect = $_GET['redirect'] ?? '/';
-                header("Location: $redirect");
-                exit;
-            } else {
-                $errors['general'] = 'Credenciales incorrectas. Por favor, comprueba tu email y contraseña.';
-            }
-        } catch (\Exception $e) {
-            $errors['general'] = 'Error al iniciar sesión: ' . $e->getMessage();
-        }
-    }
-} else {
-    // Limpiar variables para el formulario GET
-    $input['identifier'] = '';
-    $input['password'] = '';
-}
-
-$title = 'Login';
 include(__DIR__ . '/../layouts/_header.php');
 ?>
 
@@ -62,23 +11,34 @@ include(__DIR__ . '/../layouts/_header.php');
 
     <div class="container">
         <div class="auth-card card">
-            <?php if (!empty($errors['general'])) : ?>
+            <?php if (isset($error) && $error): ?>
                 <div class="alert alert-danger">
-                    <?= htmlspecialchars($errors['general']) ?>
+                    <?= htmlspecialchars(urldecode($error)) ?>
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="/login" class="form">
+            <?php if (isset($success) && $success): ?>
+                <div class="alert alert-success">
+                    <?php
+                    switch ($success) {
+                        case 'logout_success':
+                            echo 'Ha cerrado sesión correctamente.';
+                            break;
+                        default:
+                            echo htmlspecialchars(urldecode($success));
+                    }
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" action="<?= url('login') ?>" class="form">
+                <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect ?? '/') ?>">
+
                 <div class="form-group">
-                    <label for="identifier" class="form-label">Email</label>
+                    <label for="email" class="form-label">Email</label>
                     <div class="form-field">
-                        <input type="text" name="identifier" id="identifier" class="form-input"
-                              value="<?= htmlspecialchars($input['identifier'] ?? '') ?>" required>
-                        <?php if (!empty($errors['identifier'])) : ?>
-                            <div class="form-error">
-                                <?= htmlspecialchars($errors['identifier']) ?>
-                            </div>
-                        <?php endif; ?>
+                        <input type="text" name="email" id="email" class="form-input"
+                               value="<?= htmlspecialchars($input['email'] ?? '') ?>" required>
                     </div>
                 </div>
 
@@ -86,11 +46,6 @@ include(__DIR__ . '/../layouts/_header.php');
                     <label for="password" class="form-label">Contraseña</label>
                     <div class="form-field">
                         <input type="password" name="password" id="password" class="form-input" required>
-                        <?php if (!empty($errors['password'])) : ?>
-                            <div class="form-error">
-                                <?= htmlspecialchars($errors['password']) ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -99,7 +54,7 @@ include(__DIR__ . '/../layouts/_header.php');
                 </div>
 
                 <div class="form-footer">
-                    <p>¿No tienes una cuenta? <a href="/register" class="auth-link">Regístrate aquí</a></p>
+                    <p>¿Problemas para iniciar sesión? Contacte con el administrador del sistema.</p>
                 </div>
             </form>
         </div>

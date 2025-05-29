@@ -1,5 +1,4 @@
 <?php
-include(__DIR__ . '/../../../config/bootstrap.php');
 $title = "Inicio - Sistema de Stock Hospitalario";
 include(__DIR__ . '/../layouts/_header.php');
 ?>
