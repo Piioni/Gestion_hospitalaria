@@ -1,12 +1,4 @@
 <?php
-global $filtrarActivo;
-global $filtroNombre;
-global $success;
-global $error;
-global $canCreateDelete;
-
-
-
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -173,7 +165,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                             <i class="bi bi-pencil"></i> Editar
                                                                         </a>
                                                                         <!-- TODO: FIX ERROR -->
-                                                                        <a href="<?= url('plantas.dashboard', ['id' => $planta->getId()]) ?>"
+                                                                        <a href="<?= url('plantas', ['id' => $planta->getId()]) ?>"
                                                                            class="btn btn-sm btn-info">
                                                                             <i class="bi bi-box-seam"></i> Ver stock
                                                                         </a>
@@ -250,3 +242,4 @@ include __DIR__ . "/../../../layouts/_header.php";
 
 <?php
 include __DIR__ . "/../../../layouts/_footer.php";
+?>

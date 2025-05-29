@@ -4,21 +4,6 @@ use model\service\AlmacenService;
 use model\service\HospitalService;
 use model\service\PlantaService;
 
-// Crear instancia del servicio de almacenes
-$almacenService = new AlmacenService();
-$hospitalService = new HospitalService();
-$plantaService = new PlantaService();
-
-// Obtener hospitales para el filtro
-$hospitals = $hospitalService->getAllHospitals();
-
-// Obtener filtro de hospital si existe
-$filtroHospital = isset($_GET['hospital']) ? (int)$_GET['hospital'] : null;
-$filtroTipo = $_GET['tipo'] ?? null;
-
-// Obtener si el filtro está activo
-$filtrarActivo = isset($_GET['filtrar']) || $filtroHospital || $filtroTipo;
-
 // Aplicar los filtros a la lista de almacenes
 $almacenes = $almacenService->getAllAlmacenes();
 

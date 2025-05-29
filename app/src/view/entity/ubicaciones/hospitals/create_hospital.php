@@ -1,42 +1,4 @@
-<?php
-
-use model\service\HospitalService;
-
-$hospitalService = new HospitalService();
-
-// Inicializar variables y mensajes
-$hospital = [
-    'name' => '',
-    'address' => '',
-];
-$errors = [];
-$success = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitizar datos de entrada
-    $hospital['name'] = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-    $hospital['address'] = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS);
-
-    try {
-        // Intentar crear el hospital con los datos sanitizados
-        $hospitalService->createHospital($hospital['name'], $hospital['address']);
-        
-        // Redirigir al dashboard con mensaje de éxito
-        header('Location: ' . url('hospitals.dashboard', ['success' => 'created']));
-        exit;
-        
-    } catch (InvalidArgumentException $e) {
-        // Capturar errores de validación
-        $errors[] = $e->getMessage();
-    } catch (Exception $e) {
-        // Capturar otros errores
-        $errors[] = "Error al crear el hospital: " . $e->getMessage();
-    }
-}
-
-$title = "Crear Hospital";
-include __DIR__ . "/../../../layouts/_header.php";
-?>
+<?php include __DIR__ . "/../../../layouts/_header.php"; ?>
 
 <div class="page-section">
     <div class="container">
@@ -65,22 +27,22 @@ include __DIR__ . "/../../../layouts/_header.php";
                     <div class="form-group">
                         <label for="name" class="form-label">Nombre del Hospital</label>
                         <div class="form-field">
-                            <input type="text" id="name" name="name" class="form-input"
-                                value="<?= htmlspecialchars($hospital['name']) ?>" 
+                            <input type="text" id="name" name="nombre" class="form-input"
+                                value="<?= htmlspecialchars($hospital_name ?? '') ?>" 
                                 placeholder="Ingrese el nombre del hospital" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="address" class="form-label">Dirección</label>
                         <div class="form-field">
-                            <input type="text" id="address" name="address" class="form-input"
-                                value="<?= htmlspecialchars($hospital['address']) ?>" 
+                            <input type="text" id="address" name="ubicacion" class="form-input"
+                                value="<?= htmlspecialchars($hospital_address ?? '') ?>" 
                                 placeholder="Ingrese la dirección del hospital" required>
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Guardar Hospital</button>
-                        <a href="<?= url('hospitals.dashboard') ?>" class="btn btn-secondary">Volver</a>
+                        <a href="<?= url('hospitals') ?>" class="btn btn-secondary">Volver</a>
                     </div>
                 </form>
             </div>
@@ -88,5 +50,4 @@ include __DIR__ . "/../../../layouts/_header.php";
     </div>
 </div>
 
-<?php
-include __DIR__ . "/../../../layouts/_footer.php";
+<?php include __DIR__ . "/../../../layouts/_footer.php"; ?>

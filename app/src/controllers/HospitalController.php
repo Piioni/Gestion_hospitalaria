@@ -76,7 +76,6 @@ class HospitalController extends BaseController
 
         if (!$hospitalId || !is_numeric($hospitalId)) {
             $this->redirect('/hospitals', ['error' => 'id_invalid']);
-            return;
         }
 
         // Verificar acceso específico al hospital
@@ -93,11 +92,12 @@ class HospitalController extends BaseController
 
     public function delete(): void
     {
+        //TODO: Implementar el mostrar plantas relacionadas al hospital
+
         $hospitalId = $_GET['id_hospital'] ?? null;
 
         if (!$hospitalId || !is_numeric($hospitalId)) {
             $this->redirect('/hospitals', ['error' => 'id_invalid']);
-            return;
         }
 
         // Solo admins y gestores generales pueden eliminar
