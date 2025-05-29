@@ -1,6 +1,25 @@
 <?php
+
 return [
     "view_dir" => __DIR__ . '/../src/view',
+    
+    // Configuración centralizada de rutas de vistas
+    "view_paths" => [
+        'pages' => 'pages',
+        'layouts' => 'layouts',
+        'errors' => 'errors',
+        'auth' => 'auth',
+        'entity' => [
+            'users' => 'entity/users',
+            'hospitals' => 'entity/ubicaciones/hospitals',
+            'plantas' => 'entity/ubicaciones/plantas',
+            'botiquines' => 'entity/ubicaciones/botiquines',
+            'almacenes' => 'entity/ubicaciones/almacenes',
+            'productos' => 'entity/productos',
+            'stocks' => 'entity/stocks',
+        ]
+    ],
+    
     "routes" => [
         // Rutas públicas
         'home' => [
@@ -12,6 +31,45 @@ return [
             'path' => '/login',
             'controller' => 'AuthController',
             'method' => 'login'
+        ],
+
+        // Rutas de usuario
+        'users' => [
+            'path' => '/users',
+            'controller' => 'UserController',
+            'method' => 'index'
+        ],
+        'users.create' => [
+            'path' => '/users/create',
+            'controller' => 'UserController',
+            'method' => 'create'
+        ],
+        'users.edit' => [
+            'path' => '/users/edit',
+            'controller' => 'UserController',
+            'method' => 'edit'
+        ],
+        'users.locations' => [
+            'path' => '/users/locations',
+            'controller' => 'UserController',
+            'method' => 'locations'
+        ],
+
+        // Rutas de autenticación
+        'logout' => [
+            'path' => '/logout',
+            'controller' => 'AuthController',
+            'method' => 'logout'
+        ],
+        'register' => [
+            'path' => '/register',
+            'controller' => 'AuthController',
+            'method' => 'register'
+        ],
+        'password.change' => [
+            'path' => '/password/change',
+            'controller' => 'AuthController',
+            'method' => 'changePassword'
         ],
 
         // Rutas de hospitales
@@ -42,11 +100,146 @@ return [
             'controller' => 'PlantaController',
             'method' => 'index'
         ],
+        'plantas.create' => [
+            'path' => '/plantas/create',
+            'controller' => 'PlantaController',
+            'method' => 'create'
+        ],
         'plantas.edit' => [
             'path' => '/plantas/edit',
             'controller' => 'PlantaController',
             'method' => 'edit'
         ],
-        // ... más rutas
+        'plantas.delete' => [
+            'path' => '/plantas/delete',
+            'controller' => 'PlantaController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de almacenes
+        'almacenes' => [
+            'path' => '/almacenes',
+            'controller' => 'AlmacenController',
+            'method' => 'index'
+        ],
+        'almacenes.create' => [
+            'path' => '/almacenes/create',
+            'controller' => 'AlmacenController',
+            'method' => 'create'
+        ],
+        'almacenes.edit' => [
+            'path' => '/almacenes/edit',
+            'controller' => 'AlmacenController',
+            'method' => 'edit'
+        ],
+        'almacenes.delete' => [
+            'path' => '/almacenes/delete',
+            'controller' => 'AlmacenController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de botiquines
+        'botiquines' => [
+            'path' => '/botiquines',
+            'controller' => 'BotiquinController',
+            'method' => 'index'
+        ],
+        'botiquines.create' => [
+            'path' => '/botiquines/create',
+            'controller' => 'BotiquinController',
+            'method' => 'create'
+        ],
+        'botiquines.edit' => [
+            'path' => '/botiquines/edit',
+            'controller' => 'BotiquinController',
+            'method' => 'edit'
+        ],
+        'botiquines.delete' => [
+            'path' => '/botiquines/delete',
+            'controller' => 'BotiquinController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de productos
+        'productos' => [
+            'path' => '/productos',
+            'controller' => 'ProductoController',
+            'method' => 'index'
+        ],
+        'productos.create' => [
+            'path' => '/productos/create',
+            'controller' => 'ProductoController',
+            'method' => 'create'
+        ],
+        'productos.edit' => [
+            'path' => '/productos/edit',
+            'controller' => 'ProductoController',
+            'method' => 'edit'
+        ],
+        'productos.delete' => [
+            'path' => '/productos/delete',
+            'controller' => 'ProductoController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de stocks
+        'stocks' => [
+            'path' => '/stocks',
+            'controller' => 'StockController',
+            'method' => 'index'
+        ],
+        'stocks.botiquines' => [
+            'path' => '/stocks/botiquines',
+            'controller' => 'StockController',
+            'method' => 'botiquines'
+        ],
+        'stocks.almacenes' => [
+            'path' => '/stocks/almacenes',
+            'controller' => 'StockController',
+            'method' => 'almacenes'
+        ],
+        'stocks.create' => [
+            'path' => '/stocks/create',
+            'controller' => 'StockController',
+            'method' => 'create'
+        ],
+        'stocks.edit' => [
+            'path' => '/stocks/edit',
+            'controller' => 'StockController',
+            'method' => 'edit'
+        ],
+        'stocks.delete' => [
+            'path' => '/stocks/delete',
+            'controller' => 'StockController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de reposiciones
+        'reposiciones' => [
+            'path' => '/reposiciones',
+            'controller' => 'ReposicionController',
+            'method' => 'index'
+        ],
+
+        // Rutas de movimientos
+        'movimientos' => [
+            'path' => '/movimientos',
+            'controller' => 'MovimientoController',
+            'method' => 'index'
+        ],
+
+        // Rutas de etiquetas
+        'etiquetas' => [
+            'path' => '/etiquetas',
+            'controller' => 'EtiquetaController',
+            'method' => 'index'
+        ],
+
+        // Rutas de lecturas
+        'lecturas' => [
+            'path' => '/lecturas',
+            'controller' => 'LecturaController',
+            'method' => 'index'
+        ],
     ]
 ];
