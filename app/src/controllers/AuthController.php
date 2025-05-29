@@ -109,9 +109,6 @@ class AuthController extends BaseController
                 throw new Exception('Credenciales incorrectas');
             }
             
-            // Si llegamos aquí, la autenticación fue exitosa
-            // La sesión ya está configurada por AuthService::login()
-            
             // Redirigir a la página solicitada o a la página principal
             $this->redirect($redirect);
             
