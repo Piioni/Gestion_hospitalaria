@@ -2,6 +2,7 @@
 
 namespace controllers;
 
+use Exception;
 use middleware\AuthMiddleware;
 use model\service\AlmacenService;
 use model\service\HospitalService;
@@ -25,19 +26,17 @@ class HospitalController extends BaseController
         // Verificar permisos - solo admins, gestores generales y gestores de hospital
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
 
-        // Obtener hospitales según el rol del usuario
-        $hospitals = $this->getHospitalsForCurrentUser();
-
         // Obtener parámetros de filtro
         $filtroNombre = $_GET['nombre'] ?? null;
         $filtrarActivo = isset($_GET['filtrar']) || $filtroNombre;
 
-        // Aplicar filtros si existen
-        if ($filtroNombre) {
-            $hospitals = array_filter($hospitals, function ($hospital) use ($filtroNombre) {
-                return stripos($hospital->getNombre(), $filtroNombre) !== false;
-            });
-        }
+        // Obtener hospitales filtrados por nombre y permisos de usuario
+        $userId = $this->getCurrentUserId();
+        $userRole = $this->getCurrentUserRole();
+        $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole, $filtroNombre);
+
+        // Verificar si es admin o gestor general para determinar permisos
+        $canCreateDelete = in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL']);
 
         // Datos para la vista
         $data = [
@@ -48,6 +47,7 @@ class HospitalController extends BaseController
             'error' => $_GET['error'] ?? null,
             'plantaService' => $this->plantaService,
             'almacenService' => $this->almacenService,
+            'canCreateDelete' => $canCreateDelete,
             'scripts' => 'toasts.js',
             'title' => 'Sistema de Gestión Hospitalaria',
             'navTitle' => 'Gestión de Hospitales'
@@ -109,25 +109,6 @@ class HospitalController extends BaseController
             $hospital = $this->hospitalService->getHospitalById((int)$hospitalId);
             // Usando la notación de punto para referenciar la vista
             $this->render('entity.hospitals.delete_hospital', ['hospital' => $hospital]);
-        }
-    }
-
-    private function getHospitalsForCurrentUser(): array
-    {
-        $userRole = $this->getCurrentUserRole();
-        $userId = $this->getCurrentUserId();
-
-        switch ($userRole) {
-            case 'ADMINISTRADOR':
-            case 'GESTOR_GENERAL':
-                return $this->hospitalService->getAllHospitals();
-
-            case 'GESTOR_HOSPITAL':
-                // Solo hospitales asignados al usuario
-                return $this->hospitalService->getHospitalsByUserId($userId);
-
-            default:
-                return [];
         }
     }
 
