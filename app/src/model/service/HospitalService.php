@@ -10,10 +10,12 @@ use InvalidArgumentException;
 class HospitalService
 {
     private HospitalRepository $hospitalRepository;
+    private UserLocationService $userLocationService;
 
     public function __construct()
     {
         $this->hospitalRepository = new HospitalRepository();
+        $this->userLocationService = new UserLocationService();
     }
 
     public function createHospital($nombre, $ubicacion): bool
@@ -131,7 +133,8 @@ class HospitalService
                 $hospitals = $this->getAllHospitals();
                 break;
             case 'GESTOR_HOSPITAL':
-                $hospitals = $this->hospitalRepository->getHospitalsByUserId($userId);
+                // Obtener hospitales asignados al usuario
+                $hospitals = $this->userLocationService->getAssignedHospitals($userId);
                 break;
             default:
                 return [];
@@ -142,6 +145,9 @@ class HospitalService
             $hospitals = array_filter($hospitals, function ($hospital) use ($filtroNombre) {
                 return stripos($hospital->getNombre(), $filtroNombre) !== false;
             });
+            
+            // Reindexar el array para evitar índices faltantes
+            $hospitals = array_values($hospitals);
         }
 
         return $hospitals;

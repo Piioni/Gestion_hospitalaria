@@ -28,7 +28,7 @@ class AlmacenService
         if ($id_planta && $this->almacenRepository->getByPlantaId($id_planta)) {
             throw new \InvalidArgumentException("Ya existe un almacen en la planta seleccionada.");
         }
-        return $this->almacenRepository->create($nombre, $tipo, $id_hospital, $id_planta,);
+        return $this->almacenRepository->create($nombre, $tipo, $id_hospital, $id_planta);
     }
 
     public function updateAlmacen($id_almacen, $nombre, $tipo, $id_hospital, $id_planta): bool
@@ -59,7 +59,7 @@ class AlmacenService
         return $this->almacenRepository->getAll();
     }
 
-    public function getAlmacenById($id_almacen) : ?Almacen
+    public function getAlmacenById($id_almacen): ?Almacen
     {
         return $this->almacenRepository->getById($id_almacen);
     }
@@ -73,7 +73,4 @@ class AlmacenService
     {
         return $this->almacenRepository->getByPlantaId($id_planta);
     }
-
-
-
 }

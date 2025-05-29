@@ -105,25 +105,6 @@ class HospitalRepository
         }
     }
 
-    /**
-     * Obtiene los hospitales asociados a un usuario específico
-     * @param int $userId
-     * @return array Lista de objetos Hospital
-     */
-    public function getHospitalsByUserId(int $userId): array
-    {
-
-        $sql = "SELECT h.* FROM hospitales h 
-                INNER JOIN user_hospital uh ON h.id_hospital = uh.id_hospital 
-                WHERE uh.id_usuario = ? AND h.activo = 1
-                ORDER BY h.nombre";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId]);
-        $hospitalsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map([$this, 'createHospitalFromData'], $hospitalsData);
-    }
-
     public function existsByName($nombre): bool
     {
         try {

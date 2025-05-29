@@ -8,9 +8,13 @@ use PDOException;
 
 class UserLocationRepository {
     private PDO $pdo;
+    private HospitalRepository $hospitalRepository;
+    private PlantaRepository $plantaRepository;
 
     public function __construct() {
         $this->pdo = Database::getInstance()->getPdo();
+        $this->hospitalRepository = new HospitalRepository();
+        $this->plantaRepository = new PlantaRepository();
     }
     
     /**
@@ -92,43 +96,51 @@ class UserLocationRepository {
             throw $e;
         }
     }
-    
+
     /**
-     * Obtiene todos los hospitales asignados a un usuario
+     * Obtiene los hospitales asociados a un usuario específico
+     * @param $userId
+     * @return array Lista de objetos Hospital
      */
-    public function getUserHospitales($userId): array
+    public function getHospitalsByUserId($userId): array
     {
         try {
             $stmt = $this->pdo->prepare("
-                SELECT h.id_hospital, h.nombre FROM hospitales h
+                SELECT h.*
+                FROM hospitales h
                 JOIN user_hospitales uh ON h.id_hospital = uh.id_hospital
-                WHERE uh.id_usuario = ?
+                WHERE uh.id_usuario = ? AND h.activo = 1
             ");
             $stmt->execute([$userId]);
-            
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $hospitalesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->hospitalRepository, 'createHospitalFromData'], $hospitalesData);
+
         } catch (PDOException $e) {
-            error_log("Error en getUserHospitales: " . $e->getMessage());
+            error_log("Error en getHospitalsByUserId: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
     /**
      * Obtiene todas las plantas asignadas a un usuario
+     * @param $userId
+     * @return array Lista de objetos Planta
      */
-    public function getUserPlantas($userId): array
+    public function getPlantasByUserId($userId): array
     {
         try {
             $stmt = $this->pdo->prepare("
-                SELECT p.id_planta, p.nombre FROM plantas p
+                SELECT p.*
+                FROM plantas p
                 JOIN user_plantas up ON p.id_planta = up.id_planta
-                WHERE up.id_usuario = ?
+                WHERE up.id_usuario = ? AND p.activo = 1
             ");
             $stmt->execute([$userId]);
-            
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->plantaRepository, 'createPlantaFromData'], $plantasData);
+
         } catch (PDOException $e) {
-            error_log("Error en getUserPlantas: " . $e->getMessage());
+            error_log("Error en getPlantasByUserId: " . $e->getMessage());
             throw $e;
         }
     }
@@ -136,7 +148,7 @@ class UserLocationRepository {
     /**
      * Obtiene todos los botiquines asignados a un usuario
      */
-    public function getUserBotiquines($userId): array
+    public function getBotiquinesByUserId($userId): array
     {
         try {
             $stmt = $this->pdo->prepare("
@@ -152,158 +164,5 @@ class UserLocationRepository {
             throw $e;
         }
     }
-    
-    /**
-     * Verifica si el usuario tiene acceso a un hospital específico
-     * 
-     * @param int $userId ID del usuario
-     * @param int $hospitalId ID del hospital
-     * @return bool True si tiene acceso, false en caso contrario 
-     */
-    public function userHasAccessToHospital(int $userId, int $hospitalId): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT COUNT(*) FROM user_hospitales 
-                WHERE id_usuario = ? AND id_hospital = ?
-            ");
-            $stmt->execute([$userId, $hospitalId]);
-            return (int)$stmt->fetchColumn() > 0;
-        } catch (PDOException $e) {
-            error_log("Error en userHasAccessToHospital: " . $e->getMessage());
-            throw $e;
-        }
-    }
-    
-    /**
-     * Verifica si el usuario tiene acceso a una planta específica
-     * 
-     * @param int $userId ID del usuario
-     * @param int $plantaId ID de la planta
-     * @return bool True si tiene acceso, false en caso contrario
-     */
-    public function userHasAccessToPlanta(int $userId, int $plantaId): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT COUNT(*) FROM user_plantas 
-                WHERE id_usuario = ? AND id_planta = ?
-            ");
-            $stmt->execute([$userId, $plantaId]);
-            return (int)$stmt->fetchColumn() > 0;
-        } catch (PDOException $e) {
-            error_log("Error en userHasAccessToPlanta: " . $e->getMessage());
-            throw $e;
-        }
-    }
-    
-    /**
-     * Verifica si el usuario tiene acceso a un botiquín específico
-     * 
-     * @param int $userId ID del usuario
-     * @param int $botiquinId ID del botiquín
-     * @return bool True si tiene acceso, false en caso contrario
-     */
-    public function userHasAccessToBotiquin(int $userId, int $botiquinId): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT COUNT(*) FROM user_botiquines 
-                WHERE id_usuario = ? AND id_botiquin = ?
-            ");
-            $stmt->execute([$userId, $botiquinId]);
-            return (int)$stmt->fetchColumn() > 0;
-        } catch (PDOException $e) {
-            error_log("Error en userHasAccessToBotiquin: " . $e->getMessage());
-            throw $e;
-        }
-    }
-    
-    /**
-     * Añade una ubicación a un usuario
-     * 
-     * @param int $userId ID del usuario
-     * @param int $locationId ID de la ubicación
-     * @param string $locationType Tipo de ubicación ('hospital', 'planta', 'botiquin')
-     * @return bool True si se añadió correctamente
-     */
-    public function addUserLocation($userId, $locationId, $locationType): bool
-    {
-        try {
-            $tableName = $this->getTableNameByLocationType($locationType);
-            $columnName = $this->getColumnNameByLocationType($locationType);
-            
-            $sql = "INSERT INTO $tableName (id_usuario, $columnName) VALUES (?, ?)";
-            
-            $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$userId, $locationId]);
-        } catch (PDOException $e) {
-            error_log("Error al añadir ubicación al usuario: " . $e->getMessage());
-            return false;
-        }
-    }
-    
-    /**
-     * Elimina una ubicación de un usuario
-     * 
-     * @param int $userId ID del usuario
-     * @param int $locationId ID de la ubicación
-     * @param string $locationType Tipo de ubicación ('hospital', 'planta', 'botiquin')
-     * @return bool True si se eliminó correctamente
-     */
-    public function removeUserLocation($userId, $locationId, $locationType): bool
-    {
-        try {
-            $tableName = $this->getTableNameByLocationType($locationType);
-            $columnName = $this->getColumnNameByLocationType($locationType);
-            
-            $sql = "DELETE FROM $tableName WHERE id_usuario = ? AND $columnName = ?";
-            
-            $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$userId, $locationId]);
-        } catch (PDOException $e) {
-            error_log("Error al eliminar ubicación del usuario: " . $e->getMessage());
-            return false;
-        }
-    }
-    
-    /**
-     * Obtiene el nombre de la tabla según el tipo de ubicación
-     * 
-     * @param string $locationType Tipo de ubicación
-     * @return string Nombre de la tabla
-     */
-    private function getTableNameByLocationType(string $locationType): string
-    {
-        switch (strtolower($locationType)) {
-            case 'hospital':
-                return 'user_hospitales';
-            case 'planta':
-                return 'user_plantas';
-            case 'botiquin':
-                return 'user_botiquines';
-            default:
-                throw new \InvalidArgumentException("Tipo de ubicación no válido: $locationType");
-        }
-    }
-    
-    /**
-     * Obtiene el nombre de la columna según el tipo de ubicación
-     * 
-     * @param string $locationType Tipo de ubicación
-     * @return string Nombre de la columna
-     */
-    private function getColumnNameByLocationType(string $locationType): string
-    {
-        switch (strtolower($locationType)) {
-            case 'hospital':
-                return 'id_hospital';
-            case 'planta':
-                return 'id_planta';
-            case 'botiquin':
-                return 'id_botiquin';
-            default:
-                throw new \InvalidArgumentException("Tipo de ubicación no válido: $locationType");
-        }
-    }
+
 }
