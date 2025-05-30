@@ -1,114 +1,20 @@
 <?php
+// TODO: Terminar de implementar pagina
+// Variables recibidas del controlador
+$title = $title ?? 'Asignar Ubicaciones';
+$navTitle = $navTitle ?? 'Asignar Ubicaciones';
+$user = $user ?? null;
+$hospitales = $hospitales ?? [];
+$plantas = $plantas ?? [];
+$botiquines = $botiquines ?? [];
+$assignedHospitals = $assignedHospitals ?? [];
+$assignedPlantas = $assignedPlantas ?? [];
+$assignedBotiquines = $assignedBotiquines ?? [];
+$locationType = $locationType ?? '';
+$success = $success ?? false;
+$error = $error ?? false;
+$scripts = $scripts ?? [];
 
-//TODO: Implementar funcinalidad para que para asignar plantas se deba asignar un hospital primero.
-
-use model\service\UserService;
-use model\service\HospitalService;
-use model\service\PlantaService;
-use model\service\BotiquinService;
-
-// Inicializar servicios
-$userService = new UserService();
-$hospitalService = new HospitalService();
-$plantaService = new PlantaService();
-$botiquinService = new BotiquinService();
-
-// Obtener el ID del usuario de la URL
-$userId = filter_input(INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT);
-
-// Validar que exista el usuario
-$user = null;
-if ($userId) {
-    $user = $userService->getUserById($userId);
-} else {
-    // Redirigir si no se proporciona un ID de usuario válido
-    header('Location: /users/dashboard');
-    exit;
-}
-
-// Obtener listas de hospitales, plantas y botiquines
-$hospitales = $hospitalService->getAllHospitals();
-$plantas = $plantaService->getAllArray();
-$botiquines = $botiquinService->getAllBotiquines();
-
-// Obtener ubicaciones ya asignadas al usuario
-$assignedHospitals = $userService->getUserHospitals($userId);
-$assignedPlantas = $userService->getUserPlantas($userId);
-$assignedBotiquines = $userService->getUserBotiquines($userId);
-
-// Determinar el tipo de ubicación según el rol del usuario
-$userRole = $user ? $user->getRol() : '';
-$locationType = '';
-
-switch ($userRole) {
-    case '1':
-    case '2':
-        // Para el gestor admin, se pueden asignar todas las ubicaciones
-        $locationType = 'admin';
-        break;
-    case '3':
-        $locationType = 'hospitales';
-        break;
-    case '4':
-        $locationType = 'plantas';
-        break;
-    case '5':
-        $locationType = 'botiquines';
-        break;
-    default:
-        break;
-}
-
-// Procesar solicitud de guardar ubicaciones
-$success = false;
-$error = false;
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_locations'])) {
-    try {
-        // Eliminar todas las ubicaciones existentes
-        $userLocationRepository = new \model\repository\UserLocationRepository();
-        $userLocationRepository->deleteAllUserLocations($userId);
-
-        // Procesar según el tipo de ubicación
-        switch ($locationType) {
-            case 'hospitales':
-                if (isset($_POST['hospital_ids']) && is_array($_POST['hospital_ids'])) {
-                    foreach ($_POST['hospital_ids'] as $hospitalId) {
-                        $userLocationRepository->addUserHospital($userId, $hospitalId);
-                    }
-                }
-                break;
-            case 'plantas':
-                if (isset($_POST['planta_ids']) && is_array($_POST['planta_ids'])) {
-                    foreach ($_POST['planta_ids'] as $plantaId) {
-                        $userLocationRepository->addUserPlanta($userId, $plantaId);
-                    }
-                }
-                break;
-            case 'botiquines':
-                if (isset($_POST['botiquin_ids']) && is_array($_POST['botiquin_ids'])) {
-                    foreach ($_POST['botiquin_ids'] as $botiquinId) {
-                        $userLocationRepository->addUserBotiquin($userId, $botiquinId);
-                    }
-                }
-                break;
-        }
-
-        $success = true;
-
-        // Recargar las ubicaciones asignadas
-        $assignedHospitals = $userService->getUserHospitals($userId);
-        $assignedPlantas = $userService->getUserPlantas($userId);
-        $assignedBotiquines = $userService->getUserBotiquines($userId);
-
-    } catch (Exception $e) {
-        $error = $e->getMessage();
-        error_log("Error al guardar ubicaciones: " . $e->getMessage());
-    }
-}
-
-$scripts = ["toasts.js", "user_locations.js"];
-$title = 'Asignar Ubicaciones';
 include(__DIR__ . '/../../layouts/_header.php');
 ?>
 
@@ -183,7 +89,7 @@ include(__DIR__ . '/../../layouts/_header.php');
                                 Los usuarios con rol de ADMIN o GESTOR_GENERAL tienen acceso a todas las ubicaciones.
                                 No es necesario asignar ubicaciones específicas.
                             </div>
-<!--                        Boton para volver al dashboard-->
+                            <!-- Boton para volver al dashboard-->
                             <div class="text-end">
                                 <a href="<?= url("users") ?>" class="btn btn-secondary">
                                     <i class="bi bi-arrow-left me-1"></i> Volver al Dashboard
@@ -402,7 +308,7 @@ include(__DIR__ . '/../../layouts/_header.php');
 
                                 <div class="row mt-4">
                                     <div class="col-12 text-end">
-                                        <a href=" <?= url("users") ?>" class="btn btn-secondary me-2">
+                                        <a href="<?= url("users") ?>" class="btn btn-secondary me-2">
                                             <i class="bi bi-arrow-left me-1"></i> Volver
                                         </a>
                                         <button type="submit" name="save_locations" class="btn btn-success"
@@ -431,5 +337,4 @@ include(__DIR__ . '/../../layouts/_header.php');
         };
     </script>
 
-<?php
-include(__DIR__ . '/../../layouts/_footer.php');
+<?php include(__DIR__ . '/../../layouts/_footer.php'); ?>

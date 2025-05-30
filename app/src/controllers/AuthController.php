@@ -24,7 +24,6 @@ class AuthController extends BaseController
         // Si ya está autenticado, redirigir a la página principal
         if (isset($_SESSION['user_id'])) {
             $this->redirect('/');
-            return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,7 +35,6 @@ class AuthController extends BaseController
                 'error' => $_GET['error'] ?? null,
                 'success' => $_GET['success'] ?? null,
                 'redirect' => $_GET['redirect'] ?? '/'
-                // Se eliminó la opción hideNav
             ];
 
             // Renderizar la vista de login usando notación de punto
@@ -67,7 +65,7 @@ class AuthController extends BaseController
     #[NoReturn]
     public function logout(): void
     {
-        // Usar el método logout de AuthService en lugar de manejar la sesión directamente
+        // Usar el méto do logout de AuthService en lugar de manejar la sesión directamente
         $this->authService->logout();
     }
 

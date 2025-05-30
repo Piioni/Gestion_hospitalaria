@@ -1,70 +1,12 @@
 <?php
+// Ahora los datos vienen del controlador
+$title = $title ?? 'Crear Usuario';
+$navTitle = $navTitle ?? 'Crear Usuario';
+$success = $success ?? false;
+$errors = $errors ?? [];
+$input = $input ?? [];
+$roles = $roles ?? [];
 
-use model\service\AuthService;
-use model\service\RoleService;
-
-$auth = new AuthService();
-$roleService = new RoleService();
-
-// Obtener los valores de option de los selects
-$roles = $roleService->getAllRoles();
-
-$success = false;
-$userId = null;
-
-$errors = [];
-$input = [];
-
-// Procesar el envío del formulario
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $input['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-    $input['email'] = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $input['password'] = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
-    $input['confirm_password'] = filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_SPECIAL_CHARS);
-    $input['role'] = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_NUMBER_INT);
-
-    if ($input['password'] !== $input['confirm_password']) {
-        $errors['confirm_password'] = "Las contraseñas no coinciden.";
-    }
-
-    // Validar los datos de entrada
-    if (empty($errors)) {
-        try {
-            $success = $auth->register(
-                $input['nombre'],
-                $input['email'],
-                $input['password'],
-                $input['role'],
-            );
-
-            if ($success) {
-                // Obtener el ID del usuario recién creado
-                $userId = $auth->getUserIdByEmail($input['email']);
-
-                // Vaciar los campos del formulario
-                $input['nombre'] = '';
-                $input['email'] = '';
-                $input['password'] = '';
-                $input['confirm_password'] = '';
-                $input['role'] = '';
-
-                // Preguntarle si se desea asignar localizaciones al usuario
-
-
-
-            }
-
-        } catch (InvalidArgumentException $e) {
-            // Capturar errores de validación
-            $errors['general'] = $e->getMessage();
-        } catch (Exception $e) {
-            // Capturar otros errores
-            $errors['general'] = "Error al registrar el usuario: " . $e->getMessage();
-        }
-    }
-}
-
-$title = 'Register';
 include(__DIR__ . '/../../layouts/_header.php');
 ?>
 

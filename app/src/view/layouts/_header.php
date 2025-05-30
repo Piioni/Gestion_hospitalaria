@@ -149,7 +149,6 @@ $canManageUsers = in_array($userRole, [ROLE_ADMIN, ROLE_GESTOR_GENERAL]);
                             <ul class="dropdown-menu">
                                 <li><a href="<?= url('users') ?>">Dashboard</a></li>
                                 <li><a href="<?= url('users.create') ?>">Crear Usuario</a></li>
-                                <li><a href="<?= url('users.locations') ?>">Asignar Ubicaciones</a></li>
                             </ul>
                         </li>
                     <?php endif; ?>
@@ -163,26 +162,17 @@ $canManageUsers = in_array($userRole, [ROLE_ADMIN, ROLE_GESTOR_GENERAL]);
                             <?= htmlspecialchars($userName) ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <?php if ($canManageUsers): ?>
-                                <li><a href="<?= url('users') ?>">Gestionar usuarios</a></li>
-                                <li class="dropdown-divider"></li>
-                            <?php endif; ?>
-
-                            <li><a href="<?= url('password.change') ?>"><i class="bi bi-key me-1"></i>Cambiar
-                                    contraseña</a></li>
-                            <li><a href="<?= url('logout') ?>"><i class="bi bi-box-arrow-right me-1"></i>Cerrar
-                                    sesión</a></li>
+                            <li><a href="<?= url('password.change') ?>"><i class="bi bi-key me-1"></i>
+                                    Cambiar contraseña</a></li>
+                            <li><a href="<?= url('logout') ?>"><i class="bi bi-box-arrow-right me-1"></i>
+                                    Cerrar sesión</a></li>
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="<?= url('login') ?>" class="nav-link"><i class="bi bi-box-arrow-in-right me-1"></i>Iniciar
-                            sesión</a></li>
+                    <li><a href="<?= url('login') ?>" class="nav-link"><i class="bi bi-box-arrow-in-right me-1"></i>
+                            Iniciar sesión</a></li>
                 <?php endif; ?>
             </ul>
         </nav>
     </div>
 </header>
-
-<div class="alerts-container">
-    <?php include __DIR__ . '/_alerts.php'; ?>
-</div>

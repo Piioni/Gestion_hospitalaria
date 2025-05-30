@@ -49,6 +49,11 @@ return [
             'controller' => 'UserController',
             'method' => 'edit'
         ],
+        'users.delete' => [
+            'path' => '/users/delete',
+            'controller' => 'UserController',
+            'method' => 'delete'
+        ],
         'users.locations' => [
             'path' => '/users/locations',
             'controller' => 'UserController',
