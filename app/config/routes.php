@@ -196,12 +196,12 @@ return [
         'stocks.botiquines' => [
             'path' => '/stocks/botiquines',
             'controller' => 'StockController',
-            'method' => 'botiquines'
+            'method' => 'indexBotiquin'
         ],
         'stocks.almacenes' => [
             'path' => '/stocks/almacenes',
             'controller' => 'StockController',
-            'method' => 'almacenes'
+            'method' => 'indexAlmacen'
         ],
         'stocks.create' => [
             'path' => '/stocks/create',
