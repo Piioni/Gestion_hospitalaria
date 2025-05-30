@@ -8,10 +8,12 @@ use model\repository\AlmacenRepository;
 class AlmacenService
 {
     private AlmacenRepository $almacenRepository;
+    private UserLocationService $userLocationService;
 
     public function __construct()
     {
         $this->almacenRepository = new AlmacenRepository();
+        $this->userLocationService = new UserLocationService();
     }
 
     public function createAlmacen($nombre, $tipo, $id_hospital, $id_planta): bool
@@ -46,6 +48,14 @@ class AlmacenService
             }
         }
 
+        // Verificar que no exista un almacen general en el hospital (a menos que sea el mismo que estamos editando)
+        if ($tipo === "GENERAL") {
+            $existingAlmacen = $this->almacenRepository->getByHospitalId($id_hospital);
+            if ($existingAlmacen && $existingAlmacen->getId() != $id_almacen) {
+                throw new \InvalidArgumentException("Ya existe un almacen general en el hospital seleccionado.");
+            }
+        }
+
         return $this->almacenRepository->update($id_almacen, $nombre, $tipo, $id_hospital, $id_planta);
     }
 
@@ -72,5 +82,29 @@ class AlmacenService
     public function getAlmacenByPlantaId($id_planta): ?Almacen
     {
         return $this->almacenRepository->getByPlantaId($id_planta);
+    }
+
+    public function getAlmacenesForUser($userId, $userRole, $filtroHospital, $filtroTipo): array
+    {
+        $almacenes = match ($userRole) {
+            'ADMINISTRADOR', 'GESTOR_GENERAL' => $this->almacenRepository->getAll(),
+            'GESTOR_HOSPITAL' => $this->userLocationService->getAssignedAlmacenesFromHospitals($userId),
+            'GESTOR_PLANTA' => $this->userLocationService->getAssignedAlmacenesFromPlantas($userId),
+            default => throw new \Exception("Rol de usuario no reconocido"),
+        };
+
+        // Aplicar filtros si se proporcionan
+        if ($filtroHospital) {
+            $almacenes = array_filter($almacenes, function($almacen) use ($filtroHospital) {
+                return $almacen->getIdHospital() == $filtroHospital;
+            });
+        }
+        if ($filtroTipo) {
+            $almacenes = array_filter($almacenes, function($almacen) use ($filtroTipo) {
+                return $almacen->getTipo() == $filtroTipo;
+            });
+        }
+        // Reindexar el array para evitar índices faltantes
+        return array_values($almacenes);
     }
 }

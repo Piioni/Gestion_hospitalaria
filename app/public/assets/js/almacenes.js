@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     // Referencias a los elementos del DOM
     const tipoSelect = document.getElementById('tipo');
@@ -18,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (document.querySelector('.field-help')) {
                 document.querySelector('.field-help').style.display = 'none';
             }
+            
+            // Cargar las plantas del hospital seleccionado cuando se cambia a tipo PLANTA
+            cargarPlantasPorHospital();
         } else {
             // Si es GENERAL u otro tipo, deshabilitar el selector de plantas
             plantaSelect.disabled = true;
@@ -38,20 +40,32 @@ document.addEventListener('DOMContentLoaded', function() {
         // Limpiar el selector de plantas
         plantaSelect.innerHTML = '<option value="">Seleccione una planta</option>';
         
+        // Solo cargar plantas si hay un hospital seleccionado y el tipo es PLANTA
         if (hospitalId) {
+            // Verificar que allPlantas esté definido
+            if (!window.allPlantas || !Array.isArray(window.allPlantas)) {
+                console.error('Error: La variable allPlantas no está definida correctamente');
+                return;
+            }
+            
             // Filtrar plantas por hospital seleccionado
             const plantasDelHospital = window.allPlantas.filter(planta => 
                 planta.id_hospital == hospitalId
             );
             
+            // Log para depuración
+            console.log('Hospital ID:', hospitalId);
+            console.log('Todas las plantas:', window.allPlantas);
+            console.log('Plantas filtradas:', plantasDelHospital);
+            
             // Agregar opciones de plantas al selector
             plantasDelHospital.forEach(planta => {
                 const option = document.createElement('option');
-                option.value = planta.id_planta;
+                option.value = planta.id_planta || planta.id; // Manejar ambos formatos posibles
                 option.textContent = planta.nombre;
                 
                 // Preseleccionar la planta si estamos en modo edición
-                if (window.selectedPlantaId && planta.id_planta == window.selectedPlantaId) {
+                if (window.selectedPlantaId && (planta.id_planta == window.selectedPlantaId || planta.id == window.selectedPlantaId)) {
                     option.selected = true;
                 }
                 
@@ -62,9 +76,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Asociar eventos a los selectores
     tipoSelect.addEventListener('change', togglePlantaSelect);
-    hospitalSelect.addEventListener('change', cargarPlantasPorHospital);
+    hospitalSelect.addEventListener('change', function() {
+        // Solo cargar plantas si el tipo es PLANTA
+        if (tipoSelect.value === 'PLANTA') {
+            cargarPlantasPorHospital();
+        }
+    });
     
     // Inicializar los estados al cargar la página
     togglePlantaSelect();
-    cargarPlantasPorHospital();
+    
+    // Si ya hay un hospital seleccionado y el tipo es PLANTA, cargar las plantas
+    if (hospitalSelect.value && tipoSelect.value === 'PLANTA') {
+        cargarPlantasPorHospital();
+    }
 });

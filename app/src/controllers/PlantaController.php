@@ -73,7 +73,7 @@ class PlantaController extends BaseController
             'canCreateDelete' => $canCreateDelete,
             'scripts' => 'toasts.js',
             'title' => 'Sistema de Gestión Hospitalaria',
-            'navTitle' => 'Gestión de Plantas'
+            'navTitle' => 'Plantas'
         ];
         
         $this->render('entity.plantas.dashboard_planta', $data);

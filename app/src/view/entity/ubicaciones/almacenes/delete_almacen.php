@@ -1,65 +1,5 @@
 <?php
-
-use model\service\AlmacenService;
-use model\service\HospitalService;
-use model\service\PlantaService;
-use model\service\StockService;
-
-// Obtener el ID del almacén a eliminar
-$id_almacen = $_GET["id_almacen"] ?? null;
-
-if (!$id_almacen || !is_numeric($id_almacen)) {
-    header('Location: ' . url('almacenes.dashboard', ['error' => 'id_invalid']));
-    exit;
-}
-
-$almacenService = new AlmacenService();
-$hospitalService = new HospitalService();
-$plantaService = new PlantaService();
-$stockService = new StockService();
-
-try {
-    // Obtener información del almacén
-    $almacen = $almacenService->getAlmacenById($id_almacen);
-    
-    if (!$almacen) {
-        header('Location: ' . url('almacenes.dashboard', ['error' => 'not_found']));
-        exit;
-    }
-    
-    // Obtener el hospital y planta asociados
-    $hospital = $hospitalService->getHospitalById($almacen->getIdHospital());
-    $planta = null;
-    
-    if ($almacen->getIdPlanta()) {
-        $planta = $plantaService->getPlantaById($almacen->getIdPlanta());
-    }
-    
-    // Verificar si tiene stock asociado
-    $tieneStock = false; // Aquí se implementaría la lógica real para verificar si tiene stock
-    
-    // Capturar errores si los hay
-    $error = null;
-
-    // Si es una solicitud de confirmación, eliminar el almacén
-    if (isset($_GET["confirm"])) {
-        try {
-            $result = $almacenService->deleteAlmacen($id_almacen);
-            header('Location: ' . url('almacenes.dashboard', ['success' => 'deleted']));
-            exit;
-        } catch (Exception $e) {
-            $error = $e->getMessage();
-        }
-    }
-
-    $title = "Confirmar Eliminación de Almacén";
-    $scripts = "toasts.js";
-    include __DIR__ . "/../../../layouts/_header.php";
-} catch (Exception $e) {
-    // Error inesperado
-    header('Location: ' . url('almacenes.dashboard', ['error' => 'unexpected']));
-    exit;
-}
+include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
 <div class="page-section">
@@ -87,8 +27,8 @@ try {
                 </div>
                 
                 <div class="text-center mt-4">
-                    <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
-                    <a href="<?= url('almacenes.delete', ['id_almacen' => $id_almacen, 'confirm' => 1]) ?>" 
+                    <a href="<?= url('almacenes') ?>" class="btn btn-secondary">Cancelar</a>
+                    <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId(), 'confirm' => 1]) ?>" 
                        class="btn btn-danger" 
                        id="confirmDelete">Confirmar Eliminación</a>
                 </div>
@@ -126,7 +66,6 @@ try {
                 { autoClose: false }
             );
         <?php endif; ?>
-
     });
 </script>
 

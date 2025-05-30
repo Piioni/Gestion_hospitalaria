@@ -1,88 +1,4 @@
 <?php
-
-use model\service\AlmacenService;
-use model\service\HospitalService;
-use model\service\PlantaService;
-
-$almacenService = new AlmacenService();
-$hospitalService = new HospitalService();
-$plantaService = new PlantaService();
-
-// Obtener lista de hospitales y plantas
-$hospitals = $hospitalService->getAllHospitals();
-$plantas = $plantaService->getAllArray();
-
-// Inicializar variables
-$almacen = [];
-$errors = [];
-$success = false;
-
-// Verificar si se ha proporcionado un ID de almacén para editar
-if (!isset($_GET['id_almacen']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Redirigir al usuario si no se proporciona un ID
-    header("Location: " . url('almacenes.dashboard', ['error' => 'no_id']));
-    exit;
-}
-
-// Sí es una solicitud POST, procesar el formulario de edición
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitizar datos de entrada
-    $almacen['id'] = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-    $almacen['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-    $almacen['tipo'] = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_SPECIAL_CHARS);
-    $almacen['id_hospital'] = filter_input(INPUT_POST, 'id_hospital', FILTER_SANITIZE_SPECIAL_CHARS);
-    $almacen['id_planta'] = filter_input(INPUT_POST, 'id_planta', FILTER_SANITIZE_SPECIAL_CHARS);
-
-    try {
-        // Intentar actualizar el almacén con los datos sanitizados
-        $success = $almacenService->updateAlmacen(
-            $almacen['id'],
-            $almacen['nombre'],
-            $almacen['tipo'],
-            $almacen['id_hospital'],
-            $almacen['id_planta']
-        );
-
-        // Redirigir a la misma página con un mensaje de éxito
-        if ($success) {
-            header("Location: " . url('almacenes.dashboard', ['success' => 'updated']));
-            exit;
-        }
-    } catch (InvalidArgumentException $e) {
-        // Capturar errores de validación
-        $errors[] = $e->getMessage();
-    } catch (Exception $e) {
-        // Capturar otros errores
-        $errors[] = "Error al actualizar el almacén: " . $e->getMessage();
-    }
-
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Obtener el ID del almacén a editar
-    $id = filter_input(INPUT_GET, 'id_almacen', FILTER_SANITIZE_NUMBER_INT);
-
-    try {
-        // Cargar los datos del almacén desde la base de datos
-        $almacenObj = $almacenService->getAlmacenById($id);
-
-        if ($almacenObj) {
-            // Llenar el array con los datos del almacén
-            $almacen['id'] = $almacenObj->getId();
-            $almacen['nombre'] = $almacenObj->getNombre();
-            $almacen['tipo'] = $almacenObj->getTipo();
-            $almacen['id_hospital'] = $almacenObj->getIdHospital();
-            $almacen['id_planta'] = $almacenObj->getIdPlanta();
-        } else {
-            // El almacén no existe, redirigir
-            header("Location: " . url('almacenes.dashboard', ['error' => 'not_found']));
-            exit;
-        }
-    } catch (Exception $e) {
-        $errors[] = "Error al cargar el almacén: " . $e->getMessage();
-    }
-}
-
-$title = "Editar Almacén";
-$scripts = ["almacenes.js", "toasts.js"];
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -168,10 +84,11 @@ include __DIR__ . "/../../../layouts/_header.php";
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-1"></i> Guardar Cambios
                                 </button>
-                                <a href="<?= url('almacenes.dashboard') ?>" class="btn btn-secondary">
+                                <a href="<?= url('almacenes') ?>" class="btn btn-secondary">
                                     <i class="fas fa-times me-1"></i> Cancelar
                                 </a>
-                                <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen['id']]) ?>" class="btn btn-danger">
+                                <a href="<?= url('almacenes.delete', ['id_almacen' => $almacen['id']]) ?>"
+                                   class="btn btn-danger">
                                     <i class="fas fa-trash me-1"></i> Eliminar Almacén
                                 </a>
                             </div>
@@ -189,69 +106,17 @@ include __DIR__ . "/../../../layouts/_header.php";
 
         // Para preseleccionar la planta en edición
         window.selectedPlantaId = '<?= $almacen['id_planta'] ?? '' ?>';
-        
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function () {
             <?php if (!empty($errors)): ?>
-                // Mostrar errores en un toast de tipo danger
-                ToastSystem.danger(
-                    'Error al actualizar el almacén',
-                    `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
-                    null,
-                    { autoClose: false }
-                );
+            // Mostrar errores en un toast de tipo danger
+            ToastSystem.danger(
+                'Error al actualizar el almacén',
+                `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
+                null,
+                {autoClose: false}
+            );
             <?php endif; ?>
-            
-            <?php if ($success): ?>
-                // Mostrar mensaje de éxito
-                ToastSystem.success(
-                    'Almacén actualizado',
-                    'El almacén se ha actualizado correctamente.',
-                    null,
-                    { autoClose: true, closeDelay: 5000 }
-                );
-            <?php endif; ?>
-            
-            // Validar el formulario antes de enviar
-            document.getElementById('editAlmacenForm').addEventListener('submit', function(event) {
-                const nombre = document.getElementById('nombre').value.trim();
-                const tipo = document.getElementById('tipo').value;
-                const hospital = document.getElementById('id_hospital').value;
-                const planta = document.getElementById('id_planta').value;
-                
-                let isValid = true;
-                let errorMessages = [];
-                
-                if (!nombre) {
-                    errorMessages.push('Debe ingresar un nombre para el almacén');
-                    isValid = false;
-                }
-                
-                if (!tipo) {
-                    errorMessages.push('Debe seleccionar un tipo de almacén');
-                    isValid = false;
-                }
-                
-                if (!hospital) {
-                    errorMessages.push('Debe seleccionar un hospital');
-                    isValid = false;
-                }
-                
-                // Si es de tipo PLANTA, validar que se haya seleccionado una planta
-                if (tipo === 'PLANTA' && !planta) {
-                    errorMessages.push('Para almacenes de tipo PLANTA, debe seleccionar una planta');
-                    isValid = false;
-                }
-                
-                if (!isValid) {
-                    event.preventDefault();
-                    ToastSystem.warning(
-                        'Formulario incompleto',
-                        errorMessages.join('<br>'),
-                        null,
-                        { autoClose: true, closeDelay: 7000 }
-                    );
-                }
-            });
         });
     </script>
 

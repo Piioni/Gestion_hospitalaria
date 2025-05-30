@@ -84,6 +84,52 @@ class UserLocationService
     {
         return $this->userLocationRepository->getBotiquinesByUserId($userId);
     }
+
+    public function getAssignedAlmacenesFromHospitals(int $userId): array
+    {
+        // Obtener IDs de hospitales asignados
+        $hospitales = $this->getAssignedHospitals($userId);
+        if (empty($hospitales)) {
+            return [];
+        }
+
+        // Obtener IDs de hospitales
+        $hospitalIds = array_map(function($hospital) {
+            return $hospital->getId();
+        }, $hospitales);
+
+        // Obtener almacenes de los hospitales
+        $almacenes = [];
+        foreach ($hospitalIds as $hospitalId) {
+            $almacenesDeHospital = $this->userLocationRepository->getAlmacenesByHospitalId($hospitalId);
+            $almacenes = array_merge($almacenes, $almacenesDeHospital);
+        }
+
+        return $almacenes;
+    }
+
+    public function getAssignedAlmacenesFromPlantas(int $userId): array
+    {
+        // Obtener plantas asignadas al usuario
+        $plantas = $this->getAssignedPlantas($userId);
+        if (empty($plantas)) {
+            return [];
+        }
+
+        // Obtener IDs de plantas
+        $plantaIds = array_map(function($planta) {
+            return $planta->getId();
+        }, $plantas);
+
+        // Obtener almacenes de las plantas
+        $almacenes = [];
+        foreach ($plantaIds as $plantaId) {
+            $almacenesDePlanta = $this->userLocationRepository->getAlmacenesByPlantaId($plantaId);
+            $almacenes = array_merge($almacenes, $almacenesDePlanta);
+        }
+
+        return $almacenes;
+    }
     
     /**
      * Asigna un hospital a un usuario

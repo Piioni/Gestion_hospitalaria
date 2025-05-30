@@ -10,11 +10,15 @@ class UserLocationRepository {
     private PDO $pdo;
     private HospitalRepository $hospitalRepository;
     private PlantaRepository $plantaRepository;
+    private AlmacenRepository $almacenRepository;
+    private BotiquinRepository $botiquinRepository;
 
     public function __construct() {
         $this->pdo = Database::getInstance()->getPdo();
         $this->hospitalRepository = new HospitalRepository();
         $this->plantaRepository = new PlantaRepository();
+        $this->almacenRepository = new AlmacenRepository();
+        $this->botiquinRepository = new BotiquinRepository();
     }
     
     /**
@@ -164,5 +168,40 @@ class UserLocationRepository {
             throw $e;
         }
     }
+
+    public function getAlmacenesByHospitalId($hospitalId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT a.* FROM almacenes a
+                JOIN hospitales h ON a.id_hospital = h.id_hospital
+                WHERE h.id_hospital = ? AND a.activo = 1
+            ");
+            $stmt->execute([$hospitalId]);
+            $almacenesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->almacenRepository, 'createAlmacenFromData'], $almacenesData);
+        } catch (PDOException $e) {
+            error_log("Error en getAlmacenesByHospitalId: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAlmacenesByPlantaId($plantaId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT a.* FROM almacenes a
+                JOIN plantas p ON a.id_planta = p.id_planta
+                WHERE p.id_planta = ? AND a.activo = 1
+            ");
+            $stmt->execute([$plantaId]);
+            $almacenesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->almacenRepository, 'createAlmacenFromData'], $almacenesData);
+        } catch (PDOException $e) {
+            error_log("Error en getAlmacenesByPlantaId: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 
 }
