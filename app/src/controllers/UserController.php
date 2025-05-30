@@ -39,10 +39,16 @@ class UserController extends BaseController
         // Verificar permisos - solo admins pueden ver todos los usuarios
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL']);
 
+        $data = $this->prepareDashboardData();
+        $this->render('entity.users.dashboard_user', $data);
+    }
+    
+    private function prepareDashboardData(): array
+    {
         // Obtener la lista de usuarios
         $users = $this->userService->getAllUsers();
 
-        $data = [
+        return [
             'users' => $users,
             'success' => $_GET['success'] ?? null,
             'error' => $_GET['error'] ?? null,
@@ -50,8 +56,6 @@ class UserController extends BaseController
             'title' => 'Gestión de Usuarios',
             'navTitle' => 'Usuarios'
         ];
-
-        $this->render('entity.users.dashboard_user', $data);
     }
 
     public function create(): void
@@ -135,22 +139,37 @@ class UserController extends BaseController
 
         $userId = $_GET['id'] ?? null;
 
-        if (!$userId || !is_numeric($userId)) {
+        if (!$this->validateUserId($userId)) {
             $this->redirect('users', ['error' => 'id_invalid']);
             return;
         }
 
+        $data = $this->prepareEditData($userId);
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->handleEdit((int)$userId, $data);
+        } else {
+            $this->render('entity.users.edit_user', $data);
+        }
+    }
+    
+    private function validateUserId($id): bool
+    {
+        return !empty($id) && is_numeric($id);
+    }
+    
+    private function prepareEditData($userId): array
+    {
         // Obtener el usuario a editar
         $user = $this->userService->getUserById((int)$userId);
         if (!$user) {
             $this->redirect('users', ['error' => 'user_not_found']);
-            return;
         }
 
         // Obtener roles para el selector
         $roles = $this->roleService->getAllRoles();
 
-        $data = [
+        return [
             'title' => 'Editar Usuario',
             'navTitle' => 'Editar Usuario',
             'user' => $user,
@@ -158,12 +177,6 @@ class UserController extends BaseController
             'errors' => [],
             'success' => false
         ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->handleEdit((int)$userId, $data);
-        } else {
-            $this->render('entity.users.edit_user', $data);
-        }
     }
 
     private function handleEdit(int $userId, array &$data): void
@@ -172,21 +185,10 @@ class UserController extends BaseController
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_NUMBER_INT);
 
-        $errors = [];
-
-        if (empty($nombre) || empty($email) || empty($role)) {
-            $errors['general'] = "Todos los campos son obligatorios.";
-        }
-
-        // Verificar si el email es único (excluyendo el usuario actual)
-        $existingUser = $this->userService->getUserByEmail($email);
-        if ($existingUser && $existingUser->getId() != $userId) {
-            $errors['email'] = "El correo electrónico ya está en uso.";
-        }
+        $errors = $this->validateEditData($userId, $nombre, $email, $role);
 
         if (empty($errors)) {
             try {
-                // Corregir: usar userService en lugar de userRepository
                 if ($this->userService->updateUser($userId, $nombre, $email, $role)) {
                     $this->redirect('users', ['success' => 'updated']);
                     return;
@@ -204,6 +206,23 @@ class UserController extends BaseController
         $data['user']->setRol($role);
         $this->render('entity.users.edit_user', $data);
     }
+    
+    private function validateEditData(int $userId, $nombre, $email, $role): array
+    {
+        $errors = [];
+
+        if (empty($nombre) || empty($email) || empty($role)) {
+            $errors['general'] = "Todos los campos son obligatorios.";
+        }
+
+        // Verificar si el email es único (excluyendo el usuario actual)
+        $existingUser = $this->userService->getUserByEmail($email);
+        if ($existingUser && $existingUser->getId() != $userId) {
+            $errors['email'] = "El correo electrónico ya está en uso.";
+        }
+        
+        return $errors;
+    }
 
     public function delete(): void
     {
@@ -212,7 +231,7 @@ class UserController extends BaseController
 
         $userId = $_GET['id'] ?? null;
 
-        if (!$userId || !is_numeric($userId)) {
+        if (!$this->validateUserId($userId)) {
             $this->redirect('users', ['error' => 'id_invalid']);
             return;
         }
@@ -223,24 +242,29 @@ class UserController extends BaseController
             return;
         }
 
-        // Obtener el usuario a eliminar
-        $user = $this->userService->getUserById((int)$userId);
-        if (!$user) {
-            $this->redirect('users', ['error' => 'user_not_found']);
-        }
-
-        $data = [
-            'title' => 'Eliminar Usuario',
-            'navTitle' => 'Eliminar Usuario',
-            'user' => $user,
-            'roleName' => $this->roleService->getRoleById($user->getRol())->getNombre()
-        ];
+        $data = $this->prepareDeleteData($userId);
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->handleDelete((int)$userId);
         } else {
             $this->render('entity.users.delete_user', $data);
         }
+    }
+    
+    private function prepareDeleteData($userId): array
+    {
+        // Obtener el usuario a eliminar
+        $user = $this->userService->getUserById((int)$userId);
+        if (!$user) {
+            $this->redirect('users', ['error' => 'user_not_found']);
+        }
+
+        return [
+            'title' => 'Eliminar Usuario',
+            'navTitle' => 'Eliminar Usuario',
+            'user' => $user,
+            'roleName' => $this->roleService->getRoleById($user->getRol())->getNombre()
+        ];
     }
 
     private function handleDelete(int $userId): void
@@ -249,7 +273,7 @@ class UserController extends BaseController
             // Primero eliminar todas las ubicaciones asignadas
             $this->userLocationRepository->deleteAllUserLocations($userId);
 
-            // Luego eliminar el usuario - corregir: usar userService en lugar de userRepository
+            // Luego eliminar el usuario
             if ($this->userService->deleteUser($userId)) {
                 $this->redirect('users', ['success' => 'deleted']);
             } else {
@@ -267,10 +291,22 @@ class UserController extends BaseController
 
         $userId = $_GET['user_id'] ?? null;
 
-        if (!$userId || !is_numeric($userId)) {
+        if (!$this->validateUserId($userId)) {
             $this->redirect('/users', ['error' => 'id_invalid']);
         }
 
+        $data = $this->prepareLocationData($userId);
+
+        // Procesar solicitud de guardar ubicaciones
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_locations'])) {
+            $this->handleSaveLocations((int)$userId, $data);
+        } else {
+            $this->render('entity.users.user_locations', $data);
+        }
+    }
+    
+    private function prepareLocationData($userId): array
+    {
         // Obtener el usuario
         $user = $this->userService->getUserById((int)$userId);
         if (!$user) {
@@ -289,27 +325,9 @@ class UserController extends BaseController
 
         // Determinar el tipo de ubicación según el rol del usuario
         $userRole = $user->getRol();
-        $locationType = '';
+        $locationType = $this->determineLocationType($userRole);
 
-        switch ($userRole) {
-            case '1': // ADMINISTRADOR
-            case '2': // GESTOR_GENERAL
-                $locationType = 'admin';
-                break;
-            case '3': // GESTOR_HOSPITAL
-                $locationType = 'hospitales';
-                break;
-            case '4': // GESTOR_PLANTA
-                $locationType = 'plantas';
-                break;
-            case '5': // GESTOR_BOTIQUIN
-                $locationType = 'botiquines';
-                break;
-            default:
-                break;
-        }
-
-        $data = [
+        return [
             'title' => 'Asignar Ubicaciones',
             'navTitle' => 'Asignar Ubicaciones',
             'user' => $user,
@@ -324,12 +342,22 @@ class UserController extends BaseController
             'error' => false,
             'scripts' => ["toasts.js", "user_locations.js"]
         ];
-
-        // Procesar solicitud de guardar ubicaciones
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_locations'])) {
-            $this->handleSaveLocations((int)$userId, $data);
-        } else {
-            $this->render('entity.users.user_locations', $data);
+    }
+    
+    private function determineLocationType($userRole): string
+    {
+        switch ($userRole) {
+            case '1': // ADMINISTRADOR
+            case '2': // GESTOR_GENERAL
+                return 'admin';
+            case '3': // GESTOR_HOSPITAL
+                return 'hospitales';
+            case '4': // GESTOR_PLANTA
+                return 'plantas';
+            case '5': // GESTOR_BOTIQUIN
+                return 'botiquines';
+            default:
+                return '';
         }
     }
 
@@ -340,29 +368,7 @@ class UserController extends BaseController
             $this->userLocationRepository->deleteAllUserLocations($userId);
 
             // Procesar según el tipo de ubicación
-            switch ($data['locationType']) {
-                case 'hospitales':
-                    if (isset($_POST['hospital_ids']) && is_array($_POST['hospital_ids'])) {
-                        foreach ($_POST['hospital_ids'] as $hospitalId) {
-                            $this->userLocationRepository->addUserHospital($userId, $hospitalId);
-                        }
-                    }
-                    break;
-                case 'plantas':
-                    if (isset($_POST['planta_ids']) && is_array($_POST['planta_ids'])) {
-                        foreach ($_POST['planta_ids'] as $plantaId) {
-                            $this->userLocationRepository->addUserPlanta($userId, $plantaId);
-                        }
-                    }
-                    break;
-                case 'botiquines':
-                    if (isset($_POST['botiquin_ids']) && is_array($_POST['botiquin_ids'])) {
-                        foreach ($_POST['botiquin_ids'] as $botiquinId) {
-                            $this->userLocationRepository->addUserBotiquin($userId, $botiquinId);
-                        }
-                    }
-                    break;
-            }
+            $this->saveLocationsBasedOnType($userId, $data['locationType']);
 
             $data['success'] = true;
 
@@ -377,5 +383,32 @@ class UserController extends BaseController
         }
 
         $this->render('entity.users.user_locations', $data);
+    }
+    
+    private function saveLocationsBasedOnType(int $userId, string $locationType): void
+    {
+        switch ($locationType) {
+            case 'hospitales':
+                if (isset($_POST['hospital_ids']) && is_array($_POST['hospital_ids'])) {
+                    foreach ($_POST['hospital_ids'] as $hospitalId) {
+                        $this->userLocationRepository->addUserHospital($userId, $hospitalId);
+                    }
+                }
+                break;
+            case 'plantas':
+                if (isset($_POST['planta_ids']) && is_array($_POST['planta_ids'])) {
+                    foreach ($_POST['planta_ids'] as $plantaId) {
+                        $this->userLocationRepository->addUserPlanta($userId, $plantaId);
+                    }
+                }
+                break;
+            case 'botiquines':
+                if (isset($_POST['botiquin_ids']) && is_array($_POST['botiquin_ids'])) {
+                    foreach ($_POST['botiquin_ids'] as $botiquinId) {
+                        $this->userLocationRepository->addUserBotiquin($userId, $botiquinId);
+                    }
+                }
+                break;
+        }
     }
 }

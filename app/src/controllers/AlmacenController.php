@@ -98,31 +98,7 @@ class AlmacenController extends BaseController
         
         // Procesar el formulario si es POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Sanitizar datos de entrada
-            $almacen['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-            $almacen['tipo'] = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_SPECIAL_CHARS);
-            $almacen['id_hospital'] = filter_input(INPUT_POST, 'id_hospital', FILTER_SANITIZE_SPECIAL_CHARS);
-            $almacen['id_planta'] = filter_input(INPUT_POST, 'id_planta', FILTER_SANITIZE_SPECIAL_CHARS);
-
-            try {
-                // Intentar crear el almacen
-                $success = $this->almacenService->createAlmacen(
-                    $almacen['nombre'],
-                    $almacen['tipo'],
-                    $almacen['id_hospital'],
-                    $almacen['id_planta']
-                );
-
-                // Redirigir tras crear con éxito
-                if ($success) {
-                    header("Location: " . url('almacenes.dashboard', ['success' => 'created']));
-                    exit;
-                }
-            } catch (InvalidArgumentException $e) {
-                $errors[] = $e->getMessage();
-            } catch (Exception $e) {
-                $errors[] = "Error al crear el almacén: " . $e->getMessage();
-            }
+            $this->handleCreate($almacen, $errors, $success);
         }
         
         $data = [
@@ -138,13 +114,42 @@ class AlmacenController extends BaseController
         $this->render('entity.almacenes.create_almacen', $data);
     }
     
+    private function handleCreate(array &$almacen, array &$errors, bool &$success): void
+    {
+        // Sanitizar datos de entrada
+        $almacen['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
+        $almacen['tipo'] = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_SPECIAL_CHARS);
+        $almacen['id_hospital'] = filter_input(INPUT_POST, 'id_hospital', FILTER_SANITIZE_SPECIAL_CHARS);
+        $almacen['id_planta'] = filter_input(INPUT_POST, 'id_planta', FILTER_SANITIZE_SPECIAL_CHARS);
+
+        try {
+            // Intentar crear el almacen
+            $success = $this->almacenService->createAlmacen(
+                $almacen['nombre'],
+                $almacen['tipo'],
+                $almacen['id_hospital'],
+                $almacen['id_planta']
+            );
+
+            // Redirigir tras crear con éxito
+            if ($success) {
+                header("Location: " . url('almacenes', ['success' => 'created']));
+                exit;
+            }
+        } catch (InvalidArgumentException $e) {
+            $errors[] = $e->getMessage();
+        } catch (Exception $e) {
+            $errors[] = "Error al crear el almacén: " . $e->getMessage();
+        }
+    }
+    
     public function edit(): void
     {
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
         
         $id_almacen = $_GET['id_almacen'] ?? null;
         
-        if (!$id_almacen || !is_numeric($id_almacen)) {
+        if (!$this->validateAlmacenId($id_almacen)) {
             header("Location: " . url('almacenes', ['error' => 'no_id']));
             exit;
         }
@@ -157,53 +162,14 @@ class AlmacenController extends BaseController
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
         $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole);
-        
         $plantas = $this->plantaService->getAllArray();
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Procesar formulario de edición
-            $almacen['id'] = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-            $almacen['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-            $almacen['tipo'] = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_SPECIAL_CHARS);
-            $almacen['id_hospital'] = filter_input(INPUT_POST, 'id_hospital', FILTER_SANITIZE_SPECIAL_CHARS);
-            $almacen['id_planta'] = filter_input(INPUT_POST, 'id_planta', FILTER_SANITIZE_SPECIAL_CHARS);
-
-            try {
-                $success = $this->almacenService->updateAlmacen(
-                    $almacen['id'],
-                    $almacen['nombre'],
-                    $almacen['tipo'],
-                    $almacen['id_hospital'],
-                    $almacen['id_planta']
-                );
-
-                if ($success) {
-                    header("Location: " . url('almacenes', ['success' => 'updated']));
-                    exit;
-                }
-            } catch (InvalidArgumentException $e) {
-                $errors[] = $e->getMessage();
-            } catch (Exception $e) {
-                $errors[] = "Error al actualizar el almacén: " . $e->getMessage();
-            }
+            $this->handleEdit($almacen, $errors, $success);
         } else {
             // Cargar datos del almacén existente
-            try {
-                $almacenObj = $this->almacenService->getAlmacenById($id_almacen);
-                
-                if (!$almacenObj) {
-                    header("Location: " . url('almacenes', ['error' => 'not_found']));
-                    exit;
-                }
-                
-                $almacen['id'] = $almacenObj->getId();
-                $almacen['nombre'] = $almacenObj->getNombre();
-                $almacen['tipo'] = $almacenObj->getTipo();
-                $almacen['id_hospital'] = $almacenObj->getIdHospital();
-                $almacen['id_planta'] = $almacenObj->getIdPlanta();
-            } catch (Exception $e) {
-                $errors[] = "Error al cargar el almacén: " . $e->getMessage();
-            }
+            $this->loadAlmacenData($id_almacen, $almacen, $errors);
         }
         
         $data = [
@@ -219,67 +185,134 @@ class AlmacenController extends BaseController
         $this->render('entity.almacenes.edit_almacen', $data);
     }
     
+    private function validateAlmacenId($id): bool
+    {
+        return !empty($id) && is_numeric($id);
+    }
+    
+    private function loadAlmacenData($id_almacen, array &$almacen, array &$errors): void
+    {
+        try {
+            $almacenObj = $this->almacenService->getAlmacenById($id_almacen);
+            
+            if (!$almacenObj) {
+                header("Location: " . url('almacenes', ['error' => 'not_found']));
+                exit;
+            }
+            
+            $almacen['id'] = $almacenObj->getId();
+            $almacen['nombre'] = $almacenObj->getNombre();
+            $almacen['tipo'] = $almacenObj->getTipo();
+            $almacen['id_hospital'] = $almacenObj->getIdHospital();
+            $almacen['id_planta'] = $almacenObj->getIdPlanta();
+        } catch (Exception $e) {
+            $errors[] = "Error al cargar el almacén: " . $e->getMessage();
+        }
+    }
+    
+    private function handleEdit(array &$almacen, array &$errors, bool &$success): void
+    {
+        // Procesar formulario de edición
+        $almacen['id'] = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $almacen['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
+        $almacen['tipo'] = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_SPECIAL_CHARS);
+        $almacen['id_hospital'] = filter_input(INPUT_POST, 'id_hospital', FILTER_SANITIZE_SPECIAL_CHARS);
+        $almacen['id_planta'] = filter_input(INPUT_POST, 'id_planta', FILTER_SANITIZE_SPECIAL_CHARS);
+
+        try {
+            $success = $this->almacenService->updateAlmacen(
+                $almacen['id'],
+                $almacen['nombre'],
+                $almacen['tipo'],
+                $almacen['id_hospital'],
+                $almacen['id_planta']
+            );
+
+            if ($success) {
+                header("Location: " . url('almacenes', ['success' => 'updated']));
+                exit;
+            }
+        } catch (InvalidArgumentException $e) {
+            $errors[] = $e->getMessage();
+        } catch (Exception $e) {
+            $errors[] = "Error al actualizar el almacén: " . $e->getMessage();
+        }
+    }
+    
     public function delete(): void
     {
-        // TODO: Implementar la verificación de stock asociado antes de eliminar un almacén
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
         
         $id_almacen = $_GET['id_almacen'] ?? null;
         $confirm = isset($_GET['confirm']);
         
-        if (!$id_almacen || !is_numeric($id_almacen)) {
+        if (!$this->validateAlmacenId($id_almacen)) {
             header("Location: " . url('almacenes', ['error' => 'id_invalid']));
             exit;
         }
         
-        // Inicializar variables
-        $error = null;
-        
         try {
             // Obtener datos del almacén
-            $almacen = $this->almacenService->getAlmacenById($id_almacen);
-            
-            if (!$almacen) {
-                header("Location: " . url('almacenes', ['error' => 'not_found']));
-                exit;
-            }
-            
-            $hospital = $this->hospitalService->getHospitalById($almacen->getIdHospital());
-            
-            $planta = null;
-            if ($almacen->getIdPlanta()) {
-                $planta = $this->plantaService->getPlantaById($almacen->getIdPlanta());
-            }
-            
-            // Verificar stock asociado
-            $tieneStock = false; // Implementar después la verificación real
+            $data = $this->prepareDeleteData($id_almacen);
             
             // Si se solicita confirmar la eliminación
             if ($confirm) {
-                $result = $this->almacenService->deleteAlmacen($id_almacen);
-                if ($result) {
-                    header("Location: " . url('almacenes', ['success' => 'deleted']));
-                    exit;
-                } else {
-                    $error = "No se pudo eliminar el almacén";
-                }
+                $this->handleDelete($id_almacen, $data);
             }
-            
-            $data = [
-                'almacen' => $almacen,
-                'hospital' => $hospital,
-                'planta' => $planta,
-                'tieneStock' => $tieneStock,
-                'error' => $error,
-                'title' => 'Confirmar Eliminación de Almacén',
-                'scripts' => 'toasts.js'
-            ];
             
             $this->render('entity.almacenes.delete_almacen', $data);
             
         } catch (Exception $e) {
             header("Location: " . url('almacenes', ['error' => 'unexpected']));
             exit;
+        }
+    }
+    
+    private function prepareDeleteData($id_almacen): array
+    {
+        //TODO: Validar que el almacen no tenga stock asociado
+        $almacen = $this->almacenService->getAlmacenById($id_almacen);
+        
+        if (!$almacen) {
+            header("Location: " . url('almacenes', ['error' => 'not_found']));
+            exit;
+        }
+        
+        $hospital = $this->hospitalService->getHospitalById($almacen->getIdHospital());
+        
+        $planta = null;
+        if ($almacen->getIdPlanta()) {
+            $planta = $this->plantaService->getPlantaById($almacen->getIdPlanta());
+        }
+        
+        // Verificar stock asociado
+        $tieneStock = $this->stockService->almacenHasStock($id_almacen);
+        
+        return [
+            'almacen' => $almacen,
+            'hospital' => $hospital,
+            'planta' => $planta,
+            'tieneStock' => $tieneStock,
+            'error' => null,
+            'title' => 'Confirmar Eliminación de Almacén',
+            'scripts' => 'toasts.js'
+        ];
+    }
+    
+    private function handleDelete($id_almacen, array &$data): void
+    {
+        // Verificar si tiene stock antes de eliminar
+        if ($data['tieneStock']) {
+            $data['error'] = "No se puede eliminar un almacén con productos en stock";
+            return;
+        }
+        
+        $result = $this->almacenService->deleteAlmacen($id_almacen);
+        if ($result) {
+            header("Location: " . url('almacenes', ['success' => 'deleted']));
+            exit;
+        } else {
+            $data['error'] = "No se pudo eliminar el almacén";
         }
     }
 }
