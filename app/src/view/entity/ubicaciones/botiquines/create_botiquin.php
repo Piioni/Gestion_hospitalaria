@@ -1,56 +1,4 @@
 <?php
-
-use model\service\BotiquinService;
-use model\service\PlantaService;
-
-$botiquinService = new BotiquinService();
-$plantaService = new PlantaService();
-
-$plantas = $plantaService->getAllPlantas();
-
-// Inicializar el botiquín con valores por defecto
-$botiquin = [
-    'id_planta' => '',
-    'nombre' => '',
-    'capacidad' => 0,
-];
-
-$errors = [];
-$success = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitizar datos de entrada
-    $id_planta = filter_input(INPUT_POST, 'id_planta', FILTER_SANITIZE_NUMBER_INT);
-    $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-    $capacidad = filter_input(INPUT_POST, 'capacidad', FILTER_SANITIZE_NUMBER_INT);
-
-    try {
-        $success = $botiquinService->createBotiquin($id_planta, $nombre, $capacidad);
-
-        if ($success) {
-            // Redirigir a la página de lista de botiquines con mensaje de éxito
-            header('Location: ' . url('botiquines.dashboard', ['success' => 'created']));
-            exit;
-        }
-
-    } catch (InvalidArgumentException $e) {
-        // Manejo de errores de validación
-        $errors[] = $e->getMessage();
-    } catch (Exception $e) {
-        // Manejo de errores
-        $errors[] = "Error al crear el botiquín: " . $e->getMessage();
-    }
-
-} elseif (isset($_GET['id_planta'])) {
-    // Si se pasa un ID de planta, cargar los datos de la planta
-    $id_planta = filter_input(INPUT_GET, 'id_planta', FILTER_SANITIZE_NUMBER_INT);
-    $planta = $plantaService->getPlantaById($id_planta);
-    $botiquin['id_planta'] = $planta->getId();
-}
-
-// Añadir el script de toasts a los scripts que se cargarán
-$scripts = "toasts.js";
-$title = "Crear Botiquín";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -103,7 +51,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Crear Botiquín</button>
-                        <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
+                        <a href="<?= url('botiquines') ?>" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>

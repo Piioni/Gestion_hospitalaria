@@ -4,14 +4,17 @@ namespace model\service;
 
 use model\entity\Botiquin;
 use model\repository\BotiquinRepository;
+use model\repository\StockRepository;
 
 class BotiquinService
 {
     private BotiquinRepository $botiquinRepository;
+    private StockRepository $stockRepository;
 
     public function __construct()
     {
         $this->botiquinRepository = new BotiquinRepository();
+        $this->stockRepository = new StockRepository();
     }
 
     public function createBotiquin($id_planta, $nombre, $capacidad): bool
@@ -45,13 +48,31 @@ class BotiquinService
         return $this->botiquinRepository->update($id_botiquin, $id_planta, $nombre, $capacidad);
     }
 
-    public function deleteBotiquin($id_botiquin): bool
+    public function deleteBotiquin($id_botiquin, $idAlmacenDestino = null): bool
     {
         if (empty($id_botiquin) || !is_numeric($id_botiquin)) {
             throw new \InvalidArgumentException("El ID del botiquín es inválido.");
         }
 
+        // Si hay productos y no se proporcionó un almacén destino, validar
+        if ($this->countProductos($id_botiquin) > 0 && empty($idAlmacenDestino)) {
+            throw new \InvalidArgumentException("Este botiquín tiene productos. Debe seleccionar un almacén destino.");
+        }
+
+        // Si hay un almacén destino, transferir los productos
+        if ($idAlmacenDestino) {
+            // Implementar lógica de transferencia
+            $this->transferirProductosAAlmacen($id_botiquin, $idAlmacenDestino);
+        }
+
         return $this->botiquinRepository->delete($id_botiquin);
+    }
+
+    private function transferirProductosAAlmacen($idBotiquin, $idAlmacen): bool
+    {
+        // Implementar la lógica de transferencia de productos
+        // Esta es una función simplificada, se debe implementar según la lógica de negocio
+        return $this->stockRepository->transferBotiquinStockToAlmacen($idBotiquin, $idAlmacen);
     }
 
     public function getAllBotiquines(): array
@@ -64,12 +85,17 @@ class BotiquinService
         return $this->botiquinRepository->getByPlantaId($plantaId);
     }
 
-    public function getBotiquinById($id_botiquin): Botiquin
+    public function getBotiquinById($id_botiquin): ?Botiquin
     {
         return $this->botiquinRepository->getBotiquinById($id_botiquin);
     }
 
     public function getStockByBotiquinId($id_botiquin): int
+    {
+        return $this->countProductos($id_botiquin);
+    }
+
+    public function countProductos($id_botiquin): int
     {
         return $this->botiquinRepository->countProductos($id_botiquin);
     }

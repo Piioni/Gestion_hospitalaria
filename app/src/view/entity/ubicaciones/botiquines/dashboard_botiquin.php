@@ -1,65 +1,5 @@
 <?php
-
-use model\service\BotiquinService;
-use model\service\PlantaService;
-use model\service\HospitalService;
-
-$botiquinesService = new BotiquinService();
-
-$plantasService = new PlantaService();
-$plantas = $plantasService->getAllPlantas();
-
-$hospitalService = new HospitalService();
-
-// Obtener el filtro de planta desde la URL, si existe
-$filtro_plantas = isset($_GET['planta']) ? (int)$_GET['planta'] : null;
-
-// Obtener ID de botiquín específico si se proporciona
-$id_botiquin = isset($_GET['id_botiquin']) ? (int)$_GET['id_botiquin'] : null;
-
-// Determinar si el filtro está activo
-$filtrarActivo = isset($_GET['filtrar']) || $filtro_plantas || $id_botiquin || isset($_GET['nombre']);
-
-$filtroNombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : null;
-
-// Filtrar los botiquines por planta o por ID específico
-if ($id_botiquin) {
-    // Si se proporciona un ID específico de botiquín
-    $botiquin = $botiquinesService->getBotiquinById($id_botiquin);
-    if ($botiquin) {
-        $botiquines = [$botiquin];
-        // Actualizar el filtro de planta para mantener la consistencia en el filtro
-        $filtro_plantas = $botiquin->getIdPlanta();
-    } else {
-        $botiquines = [];
-    }
-} elseif ($filtro_plantas && $filtroNombre) {
-    // Filtrar por planta y nombre
-    $botiquines = array_filter($botiquinesService->getBotiquinesByPlantaId($filtro_plantas), function ($b) use ($filtroNombre) {
-        return stripos($b->getNombre(), $filtroNombre) !== false;
-    });
-} elseif ($filtro_plantas) {
-    // Filtrar por planta
-    $botiquines = $botiquinesService->getBotiquinesByPlantaId($filtro_plantas);
-} elseif ($filtroNombre) {
-    // Filtrar por nombre
-    $botiquines = array_filter($botiquinesService->getAllBotiquines(), function ($b) use ($filtroNombre) {
-        return stripos($b->getNombre(), $filtroNombre) !== false;
-    });
-} else {
-    // Sin filtros, mostrar todos
-    $botiquines = $botiquinesService->getAllBotiquines();
-}
-
-// Recoger mensajes de éxito o error para toasts
-$success = $_GET['success'] ?? null;
-$error = $_GET['error'] ?? null;
-
-$title = "Sistema de Gestión Hospitalaria";
-$navTitle = "Gestión de Botiquines";
-// Añadir el script de toasts a los scripts que se cargarán
-$scripts = "toasts.js";
-include __DIR__ . '/../../../layouts/_header.php';
+include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
 <div class="page-section">
@@ -96,7 +36,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                             </div>
                             <div class="filter-actions">
                                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
-                                <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary"><i
+                                <a href="<?= url('botiquines') ?>" class="btn btn-secondary"><i
                                             class="bi bi-x-circle"></i> Limpiar filtros</a>
                             </div>
                         </form>
@@ -132,7 +72,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                     <?php if (count($botiquines) === 1 && $id_botiquin): ?>
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle"></i> Mostrando el botiquín seleccionado.
-                            <a href="<?= url('botiquines.dashboard') ?>">Ver todos los botiquines</a>
+                            <a href="<?= url('botiquines') ?>">Ver todos los botiquines</a>
                         </div>
                     <?php endif; ?>
 
@@ -152,7 +92,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                             <?php foreach ($botiquines as $botiquin):
                                 // Obtener la planta asociada
                                 try {
-                                    $planta = $plantasService->getPlantaById($botiquin->getIdPlanta());
+                                    $planta = $plantaService->getPlantaById($botiquin->getIdPlanta());
                                     $plantaNombre = $planta->getNombre();
                                     // Obtener el hospital asociado a la planta
                                     $hospital = $hospitalService->getHospitalById($planta->getIdHospital());
@@ -173,7 +113,7 @@ include __DIR__ . '/../../../layouts/_header.php';
                                     <td>
                                         <?php
                                         // Obtener el stock del botiquín
-                                        $stock = $botiquinesService->getStockByBotiquinId($botiquin->getId());
+                                        $stock = $botiquinService->getStockByBotiquinId($botiquin->getId());
                                         if ($stock) {
                                             echo htmlspecialchars($stock, ENT_QUOTES) . " productos";
                                         } else {
