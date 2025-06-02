@@ -78,8 +78,8 @@ class PlantaController extends BaseController
             'stockService' => $this->stockService,
             'canCreateDelete' => $canCreateDelete,
             'scripts' => 'toasts.js',
-            'title' => 'Sistema de Gestión Hospitalaria',
-            'navTitle' => 'Plantas'
+            'title' => 'Plantas',
+            'navTitle' => 'Pegasus Medical'
         ];
     }
     

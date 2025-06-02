@@ -49,8 +49,8 @@ class HospitalController extends BaseController
             'almacenService' => $this->almacenService,
             'canCreateDelete' => $canCreateDelete,
             'scripts' => 'toasts.js',
-            'title' => 'Sistema de Gestión Hospitalaria',
-            'navTitle' => 'Gestión de Hospitales'
+            'title' => 'Hospitales',
+            'navTitle' => 'Pegasus Medical'
         ];
 
         // Usando la notación de punto para referenciar la vista
