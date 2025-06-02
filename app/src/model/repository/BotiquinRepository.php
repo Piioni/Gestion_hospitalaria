@@ -131,4 +131,15 @@ class BotiquinRepository
             throw $e;
         }
     }
+
+    public function getAllArray(): array
+    {
+        try {
+            $stmt = $this->pdo->query("SELECT id_botiquin, id_planta, nombre FROM botiquines");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener todos los botiquines como array: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }

@@ -80,6 +80,11 @@ class BotiquinService
         return $this->botiquinRepository->getAll();
     }
 
+    public function getAllArray(): array
+    {
+        return $this->botiquinRepository->getAllArray();
+    }
+
     public function getBotiquinesByPlantaId($plantaId): array
     {
         return $this->botiquinRepository->getByPlantaId($plantaId);

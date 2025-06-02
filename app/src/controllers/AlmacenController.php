@@ -65,7 +65,7 @@ class AlmacenController extends BaseController
             'almacenService' => $this->almacenService,
             'hospitalService' => $this->hospitalService,
             'title' => 'Almacenes',
-            'scripts' => ['toasts.js', 'almacenes.js'],
+            'scripts' => ['toasts.js', 'almacenes.js', 'hospital_planta_botiquin.js'],
             'navTitle' => 'Almacenes',
             'success' => $success,
             'error' => $error,
@@ -108,7 +108,7 @@ class AlmacenController extends BaseController
             'hospitals' => $hospitals,
             'plantas' => $plantas,
             'title' => 'Crear Almacén',
-            'scripts' => ['almacenes.js', 'toasts.js']
+            'scripts' => ['almacenes.js', 'toasts.js', 'hospital_planta_botiquin.js'],
         ];
         
         $this->render('entity.almacenes.create_almacen', $data);

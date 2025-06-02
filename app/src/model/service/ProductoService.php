@@ -35,7 +35,7 @@ class ProductoService
         return $this->productoRepository->delete($id_producto);
     }
 
-    public function getAll(): array
+    public function getAllProducts(): array
     {
         return $this->productoRepository->getAll();
     }
