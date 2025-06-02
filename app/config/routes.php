@@ -172,22 +172,22 @@ return [
         // Rutas de productos
         'productos' => [
             'path' => '/productos',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'index'
         ],
         'productos.create' => [
             'path' => '/productos/create',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'create'
         ],
         'productos.edit' => [
             'path' => '/productos/edit',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'edit'
         ],
         'productos.delete' => [
             'path' => '/productos/delete',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'delete'
         ],
 

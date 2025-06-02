@@ -45,30 +45,9 @@ class ProductoService
         return $this->productoRepository->getById($id_producto);
     }
 
-    public function getProductosByCodigoAndAlmacen($codigo, $almacen): array
+    public function filtrarProductos(array $filtros = []): array
     {
-        return $this->productoRepository->getByCodigoAndAlmacen($codigo, $almacen);
-    }
-
-    public function getProductosByCodigoAndBotiquin(string $codigo, $botiquin) : array
-    {
-        return $this->productoRepository->getByCodigoAndBotiquin($codigo, $botiquin);
-    }
-
-    public function getProductosByCodigo(string $codigo) : array
-    {
-        return $this->productoRepository->getByCodigo($codigo);
-
-    }
-
-    public function getProductosByAlmacen(string $almacen): array
-    {
-        return $this->productoRepository->getByAlmacen($almacen);
-    }
-
-    public function getProductosByBotiquin(string $botiquin): array
-    {
-        return $this->productoRepository->getByBotiquin($botiquin);
+        return $this->productoRepository->filtrarProductos($filtros);
     }
 
     /**

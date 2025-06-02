@@ -57,6 +57,17 @@ class ProductoRepository
             throw $e;
         }
     }
+    
+    public function delete($id_producto): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("DELETE FROM productos WHERE id_producto = ?");
+            return $stmt->execute([$id_producto]);
+        } catch (PDOException $e) {
+            error_log("Error al eliminar producto: " . $e->getMessage());
+            throw $e;
+        }
+    }
 
     public function getAll(): array
     {
@@ -87,96 +98,45 @@ class ProductoRepository
         }
     }
 
-    public function getByCodigo(string $codigo): array
+    /**
+     * Méto do optimizado para filtrar productos con múltiples criterios
+     * 
+     * @param array $filtros Criterios de filtrado (codigo, almacen, botiquin)
+     * @return array Lista de productos filtrados
+     */
+    public function filtrarProductos(array $filtros = []): array
     {
         try {
-            $stmt = $this->pdo->prepare("
-                SELECT * 
-                FROM productos
-                WHERE codigo LIKE CONCAT('%', ?, '%')
-                ");
-            $stmt->execute([$codigo]);
+            $whereConditions = [];
+            $params = [];
+
+            // Código del producto
+            if (!empty($filtros['codigo'])) {
+                $whereConditions[] = "codigo LIKE CONCAT('%', ?, '%')";
+                $params[] = $filtros['codigo'];
+            }
+            // Nombre del producto
+            if (!empty($filtros['nombre'])) {
+                $whereConditions[] = "nombre LIKE CONCAT('%', ?, '%')";
+                $params[] = $filtros['nombre'];
+            }
+
+            // Construir consulta SQL
+            $sql = "SELECT DISTINCT * FROM productos p";
+            
+            if (!empty($whereConditions)) {
+                $sql .= " WHERE " . implode(" AND ", $whereConditions);
+            }
+
+            $sql .= " ORDER BY nombre ASC";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
             return array_map([$this, 'createProductoFromData'], $productos);
-
         } catch (PDOException $e) {
-            error_log("Error al obtener producto por código: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getByCodigoAndAlmacen(string $codigo, $almacen) : array
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT p.* 
-                FROM productos p
-                JOIN stocks s ON p.id_producto = s.id_producto
-                WHERE p.codigo LIKE CONCAT('%', ?, '%') AND s.id_ubicacion = ? AND tipo_ubicacion = 'ALMACEN'
-            ");
-            $stmt->execute([$codigo, $almacen]);
-            $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createProductoFromData'], $productos);
-
-        } catch (PDOException $e) {
-            error_log("Error al obtener productos por código y almacén: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getByCodigoAndBotiquin(string $codigo, $botiquin): array
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT p.* 
-                FROM productos p
-                JOIN stocks s ON p.id_producto = s.id_producto
-                WHERE p.codigo LIKE CONCAT('%', ?, '%') AND s.id_ubicacion = ? AND tipo_ubicacion = 'BOTIQUIN'
-            ");
-            $stmt->execute([$codigo, $botiquin]);
-            $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createProductoFromData'], $productos);
-
-        } catch (PDOException $e) {
-            error_log("Error al obtener productos por código y botiquín: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getByBotiquin(string $botiquin): array
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT p.* 
-                FROM productos p
-                JOIN stocks s ON p.id_producto = s.id_producto
-                WHERE s.id_ubicacion = ? AND tipo_ubicacion = 'BOTIQUIN'
-            ");
-            $stmt->execute([$botiquin]);
-            $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createProductoFromData'], $productos);
-
-        } catch (PDOException $e) {
-            error_log("Error al obtener productos por botiquín: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getByAlmacen(string $almacen): array
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT p.* 
-                FROM productos p
-                JOIN stocks s ON p.id_producto = s.id_producto
-                WHERE s.id_ubicacion = ? AND tipo_ubicacion = 'ALMACEN'
-            ");
-            $stmt->execute([$almacen]);
-            $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createProductoFromData'], $productos);
-
-        } catch (PDOException $e) {
-            error_log("Error al obtener productos por almacén: " . $e->getMessage());
+            error_log("Error al filtrar productos: " . $e->getMessage());
             throw $e;
         }
     }
