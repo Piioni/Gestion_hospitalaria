@@ -17,6 +17,10 @@ return [
             'almacenes' => 'entity/ubicaciones/almacenes',
             'productos' => 'entity/productos',
             'stocks' => 'entity/stocks',
+            'reposiciones' => 'entity/reposiciones',
+            'movimientos' => 'entity/movimientos',
+            'lecturas' => 'entity/lecturas',
+            'etiquetas' => 'entity/etiquetas',
         ]
     ],
     
@@ -245,6 +249,11 @@ return [
             'path' => '/lecturas',
             'controller' => 'LecturaController',
             'method' => 'index'
+        ],
+        'lecturas.create' => [
+            'path' => '/lecturas/create',
+            'controller' => 'LecturaController',
+            'method' => 'create'
         ],
     ]
 ];

@@ -70,6 +70,12 @@
     font-size: 0.9rem;
 }
 
+/* Contenedor de formularios para limitar el ancho */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 /* Formulario en línea */
 .form-inline {
     display: flex;
@@ -246,4 +252,11 @@
     background-color: var(--light-bg);
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+/* Ajustes para formularios en pantallas más pequeñas */
+@media (max-width: 992px) {
+    .form-container {
+        max-width: 100%;
+    }
 }
