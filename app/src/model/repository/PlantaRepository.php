@@ -136,41 +136,4 @@ class PlantaRepository
             throw $e;
         }
     }
-
-    public function getByHospitalAndNombre($hospitalId, $nombre): array
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT * 
-                FROM plantas 
-                WHERE id_hospital = ? AND nombre LIKE CONCAT('%', ?, '%') AND activo = 1
-                ORDER BY nombre
-                ");
-            $stmt->execute([$hospitalId, '%' . $nombre . '%']);
-            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createPlantaFromData'], $plantasData);
-        } catch (PDOException $e) {
-            error_log("Error al obtener plantas por hospital y nombre: " . $e->getMessage());
-            throw $e;
-        }
-
-    }
-
-    public function getByNombre($nombre): array
-    {
-    try {
-            $stmt = $this->pdo->prepare("
-                SELECT * 
-                FROM plantas 
-                WHERE nombre LIKE CONCAT('%', ?, '%') AND activo = 1
-                ORDER BY nombre
-                ");
-            $stmt->execute(['%' . $nombre . '%']);
-            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createPlantaFromData'], $plantasData);
-        } catch (PDOException $e) {
-            error_log("Error al obtener plantas por nombre: " . $e->getMessage());
-            throw $e;
-        }
-    }
 }

@@ -10,10 +10,12 @@ use InvalidArgumentException;
 class HospitalService
 {
     private HospitalRepository $hospitalRepository;
+    private UserLocationService $userLocationService;
 
     public function __construct()
     {
         $this->hospitalRepository = new HospitalRepository();
+        $this->userLocationService = new UserLocationService();
     }
 
     public function createHospital($nombre, $ubicacion): bool
@@ -39,12 +41,6 @@ class HospitalService
         return $this->hospitalRepository->create($nombre, $ubicacion);
     }
 
-    /**
-     * Elimina un hospital si no tiene dependencias o si se fuerza la eliminación
-     * @param int $id_hospital ID del hospital
-     * @param bool $force Si es true, fuerza la eliminación incluso con dependencias
-     * @return bool Resultado de la operación
-     */
     public function deleteHospital($id_hospital, $force = false): bool
     {
         // Validación del ID
@@ -119,6 +115,45 @@ class HospitalService
     }
 
     /**
+     * Obtiene los hospitales filtrados por nombre y permisos de usuario
+     *
+     * @param int $userId ID del usuario
+     * @param string $userRole Rol del usuario
+     * @param string|null $filtroNombre Filtro opcional por nombre
+     * @return array Lista de hospitales filtrados
+     */
+    public function getHospitalsForUser(int $userId, string $userRole, ?string $filtroNombre = null): array
+    {
+        // Obtener hospitales según el rol del usuario
+        $hospitals = [];
+
+        switch ($userRole) {
+            case 'ADMINISTRADOR':
+            case 'GESTOR_GENERAL':
+                $hospitals = $this->getAllHospitals();
+                break;
+            case 'GESTOR_HOSPITAL':
+                // Obtener hospitales asignados al usuario
+                $hospitals = $this->userLocationService->getAssignedHospitals($userId);
+                break;
+            default:
+                return [];
+        }
+
+        // Aplicar filtro de nombre si existe
+        if ($filtroNombre) {
+            $hospitals = array_filter($hospitals, function ($hospital) use ($filtroNombre) {
+                return stripos($hospital->getNombre(), $filtroNombre) !== false;
+            });
+            
+            // Reindexar el array para evitar índices faltantes
+            $hospitals = array_values($hospitals);
+        }
+
+        return $hospitals;
+    }
+
+    /**
      * Verifica si un hospital tiene plantas asociadas
      * @param int $id_hospital ID del hospital
      * @return array Información sobre las plantas asociadas
@@ -146,13 +181,4 @@ class HospitalService
         ];
     }
 
-    public function getHospitalsByNombre($filtroNombre) : array
-    {
-        // Validación del filtro
-        if (empty($filtroNombre)) {
-            return $this->hospitalRepository->getAll();
-        }
-
-        return $this->hospitalRepository->getByNombre($filtroNombre);
-    }
 }

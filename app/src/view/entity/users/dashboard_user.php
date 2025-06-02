@@ -1,23 +1,10 @@
 <?php
+// Ahora los datos vienen del controlador
+$pageTitle = $title ?? "Listado de Usuarios";
+$navTitle = $navTitle ?? "Usuarios";
+$success = $success ?? null;
+$error = $error ?? null;
 
-use model\service\RoleService;
-use model\service\UserService;
-
-$success = $_GET['success'] ?? null;
-
-$userService = new UserService();
-$roleService = new RoleService();
-
-// Obtener la lista de usuarios
-$users = $userService->getAllUsers();
-if (empty($users)) {
-    $users = [];
-}
-// Inicializar variables y mensajes
-$errors = [];
-$input = [];
-
-$pageTitle = "Listado de Usuarios";
 include __DIR__ . '/../../layouts/_header.php'; ?>
 
 <div class="container mt-5">
@@ -27,7 +14,7 @@ include __DIR__ . '/../../layouts/_header.php'; ?>
             <p class="lead-text mb-0">Gestión de usuarios del sistema</p>
         </div>
         <div class="col-md-4 text-end d-flex justify-content-end align-items-center">
-            <a href="/users/create" class="btn btn-primary btn-lg">
+            <a href="<?= url('users.create') ?>" class="btn btn-primary btn-lg">
                 <i class="bi bi-person-plus me-2"></i> Crear Usuario
             </a>
         </div>
@@ -36,6 +23,27 @@ include __DIR__ . '/../../layouts/_header.php'; ?>
     <?php if ($success === 'created'): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i> Usuario creado exitosamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php elseif ($success === 'updated'): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Usuario actualizado exitosamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php elseif ($success === 'deleted'): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Usuario eliminado exitosamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> 
+            <?= $error === 'id_invalid' ? 'ID de usuario no válido.' : 
+               ($error === 'user_not_found' ? 'Usuario no encontrado.' : 
+               ($error === 'cannot_delete_self' ? 'No puedes eliminar tu propio usuario.' : 
+               ($error === 'delete_failed' ? 'Error al eliminar el usuario.' : htmlspecialchars(urldecode($error))))) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -49,7 +57,7 @@ include __DIR__ . '/../../layouts/_header.php'; ?>
                 <div class="empty-state">
                     <i class="bi bi-people" style="font-size: 3rem; color: var(--muted-text);"></i>
                     <p class="mt-3 text-muted">No hay usuarios registrados.</p>
-                    <a href="/users/create" class="btn btn-primary mt-2">Crear el primer usuario</a>
+                    <a href="<?= url('users.create') ?>" class="btn btn-primary mt-2">Crear el primer usuario</a>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -90,19 +98,18 @@ include __DIR__ . '/../../layouts/_header.php'; ?>
                                 </td>
                                 <td class="text-center">
                                     <div class="actions-column justify-content-center gap-3">
-                                        <a href="/users/locations?user_id=<?= $user->getId() ?>"
+                                        <a href="<?= url('users.locations', ['user_id' => $user->getId()]) ?>"
                                            class="btn btn-sm btn-info text-white" title="Asignar ubicaciones">
                                             <i class="bi bi-geo-alt me-1"></i> Ubicaciones
                                         </a>
-                                        <a href="/users/edit?id=<?= $user->getId() ?>"
+                                        <a href="<?= url('users.edit', ['id' => $user->getId()]) ?>"
                                            class="btn btn-sm btn-primary" title="Editar usuario">
                                             <i class="bi bi-pencil-square me-1"></i> Editar
                                         </a>
-                                        <button type="button" 
-                                                data-user-id="<?= $user->getId() ?>"
-                                                class="btn btn-sm btn-danger delete-user" title="Eliminar usuario">
+                                        <a href="<?= url('users.delete', ['id' => $user->getId()]) ?>"
+                                           class="btn btn-sm btn-danger" title="Eliminar usuario">
                                             <i class="bi bi-trash-fill me-1"></i> Eliminar
-                                        </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

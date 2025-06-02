@@ -4,17 +4,17 @@ namespace model\service;
 
 use model\entity\User;
 use model\repository\UserRepository;
-use model\repository\UserLocationRepository;
+use model\service\UserLocationService;
 
 class UserService
 {
     private UserRepository $userRepository;
-    private UserLocationRepository $userLocationRepository;
+    private UserLocationService $userLocationService;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
-        $this->userLocationRepository = new UserLocationRepository();
+        $this->userLocationService = new UserLocationService();
     }
 
     public function addUser($nombre, $email, $password, $rol, $id_hospital = null, $id_planta = null, $id_botiquin = null): bool
@@ -38,44 +38,31 @@ class UserService
     }
     
     /**
-     * Guarda las ubicaciones asignadas a un usuario
-     * Implementa la regla de que solo se puede asignar un tipo de ubicación por usuario
+     * Actualiza la contraseña de un usuario
+     * 
+     * @param int $userId ID del usuario
+     * @param string $newPasswordHash Hash de la nueva contraseña
+     * @return bool True si la actualización fue exitosa, false en caso contrario
      */
-    public function saveUserLocations($userId, $hospitales, $plantas, $botiquines): bool
+    public function updatePassword(int $userId, string $newPasswordHash): bool
     {
-        // Verificar que solo hay un tipo de ubicación asignado
-        $hasHospitales = !empty($hospitales);
-        $hasPlantas = !empty($plantas);
-        $hasBotiquines = !empty($botiquines);
-        
-        $selectedTypes = ($hasHospitales ? 1 : 0) + ($hasPlantas ? 1 : 0) + ($hasBotiquines ? 1 : 0);
-        
-        if ($selectedTypes > 1) {
-            throw new \Exception("Solo puede asignar un tipo de ubicación: hospitales, plantas o botiquines.");
+        return $this->userRepository->updatePassword($userId, $newPasswordHash);
+    }
+
+    /**
+     * Añade una ubicación a un usuario
+     */
+    public function addUserLocation($userId, $locationId, $locationType): bool
+    {
+        switch ($locationType) {
+            case 'hospital':
+                return $this->userLocationService->assignHospital($userId, $locationId);
+            case 'planta':
+                return $this->userLocationService->assignPlanta($userId, $locationId);
+            case 'botiquin':
+                return $this->userLocationService->assignBotiquin($userId, $locationId);
+            default:
+                return false;
         }
-        
-        // Eliminar todas las ubicaciones actuales
-        $this->userLocationRepository->deleteAllUserLocations($userId);
-        
-        // Asignar nuevas ubicaciones
-        if ($hasHospitales) {
-            foreach ($hospitales as $hospitalId) {
-                $this->userLocationRepository->addUserHospital($userId, $hospitalId);
-            }
-        }
-        
-        if ($hasPlantas) {
-            foreach ($plantas as $plantaId) {
-                $this->userLocationRepository->addUserPlanta($userId, $plantaId);
-            }
-        }
-        
-        if ($hasBotiquines) {
-            foreach ($botiquines as $botiquinId) {
-                $this->userLocationRepository->addUserBotiquin($userId, $botiquinId);
-            }
-        }
-        
-        return true;
     }
 }

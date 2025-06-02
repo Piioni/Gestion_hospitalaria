@@ -105,24 +105,6 @@ class HospitalRepository
         }
     }
 
-    public function getByNombre($nombre): array
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT * 
-                FROM hospitales 
-                WHERE nombre LIKE CONCAT('%', ?, '%') AND activo = 1
-                ");
-            $stmt->execute([$nombre]);
-            $hospitalesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createHospitalFromData'], $hospitalesData);
-        } catch (PDOException $e) {
-            error_log("Error al obtener hospital por nombre: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-
     public function existsByName($nombre): bool
     {
         try {
@@ -228,4 +210,5 @@ class HospitalRepository
             throw $e;
         }
     }
+
 }

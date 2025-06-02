@@ -1,50 +1,5 @@
 <?php
 
-use model\service\PlantaService;
-use model\service\HospitalService;
-use model\service\AlmacenService;
-use model\service\BotiquinService;
-use model\service\StockService;
-
-// Obtener servicio de plantas
-$plantaService = new PlantaService();
-$stockService = new StockService();
-
-// Crear instancia del servicio de hospitales para obtener información relacionada
-$hospitalService = new HospitalService();
-$hospitals = $hospitalService->getAllHospitals();
-
-// Obtener filtro de hospital si existe
-$filtroHospital = isset($_GET['hospital']) ? (int)$_GET['hospital'] : null;
-$filtroNombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : null;
-
-// Determinar si el filtro está activo
-$filtrarActivo = isset($_GET['filtrar']) || $filtroHospital || $filtroNombre;
-
-// Obtener plantas filtradas según el hospital y nombre
-if ($filtroHospital && $filtroNombre) {
-    $plantas = $plantaService->getPlantasByHospitalAndNombre($filtroHospital, $filtroNombre);
-} elseif ($filtroHospital) {
-    $plantas = $plantaService->getPlantasByHospitalId($filtroHospital);
-} elseif ($filtroNombre) {
-    $plantas = $plantaService->getPlantasByNombre($filtroNombre);
-} else {
-    $plantas = $plantaService->getAllPlantas();
-}
-
-// Crear instancia del servicio de almacenes
-$almacenService = new AlmacenService();
-
-// Crear instancia del servicio de botiquines
-$botiquinService = new BotiquinService();
-
-// Verificar si se ha enviado un mensaje de éxito o error
-$success = $_GET['success'] ?? null;
-$error = $_GET['error'] ?? null;
-
-$scripts = "toasts.js";
-$title = "Sistema de Gestión Hospitalaria";
-$navTitle = "Gestión de Plantas";
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
@@ -76,13 +31,13 @@ include __DIR__ . "/../../../layouts/_header.php";
                                     <div class="form-field">
                                         <input type="text" name="nombre" id="nombre" class="form-input"
                                                placeholder="Buscar por nombre de planta"
-                                               value="<?= isset($_GET['nombre']) ? htmlspecialchars($_GET['nombre']) : '' ?>">
+                                               value="<?= isset($filtroNombre) ? htmlspecialchars($filtroNombre) : '' ?>">
                                     </div>
                                 </div>
                             </div>
                             <div class="filter-actions">
                                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
-                                <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
+                                <a href="<?= url('plantas') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
                             </div>
                         </form>
                     </div>
@@ -95,7 +50,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                     <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
                         <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
                     </a>
+                    <?php if ($canCreateDelete): ?>
                     <a href="<?= url('plantas.create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear planta</a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -106,7 +63,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                     <?php else: ?>
                         No hay plantas registradas en el sistema.
                     <?php endif; ?>
+                    <?php if ($canCreateDelete): ?>
                     <a href="<?= url('plantas.create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear una planta</a>
+                    <?php endif; ?>
                 </div>
             <?php else: ?>
                 <div class="plantas-list">
@@ -166,10 +125,12 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                     <i class="bi bi-plus-circle"></i> Crear almacén
                                                 </a>
                                             <?php endif; ?>
+                                            <?php if ($canCreateDelete): ?>
                                             <a href="<?= url('plantas.delete', ['id_planta' => $planta->getId()]) ?>"
                                                class="btn btn-sm btn-danger">
                                                 <i class="bi bi-trash"></i> Eliminar planta
                                             </a>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
 

@@ -132,4 +132,5 @@ class AlmacenRepository
             throw $e;
         }
     }
+
 }

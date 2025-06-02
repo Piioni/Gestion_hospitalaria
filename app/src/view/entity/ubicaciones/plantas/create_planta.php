@@ -1,57 +1,8 @@
 <?php
+// Esta vista ahora será manejada por el controlador PlantaController
+// y no necesita instanciar servicios ni procesar lógica de negocio
 
-use model\service\HospitalService;
-use model\service\PlantaService;
-
-$plantasService = new PlantaService();
-$hospitalService = new HospitalService();
-
-$hospitals = $hospitalService->getAllHospitals();
-
-// Incluir el script de toasts
-$scripts = "toasts.js";
-$title = "Crear Planta";
 include __DIR__ . "/../../../layouts/_header.php";
-
-$planta = [
-    'id_hospital' => '',
-    'nombre' => '',
-];
-$errors = [];
-$success = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitizar datos de entrada
-    $planta['id_hospital'] = filter_input(INPUT_POST, 'id_hospital', FILTER_SANITIZE_NUMBER_INT);
-    $planta['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-
-    try {
-        // Intentar crear la planta con los datos sanitizados
-        $plantasService->createPlanta($planta['id_hospital'], $planta['nombre']);
-        
-        // Redirigir al dashboard con mensaje de éxito
-        header('Location: ' . url('plantas.dashboard', ['success' => 'created']));
-        exit;
-        
-    } catch (InvalidArgumentException $e) {
-        // Capturar errores de validación
-        $errors[] = $e->getMessage();
-    } catch (Exception $e) {
-        // Capturar otros errores
-        $errors[] = "Error al crear la planta: " . $e->getMessage();
-    }
-} elseif (isset($_GET['id_hospital'])) {
-    // Si se pasa un ID de hospital, cargar los datos del hospital
-    $hospital_id = filter_input(INPUT_GET, 'id_hospital', FILTER_SANITIZE_NUMBER_INT);
-    $hospital = $hospitalService->getHospitalById($hospital_id);
-    if ($hospital) {
-        $planta['id_hospital'] = $hospital->getId();
-    } else {
-        header('Location: ' . url('plantas.dashboard', ['error' => 'hospital_no_encontrado']));
-        exit;
-    }
-}
-
 ?>
 
 <div class="page-section">
@@ -80,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>Información de la Planta</h3>
             </div>
             <div class="card-body">
-                <form class="form" method="POST" action="">
+                <form class="form" method="POST" action="<?= url('plantas.create') ?>">
                     <div class="form-group">
                         <label for="nombre" class="form-label">Nombre</label>
                         <input type="text" class="form-input" id="nombre" name="nombre"
-                               value="<?= htmlspecialchars($planta['nombre']) ?>" required>
+                               value="<?= htmlspecialchars($planta['nombre'] ?? '') ?>" required>
                     </div>
                     
                     <div class="form-group">
@@ -102,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Crear Planta</button>
-                        <a href="<?= url('plantas.dashboard') ?>" class="btn btn-secondary">Cancelar</a>
+                        <a href="<?= url('plantas') ?>" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>

@@ -1,77 +1,51 @@
 <?php
-
-use model\service\BotiquinService;
-use model\service\PlantaService;
-use model\service\ProductoService;
-use model\service\StockService;
-
-$botiquinService = new BotiquinService();
-$plantaService = new PlantaService();
-$productoService = new ProductoService();
-$stockService = new StockService();
-
-$plantas = $plantaService->getAllPlantas();
-
-// Obtener los filtros desde la URL
-$filtro_plantas = isset($_GET['planta']) ? (int)$_GET['planta'] : null;
-$filtro_botiquin = isset($_GET['id_botiquin']) ? (int)$_GET['id_botiquin'] : null;
-
-// Filtrar los botiquines según los parámetros
-if ($filtro_botiquin) {
-    // Si se especificó un botiquín específico
-    $botiquin = $botiquinService->getBotiquinById($filtro_botiquin);
-    if ($botiquin) {
-        $botiquines = [$botiquin];
-        // Obtenemos la planta para preseleccionarla en el filtro
-        $filtro_plantas = $botiquin->getIdPlanta();
-    } else {
-        $botiquines = [];
-    }
-} elseif ($filtro_plantas) {
-    // Si se especificó una planta
-    $botiquines = $botiquinService->getBotiquinesByPlantaId($filtro_plantas);
-} else {
-    // Si no hay filtros, mostrar todos los botiquines
-    $botiquines = $botiquinService->getAllBotiquines();
-}
-
-$title = "Stock de Botiquines";
-include __DIR__ . '/../../layouts/_header.php';
+include __DIR__ . "/../../layouts/_header.php";
 ?>
 
 <div class="page-section">
     <div class="container">
         <div class="overview-section">
-            <h1 class="page-title">Gestión de Stock en Botiquines</h1>
+            <h1 class="page-title"><?= $navTitle ?></h1>
             <p class="lead-text">
                 Control y visualización del stock de medicamentos en botiquines.
             </p>
             <div class="action-buttons">
-                <a href="<?= url('botiquines.dashboard') ?>" class="btn btn-secondary">Volver a Botiquines</a>
+                <a href="<?= url('botiquines') ?>" class="btn btn-secondary">Ver Botiquines</a>
+                <a href="<?= url('stocks') ?>" class="btn btn-secondary">Dashboard de Stock</a>
             </div>
         </div>
 
         <div class="filter-section card">
             <div class="card-body">
                 <h3 class="filter-title">Filtrar botiquines</h3>
-                <form action="" method="GET" class="form-inline filter-form">
-                    <div class="form-group">
-                        <label for="planta" class="form-label">Planta:</label>
-                        <div class="form-field">
-                            <select name="planta" id="planta" class="form-select">
-                                <option value="">Todas las plantas</option>
-                                <?php foreach ($plantas as $planta): ?>
-                                    <option value="<?= $planta->getId() ?>" <?= $filtro_plantas == $planta->getId() ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($planta->getNombre()) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                <form action="" method="GET" class="filter-form">
+                    <div class="filter-fields">
+                        <div class="filter-field">
+                            <label for="planta" class="form-label">Planta:</label>
+                            <div class="form-field">
+                                <select name="planta" id="planta" class="form-select">
+                                    <option value="">Todas las plantas</option>
+                                    <?php foreach ($plantas as $planta): ?>
+                                        <option value="<?= $planta->getId() ?>" <?= $filtro_plantas == $planta->getId() ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($planta->getNombre()) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-field">
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <div class="form-field">
+                                <input type="text" name="nombre" id="nombre" class="form-input"
+                                       placeholder="Filtrar por nombre de botiquín"
+                                       value="<?= isset($filtro_nombre) ? htmlspecialchars($filtro_nombre) : '' ?>">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
-                        <?php if ($filtro_plantas || $filtro_botiquin): ?>
-                            <a href="<?= url('stocks.botiquines') ?>" class="btn btn-secondary">Limpiar filtro</a>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
+                        <?php if ($filtro_plantas || $filtro_botiquin || $filtro_nombre): ?>
+                            <a href="<?= url('stocks.botiquines') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
                         <?php endif; ?>
                     </div>
                 </form>
@@ -83,14 +57,16 @@ include __DIR__ . '/../../layouts/_header.php';
 
             <?php if (empty($botiquines)): ?>
                 <div class="empty-state">
-                    <?php if ($filtro_plantas): ?>
-                        No hay botiquines registrados para la planta seleccionada.
+                    <?php if ($filtro_plantas || $filtro_nombre): ?>
+                        No hay botiquines que coincidan con los criterios de filtrado.
                     <?php elseif ($filtro_botiquin): ?>
                         No se encontró el botiquín especificado.
                     <?php else: ?>
-                        No hay botiquines registrados en el sistema.
+                        No hay botiquines registrados o asignados en el sistema.
                     <?php endif; ?>
-                    <a href="<?= url('botiquines.create') ?>" class="btn btn-primary">Crear un botiquín</a>
+                    <?php if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA'])): ?>
+                        <a href="<?= url('botiquines.create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear un botiquín</a>
+                    <?php endif; ?>
                 </div>
             <?php else: ?>
                 <div class="botiquines-list">
@@ -105,16 +81,19 @@ include __DIR__ . '/../../layouts/_header.php';
 
                         // Obtener los productos en stock para este botiquín
                         $productosEnStock = $stockService->getStockByBotiquinId($botiquin->getId());
-                        ?>
+                        
+                        // Determinar si este botiquín es el seleccionado para mantenerlo expandido
+                        $isSelected = ($filtro_botiquin && $filtro_botiquin == $botiquin->getId()) ? true : false;
+                    ?>
                         <div class="botiquin-card card">
-                            <div class="collapsible-header planta-header"
+                            <div class="collapsible-header botiquin-header <?= $isSelected ? 'active' : '' ?>"
                                  onclick="toggleCollapsible(this, 'botiquin-<?= $botiquin->getId() ?>')">
-                                <h3 class="planta-name"><?= htmlspecialchars($botiquin->getNombre()) ?></h3>
+                                <h3 class="botiquin-name"><?= htmlspecialchars($botiquin->getNombre()) ?></h3>
                                 <span class="badge"><?= count($productosEnStock) ?> productos</span>
                                 <span class="collapsible-icon">▼</span>
                             </div>
 
-                            <div id="botiquin-<?= $botiquin->getId() ?>" class="collapsible-content <?= $filtro_botiquin == $botiquin->getId() ? 'active' : '' ?>">
+                            <div id="botiquin-<?= $botiquin->getId() ?>" class="collapsible-content <?= $isSelected ? 'active' : '' ?>">
                                 <div class="card-body">
                                     <div class="botiquin-details">
                                         <p><strong>Ubicación:</strong> <?= htmlspecialchars($plantaNombre) ?></p>
@@ -128,8 +107,8 @@ include __DIR__ . '/../../layouts/_header.php';
                                         <?php if (empty($productosEnStock)): ?>
                                             <div class="empty-stock">
                                                 <p>No hay productos en stock para este botiquín.</p>
-                                                <a href="/stock/add?tipo=BOTIQUIN&id_ubicacion=<?= $botiquin->getId() ?>" class="btn btn-sm btn-primary">
-                                                    Añadir producto
+                                                <a href="#" class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-plus-circle"></i> Añadir producto
                                                 </a>
                                             </div>
                                         <?php else: ?>
@@ -151,18 +130,18 @@ include __DIR__ . '/../../layouts/_header.php';
                                                             $estadoTexto = ($stock->getCantidad() < $stock->getStockMinimo()) ? 'Bajo stock' : 'OK';
                                                         ?>
                                                             <tr class="<?= $estadoClase ?>">
-                                                                <td><?= htmlspecialchars($producto->getNombre()) ?></td>
+                                                                <td><?= $producto ? htmlspecialchars($producto->getNombre()) : 'Producto no encontrado' ?></td>
                                                                 <td><?= $stock->getCantidad() ?></td>
                                                                 <td><?= $stock->getStockMinimo() ?></td>
                                                                 <td><span class="estado-badge <?= $estadoClase ?>"><?= $estadoTexto ?></span></td>
                                                                 <td class="acciones-stock">
-                                                                    <a href="/movimientos/create?tipo=consumo&id_stock=<?= $stock->getId() ?>" class="btn btn-sm btn-warning" title="Consumir">
+                                                                    <a href="#" class="btn btn-sm btn-warning" title="Consumir">
                                                                         <i class="bi bi-dash-circle"></i> Consumir
                                                                     </a>
-                                                                    <a href="/movimientos/create?tipo=desecho&id_stock=<?= $stock->getId() ?>" class="btn btn-sm btn-danger" title="Desechar">
+                                                                    <a href="#" class="btn btn-sm btn-danger" title="Desechar">
                                                                         <i class="bi bi-trash"></i> Desechar
                                                                     </a>
-                                                                    <a href="/movimientos/create?tipo=reposicion&id_stock=<?= $stock->getId() ?>" class="btn btn-sm btn-success" title="Reponer">
+                                                                    <a href="#" class="btn btn-sm btn-success" title="Reponer">
                                                                         <i class="bi bi-plus-circle"></i> Reponer
                                                                     </a>
                                                                 </td>
@@ -191,8 +170,10 @@ include __DIR__ . '/../../layouts/_header.php';
     }
 
     // Actualizar automáticamente el formulario cuando cambia el select
-    document.getElementById('planta').addEventListener('change', function () {
-        this.form.submit();
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('planta').addEventListener('change', function () {
+            this.form.submit();
+        });
     });
 </script>
 

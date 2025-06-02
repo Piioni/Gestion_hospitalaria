@@ -2,186 +2,249 @@
 
 return [
     "view_dir" => __DIR__ . '/../src/view',
-
+    
+    // Configuración centralizada de rutas de vistas
+    "view_paths" => [
+        'pages' => 'pages',
+        'layouts' => 'layouts',
+        'errors' => 'errors',
+        'auth' => 'auth',
+        'entity' => [
+            'users' => 'entity/users',
+            'hospitals' => 'entity/ubicaciones/hospitals',
+            'plantas' => 'entity/ubicaciones/plantas',
+            'botiquines' => 'entity/ubicaciones/botiquines',
+            'almacenes' => 'entity/ubicaciones/almacenes',
+            'productos' => 'entity/productos',
+            'stocks' => 'entity/stocks',
+        ]
+    ],
+    
     "routes" => [
-        // Public pages
+        // Rutas públicas
         'home' => [
             'path' => '/',
-            'view' => 'pages/homepage.php'
+            'controller' => 'HomeController',
+            'method' => 'index'
         ],
-        'homepage' => [
-            'path' => '/homepage',
-            'view' => 'pages/homepage.php'
-        ],
-
-        // Error pages
-        '404' => [
-            'path' => '/404',
-            'view' => 'errors/404.php'
-        ],
-
-        // Auth pages
         'login' => [
             'path' => '/login',
-            'view' => 'auth/login.php'
-        ],
-        'logout' => [
-            'path' => '/logout',
-            'view' => 'auth/logout.php'
+            'controller' => 'AuthController',
+            'method' => 'login'
         ],
 
-        // User pages
+        // Rutas de usuario
         'users' => [
             'path' => '/users',
-            'view' => 'entity/users/dashboard_user.php'
-        ],
-        'users.dashboard' => [
-            'path' => '/users',
-            'view' => 'entity/users/dashboard_user.php'
-        ],
-        'users.locations' => [
-            'path' => '/users/locations',
-            'view' => 'entity/users/user_locations.php'
+            'controller' => 'UserController',
+            'method' => 'index'
         ],
         'users.create' => [
             'path' => '/users/create',
-            'view' => 'entity/users/create_user.php'
+            'controller' => 'UserController',
+            'method' => 'create'
         ],
         'users.edit' => [
             'path' => '/users/edit',
-            'view' => 'entity/users/edit_user.php'
+            'controller' => 'UserController',
+            'method' => 'edit'
         ],
         'users.delete' => [
             'path' => '/users/delete',
-            'view' => 'entity/users/deleteUser.php'
+            'controller' => 'UserController',
+            'method' => 'delete'
+        ],
+        'users.locations' => [
+            'path' => '/users/locations',
+            'controller' => 'UserController',
+            'method' => 'locations'
         ],
 
-        // Hospital pages
+        // Rutas de autenticación
+        'logout' => [
+            'path' => '/logout',
+            'controller' => 'AuthController',
+            'method' => 'logout'
+        ],
+        'register' => [
+            'path' => '/register',
+            'controller' => 'AuthController',
+            'method' => 'register'
+        ],
+        'password.change' => [
+            'path' => '/password/change',
+            'controller' => 'AuthController',
+            'method' => 'changePassword'
+        ],
+
+        // Rutas de hospitales
         'hospitals' => [
             'path' => '/hospitals',
-            'view' => 'entity/ubicaciones/hospitals/dashboard_hospital.php'
-        ],
-        'hospitals.dashboard' => [
-            'path' => '/hospitals/dashboard',
-            'view' => 'entity/ubicaciones/hospitals/dashboard_hospital.php'
+            'controller' => 'HospitalController',
+            'method' => 'index'
         ],
         'hospitals.create' => [
             'path' => '/hospitals/create',
-            'view' => 'entity/ubicaciones/hospitals/create_hospital.php'
+            'controller' => 'HospitalController',
+            'method' => 'create'
         ],
         'hospitals.edit' => [
             'path' => '/hospitals/edit',
-            'view' => 'entity/ubicaciones/hospitals/edit_hospital.php'
+            'controller' => 'HospitalController',
+            'method' => 'edit'
         ],
         'hospitals.delete' => [
             'path' => '/hospitals/delete',
-            'view' => 'entity/ubicaciones/hospitals/delete_hospital.php'
+            'controller' => 'HospitalController',
+            'method' => 'delete'
         ],
 
-        // Planta pages
+        // Rutas de plantas
         'plantas' => [
             'path' => '/plantas',
-            'view' => 'entity/ubicaciones/plantas/dashboard_planta.php'
-        ],
-        'plantas.dashboard' => [
-            'path' => '/plantas/dashboard',
-            'view' => 'entity/ubicaciones/plantas/dashboard_planta.php'
+            'controller' => 'PlantaController',
+            'method' => 'index'
         ],
         'plantas.create' => [
             'path' => '/plantas/create',
-            'view' => 'entity/ubicaciones/plantas/create_planta.php'
+            'controller' => 'PlantaController',
+            'method' => 'create'
         ],
         'plantas.edit' => [
             'path' => '/plantas/edit',
-            'view' => 'entity/ubicaciones/plantas/edit_planta.php'
+            'controller' => 'PlantaController',
+            'method' => 'edit'
         ],
         'plantas.delete' => [
             'path' => '/plantas/delete',
-            'view' => 'entity/ubicaciones/plantas/delete_planta.php'
+            'controller' => 'PlantaController',
+            'method' => 'delete'
         ],
 
-        // Botiquines pages
-        'botiquines' => [
-            'path' => '/botiquines',
-            'view' => 'entity/ubicaciones/botiquines/dashboard_botiquin.php'
-        ],
-        'botiquines.dashboard' => [
-            'path' => '/botiquines/dashboard',
-            'view' => 'entity/ubicaciones/botiquines/dashboard_botiquin.php'
-        ],
-        'botiquines.create' => [
-            'path' => '/botiquines/create',
-            'view' => 'entity/ubicaciones/botiquines/create_botiquin.php'
-        ],
-        'botiquines.edit' => [
-            'path' => '/botiquines/edit',
-            'view' => 'entity/ubicaciones/botiquines/edit_botiquin.php'
-        ],
-        'botiquines.delete' => [
-            'path' => '/botiquines/delete',
-            'view' => 'entity/ubicaciones/botiquines/delete_botiquin.php'
-        ],
-
-        // Almacen pages
+        // Rutas de almacenes
         'almacenes' => [
             'path' => '/almacenes',
-            'view' => 'entity/ubicaciones/almacenes/dashboard_almacen.php'
-        ],
-        'almacenes.dashboard' => [
-            'path' => '/almacenes/dashboard',
-            'view' => 'entity/ubicaciones/almacenes/dashboard_almacen.php'
+            'controller' => 'AlmacenController',
+            'method' => 'index'
         ],
         'almacenes.create' => [
             'path' => '/almacenes/create',
-            'view' => 'entity/ubicaciones/almacenes/create_almacen.php'
+            'controller' => 'AlmacenController',
+            'method' => 'create'
         ],
         'almacenes.edit' => [
             'path' => '/almacenes/edit',
-            'view' => 'entity/ubicaciones/almacenes/edit_almacen.php'
+            'controller' => 'AlmacenController',
+            'method' => 'edit'
         ],
         'almacenes.delete' => [
             'path' => '/almacenes/delete',
-            'view' => 'entity/ubicaciones/almacenes/delete_almacen.php'
+            'controller' => 'AlmacenController',
+            'method' => 'delete'
         ],
 
-        // Producto pages
+        // Rutas de botiquines
+        'botiquines' => [
+            'path' => '/botiquines',
+            'controller' => 'BotiquinController',
+            'method' => 'index'
+        ],
+        'botiquines.create' => [
+            'path' => '/botiquines/create',
+            'controller' => 'BotiquinController',
+            'method' => 'create'
+        ],
+        'botiquines.edit' => [
+            'path' => '/botiquines/edit',
+            'controller' => 'BotiquinController',
+            'method' => 'edit'
+        ],
+        'botiquines.delete' => [
+            'path' => '/botiquines/delete',
+            'controller' => 'BotiquinController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de productos
         'productos' => [
             'path' => '/productos',
-            'view' => 'entity/productos/dashboard_producto.php'
-        ],
-        'productos.dashboard' => [
-            'path' => '/productos/dashboard',
-            'view' => 'entity/productos/dashboard_producto.php'
+            'controller' => 'ProductoController',
+            'method' => 'index'
         ],
         'productos.create' => [
             'path' => '/productos/create',
-            'view' => 'entity/productos/create_producto.php'
+            'controller' => 'ProductoController',
+            'method' => 'create'
         ],
         'productos.edit' => [
             'path' => '/productos/edit',
-            'view' => 'entity/productos/edit_producto.php'
+            'controller' => 'ProductoController',
+            'method' => 'edit'
         ],
         'productos.delete' => [
             'path' => '/productos/delete',
-            'view' => 'entity/productos/delete_producto.php'
+            'controller' => 'ProductoController',
+            'method' => 'delete'
         ],
 
-        // Stock pages
+        // Rutas de stocks
         'stocks' => [
             'path' => '/stocks',
-            'view' => 'entity/stocks/dashboard_stock.php'
-        ],
-        'stocks.dashboard' => [
-            'path' => '/stocks/dashboard',
-            'view' => 'entity/stocks/dashboard_stock.php'
+            'controller' => 'StockController',
+            'method' => 'index'
         ],
         'stocks.botiquines' => [
             'path' => '/stocks/botiquines',
-            'view' => 'entity/stocks/stock_botiquin.php'
+            'controller' => 'StockController',
+            'method' => 'indexBotiquin'
         ],
         'stocks.almacenes' => [
             'path' => '/stocks/almacenes',
-            'view' => 'entity/stocks/stock_almacen.php'
+            'controller' => 'StockController',
+            'method' => 'indexAlmacen'
+        ],
+        'stocks.create' => [
+            'path' => '/stocks/create',
+            'controller' => 'StockController',
+            'method' => 'create'
+        ],
+        'stocks.edit' => [
+            'path' => '/stocks/edit',
+            'controller' => 'StockController',
+            'method' => 'edit'
+        ],
+        'stocks.delete' => [
+            'path' => '/stocks/delete',
+            'controller' => 'StockController',
+            'method' => 'delete'
+        ],
+
+        // Rutas de reposiciones
+        'reposiciones' => [
+            'path' => '/reposiciones',
+            'controller' => 'ReposicionController',
+            'method' => 'index'
+        ],
+
+        // Rutas de movimientos
+        'movimientos' => [
+            'path' => '/movimientos',
+            'controller' => 'MovimientoController',
+            'method' => 'index'
+        ],
+
+        // Rutas de etiquetas
+        'etiquetas' => [
+            'path' => '/etiquetas',
+            'controller' => 'EtiquetaController',
+            'method' => 'index'
+        ],
+
+        // Rutas de lecturas
+        'lecturas' => [
+            'path' => '/lecturas',
+            'controller' => 'LecturaController',
+            'method' => 'index'
         ],
     ]
 ];

@@ -2,15 +2,23 @@
 
 namespace model\repository;
 
-
 use model\Database;
 use PDO;
+use PDOException;
 
 class UserLocationRepository {
     private PDO $pdo;
+    private HospitalRepository $hospitalRepository;
+    private PlantaRepository $plantaRepository;
+    private AlmacenRepository $almacenRepository;
+    private BotiquinRepository $botiquinRepository;
 
     public function __construct() {
         $this->pdo = Database::getInstance()->getPdo();
+        $this->hospitalRepository = new HospitalRepository();
+        $this->plantaRepository = new PlantaRepository();
+        $this->almacenRepository = new AlmacenRepository();
+        $this->botiquinRepository = new BotiquinRepository();
     }
     
     /**
@@ -18,94 +26,182 @@ class UserLocationRepository {
      */
     public function deleteAllUserLocations($userId): void
     {
-        // Eliminar asignaciones de hospitales
-        $stmt = $this->pdo->prepare("DELETE FROM user_hospitales WHERE user_id = :userId");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        // Eliminar asignaciones de plantas
-        $stmt = $this->pdo->prepare("DELETE FROM user_plantas WHERE user_id = :userId");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        // Eliminar asignaciones de botiquines
-        $stmt = $this->pdo->prepare("DELETE FROM user_botiquines WHERE user_id = :userId");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
+            // Iniciamos una transacción para garantizar que todas las eliminaciones se ejecuten o ninguna
+            $this->pdo->beginTransaction();
+            
+            // Eliminar asignaciones de hospitales
+            $stmt = $this->pdo->prepare("DELETE FROM user_hospitales WHERE id_usuario = ?");
+            $stmt->execute([$userId]);
+            
+            // Eliminar asignaciones de plantas
+            $stmt = $this->pdo->prepare("DELETE FROM user_plantas WHERE id_usuario = ?");
+            $stmt->execute([$userId]);
+            
+            // Eliminar asignaciones de botiquines
+            $stmt = $this->pdo->prepare("DELETE FROM user_botiquines WHERE id_usuario = ?");
+            $stmt->execute([$userId]);
+            
+            // Confirmamos la transacción
+            $this->pdo->commit();
+            
+        } catch (PDOException $e) {
+            // Si algo falla, revertimos la transacción
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("Error en deleteAllUserLocations: " . $e->getMessage());
+            throw $e;
+        }
     }
     
     /**
      * Asigna un hospital a un usuario
      */
-    public function addUserHospital($userId, $hospitalId) {
-        $stmt = $this->pdo->prepare("INSERT INTO user_hospitales (user_id, hospital_id) VALUES (:userId, :hospitalId)");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->bindParam(':hospitalId', $hospitalId, PDO::PARAM_INT);
-        return $stmt->execute();
+    public function addUserHospital($userId, $hospitalId): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO user_hospitales (id_usuario, id_hospital) VALUES (?, ?)");
+            return $stmt->execute([$userId, $hospitalId]);
+        } catch (PDOException $e) {
+            error_log("Error en addUserHospital: " . $e->getMessage());
+            throw $e;
+        }
     }
     
     /**
      * Asigna una planta a un usuario
      */
-    public function addUserPlanta($userId, $plantaId) {
-        $stmt = $this->pdo->prepare("INSERT INTO user_plantas (user_id, planta_id) VALUES (:userId, :plantaId)");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->bindParam(':plantaId', $plantaId, PDO::PARAM_INT);
-        return $stmt->execute();
+    public function addUserPlanta($userId, $plantaId): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO user_plantas (id_usuario, id_planta) VALUES (?, ?)");
+            return $stmt->execute([$userId, $plantaId]);
+        } catch (PDOException $e) {
+            error_log("Error en addUserPlanta: " . $e->getMessage());
+            throw $e;
+        }
     }
     
     /**
      * Asigna un botiquín a un usuario
      */
-    public function addUserBotiquin($userId, $botiquinId) {
-        $stmt = $this->pdo->prepare("INSERT INTO user_botiquines (user_id, botiquin_id) VALUES (:userId, :botiquinId)");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->bindParam(':botiquinId', $botiquinId, PDO::PARAM_INT);
-        return $stmt->execute();
+    public function addUserBotiquin($userId, $botiquinId): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO user_botiquines (id_usuario, id_botiquin) VALUES (?, ?)");
+            $result = $stmt->execute([$userId, $botiquinId]);
+            if (!$result) {
+                error_log("Error al insertar botiquín: " . print_r($stmt->errorInfo(), true));
+            }
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error en addUserBotiquin: " . $e->getMessage());
+            throw $e;
+        }
     }
-    
+
     /**
-     * Obtiene todos los hospitales asignados a un usuario
+     * Obtiene los hospitales asociados a un usuario específico
+     * @param $userId
+     * @return array Lista de objetos Hospital
      */
-    public function getUserHospitales($userId) {
-        $stmt = $this->pdo->prepare("
-            SELECT h.* FROM hospitales h
-            JOIN user_hospitales uh ON h.id = uh.hospital_id
-            WHERE uh.user_id = :userId
-        ");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getHospitalsByUserId($userId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT h.*
+                FROM hospitales h
+                JOIN user_hospitales uh ON h.id_hospital = uh.id_hospital
+                WHERE uh.id_usuario = ? AND h.activo = 1
+            ");
+            $stmt->execute([$userId]);
+            $hospitalesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->hospitalRepository, 'createHospitalFromData'], $hospitalesData);
+
+        } catch (PDOException $e) {
+            error_log("Error en getHospitalsByUserId: " . $e->getMessage());
+            throw $e;
+        }
     }
-    
+
     /**
      * Obtiene todas las plantas asignadas a un usuario
+     * @param $userId
+     * @return array Lista de objetos Planta
      */
-    public function getUserPlantas($userId) {
-        $stmt = $this->pdo->prepare("
-            SELECT p.* FROM plantas p
-            JOIN user_plantas up ON p.id = up.planta_id
-            WHERE up.user_id = :userId
-        ");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getPlantasByUserId($userId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT p.*
+                FROM plantas p
+                JOIN user_plantas up ON p.id_planta = up.id_planta
+                WHERE up.id_usuario = ? AND p.activo = 1
+            ");
+            $stmt->execute([$userId]);
+            $plantasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->plantaRepository, 'createPlantaFromData'], $plantasData);
+
+        } catch (PDOException $e) {
+            error_log("Error en getPlantasByUserId: " . $e->getMessage());
+            throw $e;
+        }
     }
     
     /**
      * Obtiene todos los botiquines asignados a un usuario
      */
-    public function getUserBotiquines($userId) {
-        $stmt = $this->pdo->prepare("
-            SELECT b.* FROM botiquines b
-            JOIN user_botiquines ub ON b.id = ub.botiquin_id
-            WHERE ub.user_id = :userId
-        ");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getBotiquinesByUserId($userId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT b.id_botiquin, b.nombre FROM botiquines b
+                JOIN user_botiquines ub ON b.id_botiquin = ub.id_botiquin
+                WHERE ub.id_usuario = ?
+            ");
+            $stmt->execute([$userId]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en getUserBotiquines: " . $e->getMessage());
+            throw $e;
+        }
     }
+
+    public function getAlmacenesByHospitalId($hospitalId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT a.* FROM almacenes a
+                JOIN hospitales h ON a.id_hospital = h.id_hospital
+                WHERE h.id_hospital = ? AND a.activo = 1
+            ");
+            $stmt->execute([$hospitalId]);
+            $almacenesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->almacenRepository, 'createAlmacenFromData'], $almacenesData);
+        } catch (PDOException $e) {
+            error_log("Error en getAlmacenesByHospitalId: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAlmacenesByPlantaId($plantaId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT a.* FROM almacenes a
+                JOIN plantas p ON a.id_planta = p.id_planta
+                WHERE p.id_planta = ? AND a.activo = 1
+            ");
+            $stmt->execute([$plantaId]);
+            $almacenesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->almacenRepository, 'createAlmacenFromData'], $almacenesData);
+        } catch (PDOException $e) {
+            error_log("Error en getAlmacenesByPlantaId: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
 }
