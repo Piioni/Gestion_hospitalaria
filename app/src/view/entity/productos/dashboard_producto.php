@@ -46,7 +46,7 @@ if ($filtros['codigo'] && $filtros['almacen']) {
 } elseif ($filtros['botiquin']) {
     $productos = $productoService->getProductosByBotiquin($filtros['botiquin']);
 } else {
-    $productos = $productoService->getAll();
+    $productos = $productoService->getAllProducts();
 }
 
 $title = "Sistema de Gestión Hospitalaria";

@@ -3,12 +3,14 @@
    Estilos para forms, inputs y controles
    =========================================== */
 
+/* Base de formularios */
 .form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
+/* Optimización de grupos de formulario */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -16,12 +18,14 @@
     margin-bottom: 1rem;
 }
 
+/* Etiquetas de formulario */
 .form-label {
     font-weight: 500;
     color: var(--dark-text);
     font-size: 0.95rem;
 }
 
+/* Optimización de estilos para inputs y selects */
 .form-input,
 .form-select {
     width: 100%;
@@ -41,6 +45,7 @@
     outline: none;
 }
 
+/* Optimización de mensajes de error */
 .form-error {
     color: var(--primary-color);
     font-size: 0.85rem;
@@ -55,64 +60,57 @@
     font-size: 0.9rem;
 }
 
+/* Acciones de formulario */
 .form-actions {
     display: flex;
     gap: 1rem;
     margin-top: 2rem;
 }
 
-.form-footer {
-    text-align: center;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
-    color: var(--light-text);
-    font-size: 0.9rem;
-}
-
-/* Contenedor de formularios para limitar el ancho */
+/* Optimización del contenedor de formularios */
 .form-container {
     max-width: 800px;
     margin: 0 auto;
 }
 
-/* Formulario en línea */
-.form-inline {
-    display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 1rem;
+/* Grupos con campos en línea */
+.field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
 }
 
-.form-inline .form-group {
-    margin-bottom: 0;
-    flex: 1;
-}
-
-.form-inline .form-actions {
-    margin-top: 0;
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* Grupos de inputs */
-.input-group {
-    display: flex;
-    gap: 0.5rem;
+/* Contenedor de campo */
+.form-field {
     position: relative;
 }
 
-.input-group .btn {
-    padding: 0.75rem 1rem;
-    border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+/* Clases para campos requeridos y opcionales */
+.field-required {
+    font-weight: 500;
 }
 
-.input-group .form-input {
-    border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
-    flex: 1;
+.field-required::after {
+    content: "*";
+    color: var(--primary-color);
+    margin-left: 4px;
 }
 
-/* Filtros específicos */
+.field-optional {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-left: 0.5rem;
+    font-weight: normal;
+}
+
+/* Texto de ayuda para campos */
+.field-help {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-top: 0.375rem;
+}
+
+/* Optimización de filtros */
 .filter-section {
     margin-bottom: 1.75rem;
     background-color: var(--light-bg);
@@ -139,7 +137,6 @@
     left: 0;
 }
 
-/* Modificación del filtro para layout horizontal */
 .filter-form {
     display: flex;
     flex-direction: column;
@@ -161,79 +158,13 @@
     gap: 0.5rem;
 }
 
-.hospital-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    width: 100%;
-}
-
-.hospital-filter .form-field {
-    flex: 1;
-    min-width: 200px;
-}
-
-.hospital-select {
-    max-width: 100%;
-}
-
-/* Botones de filtrado alineados */
 .filter-actions {
     display: flex;
     gap: 0.75rem;
     margin-top: 1rem;
 }
 
-/* Estilos específicos para formularios de almacenes */
-.almacen-form {
-    gap: 2rem;
-}
-
-.almacen-form .form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-field {
-    position: relative;
-}
-
-.form-field-icon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--light-text);
-}
-
-.field-required {
-    font-weight: 500;
-}
-
-.field-required::after {
-    content: "*";
-    color: var(--primary-color);
-    margin-left: 4px;
-}
-
-.field-optional {
-    font-size: 0.85rem;
-    color: var(--light-text);
-    margin-left: 0.5rem;
-    font-weight: normal;
-}
-
-.field-help {
-    font-size: 0.85rem;
-    color: var(--light-text);
-    margin-top: 0.375rem;
-}
-
-.field-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
+/* Media queries optimizadas */
 @media (max-width: 768px) {
     .field-group {
         grid-template-columns: 1fr;
@@ -248,13 +179,6 @@
     }
 }
 
-.disabled-field {
-    background-color: var(--light-bg);
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Ajustes para formularios en pantallas más pequeñas */
 @media (max-width: 992px) {
     .form-container {
         max-width: 100%;

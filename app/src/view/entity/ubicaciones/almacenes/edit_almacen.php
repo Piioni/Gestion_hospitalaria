@@ -13,7 +13,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                 </div>
             </div>
 
-            <div class="almacen-form-container">
+            <div class="form-container">
                 <div class="card almacen-card">
                     <div class="card-header">
                         <h3>Información del Almacén</h3>
