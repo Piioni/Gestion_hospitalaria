@@ -199,6 +199,7 @@ class UserLocationService
         }
         return false;
     }
+
     /**
      * Verifica si un usuario tiene acceso a una planta específica
      *

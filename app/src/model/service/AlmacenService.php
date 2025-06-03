@@ -84,7 +84,7 @@ class AlmacenService
         return $this->almacenRepository->getByPlantaId($id_planta);
     }
 
-    public function getAlmacenesForUser($userId, $userRole, $filtroHospital, $filtroTipo): array
+    public function getAlmacenesForUser($userId, $userRole, $filtroHospital = null, $filtroTipo = null): array
     {
         $almacenes = match ($userRole) {
             'ADMINISTRADOR', 'GESTOR_GENERAL' => $this->almacenRepository->getAll(),
