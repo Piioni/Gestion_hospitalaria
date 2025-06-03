@@ -1015,3 +1015,133 @@ p {
         grid-template-columns: 1fr;
     }
 }
+
+/* Estilos para la página de creación de movimientos */
+.create-movimiento-card {
+    margin-bottom: 2rem;
+}
+
+.section-subtitle {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Contenedor de selección de tipo de movimiento */
+.movement-type-selector {
+    margin-bottom: 1rem;
+}
+
+.movement-type-options {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.5rem;
+}
+
+.movement-type-option {
+    display: flex;
+    align-items: center;
+}
+
+.movement-type-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.movement-type-option label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.movement-type-option label:hover {
+    background-color: var(--primary-light-bg);
+    border-color: var(--primary-color);
+}
+
+.movement-type-option input[type="radio"]:checked + label {
+    background-color: var(--primary-light-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.movement-type-option i {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+/* Contenedor de información de producto */
+.product-info-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Contenedor de almacenes */
+.almacenes-container {
+    margin-top: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.almacenes-container.two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.almacen-section {
+    background-color: var(--light-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Estilos para el toggle de checkbox */
+.checkbox-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.checkbox-toggle input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.selectors-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .almacenes-container.two-columns {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .product-info-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .movement-type-options {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .movement-type-option label {
+        padding: 0.75rem 1rem;
+    }
+}
