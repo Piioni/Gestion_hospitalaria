@@ -14,26 +14,38 @@ include __DIR__ . "/../../layouts/_header.php";
             </div>
         </div>
 
-        <?php if (!empty($error)): ?>
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle"></i>
-                <div>
-                    <strong>Error:</strong> <?= htmlspecialchars($error) ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
         <div class="card create-movimiento-card">
-            <div class="card-header">
-                <h3 class="mb-0">Registrar Movimiento</h3>
-            </div>
             <div class="card-body">
                 <form action="<?= url('movimientos.create') ?>" method="POST" class="form" id="movimientoForm">
-                    <!-- Tipo de Movimiento -->
-                    <div class="movement-type-selector">
-                        <div class="form-group">
-                            <label class="form-label">Tipo de Movimiento</label>
-                            <div class="movement-type-options">
+                    <!-- Sección de tipo movimiento e información de producto en 2 columnas -->
+                    <div class="movement-info-grid">
+                        <!-- Columna Información de Producto -->
+                        <div class="movement-column">
+                            <h4 class="section-subtitle">Información del Producto</h4>
+                            <div class="product-info-container">
+                                <div class="form-group producto-selector">
+                                    <label for="id_producto" class="form-label">Producto</label>
+                                    <select id="id_producto" name="id_producto" class="form-select" required>
+                                        <option value="">Seleccione un producto</option>
+                                        <?php foreach ($productos as $producto): ?>
+                                            <option value="<?= $producto->getId() ?>" <?= $movimiento['id_producto'] == $producto->getId() ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($producto->getNombre()) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-group producto-selector">
+                                    <label for="cantidad" class="form-label">Cantidad</label>
+                                    <input type="number" id="cantidad" name="cantidad" min="1" value="<?= $movimiento['cantidad'] ?>" class="form-input" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Tipo de Movimiento -->
+                        <div class="movement-column">
+                            <h4 class="section-subtitle">Tipo de Movimiento</h4>
+                            <div class="movement-type-options centered-options">
                                 <div class="movement-type-option">
                                     <input type="radio" id="tipo_traslado" name="tipo_movimiento" value="TRASLADO"
                                            <?= $movimiento['tipo_movimiento'] === 'TRASLADO' ? 'checked' : '' ?>
@@ -54,29 +66,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Información de Producto -->
-                    <div class="form-group">
-                        <h4 class="section-subtitle">Información del Producto</h4>
-                        <div class="product-info-container">
-                            <div class="form-group">
-                                <label for="id_producto" class="form-label">Producto</label>
-                                <select id="id_producto" name="id_producto" class="form-select" required>
-                                    <option value="">Seleccione un producto</option>
-                                    <?php foreach ($productos as $producto): ?>
-                                        <option value="<?= $producto->getId() ?>" <?= $movimiento['id_producto'] == $producto->getId() ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($producto->getNombre()) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" id="cantidad" name="cantidad" min="1" value="<?= $movimiento['cantidad'] ?>" class="form-input" required>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Contenedor para Almacenes -->
@@ -86,9 +76,11 @@ include __DIR__ . "/../../layouts/_header.php";
                             <h4 class="section-subtitle">Almacén de Origen</h4>
 
                             <div class="form-group">
-                                <div class="checkbox-toggle">
-                                    <input type="checkbox" id="origen_es_general" name="origen_es_general" onchange="toggleAlmacenTipo('origen')">
-                                    <label for="origen_es_general">Almacén general</label>
+                                <label class="form-label">Tipo Almacén</label>
+                                <div class="almacen-tipo-selector btn-group">
+                                    <input type="hidden" id="origen_es_general" name="origen_es_general" value="0">
+                                    <button type="button" id="origen_btn_planta" class="btn btn-secondary active" onclick="selectAlmacenTipo('origen', false)">PLANTA</button>
+                                    <button type="button" id="origen_btn_general" class="btn btn-secondary" onclick="selectAlmacenTipo('origen', true)">GENERAL</button>
                                 </div>
                             </div>
 
@@ -125,9 +117,11 @@ include __DIR__ . "/../../layouts/_header.php";
                             <h4 class="section-subtitle">Almacén de Destino</h4>
 
                             <div class="form-group">
-                                <div class="checkbox-toggle">
-                                    <input type="checkbox" id="destino_es_general" name="destino_es_general" onchange="toggleAlmacenTipo('destino')">
-                                    <label for="destino_es_general">Almacén general</label>
+                                <label class="form-label">Tipo Almacén</label>
+                                <div class="almacen-tipo-selector btn-group">
+                                    <input type="hidden" id="destino_es_general" name="destino_es_general" value="0">
+                                    <button type="button" id="destino_btn_planta" class="btn btn-secondary active" onclick="selectAlmacenTipo('destino', false)">PLANTA</button>
+                                    <button type="button" id="destino_btn_general" class="btn btn-secondary" onclick="selectAlmacenTipo('destino', true)">GENERAL</button>
                                 </div>
                             </div>
 
