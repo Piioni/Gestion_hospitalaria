@@ -37,6 +37,23 @@ return [
             'method' => 'login'
         ],
 
+        // Rutas de autenticación
+        'logout' => [
+            'path' => '/logout',
+            'controller' => 'AuthController',
+            'method' => 'logout'
+        ],
+        'register' => [
+            'path' => '/register',
+            'controller' => 'AuthController',
+            'method' => 'register'
+        ],
+        'password.change' => [
+            'path' => '/password/change',
+            'controller' => 'AuthController',
+            'method' => 'changePassword'
+        ],
+
         // Rutas de usuario
         'users' => [
             'path' => '/users',
@@ -62,23 +79,6 @@ return [
             'path' => '/users/locations',
             'controller' => 'UserController',
             'method' => 'locations'
-        ],
-
-        // Rutas de autenticación
-        'logout' => [
-            'path' => '/logout',
-            'controller' => 'AuthController',
-            'method' => 'logout'
-        ],
-        'register' => [
-            'path' => '/register',
-            'controller' => 'AuthController',
-            'method' => 'register'
-        ],
-        'password.change' => [
-            'path' => '/password/change',
-            'controller' => 'AuthController',
-            'method' => 'changePassword'
         ],
 
         // Rutas de hospitales
@@ -236,12 +236,25 @@ return [
             'controller' => 'MovimientoController',
             'method' => 'index'
         ],
-
-        // Rutas de etiquetas
-        'etiquetas' => [
-            'path' => '/etiquetas',
-            'controller' => 'EtiquetaController',
-            'method' => 'index'
+        'movimientos.list' => [
+            'path' => '/movimientos/list',
+            'controller' => 'MovimientoController',
+            'method' => 'list'
+        ],
+        'movimientos.create' => [
+            'path' => '/movimientos/create',
+            'controller' => 'MovimientoController',
+            'method' => 'create'
+        ],
+        'movimientos.complete' => [
+            'path' => '/movimientos/complete',
+            'controller' => 'MovimientoController',
+            'method' => 'complete'
+        ],
+        'movimientos.cancel' => [
+            'path' => '/movimientos/cancel',
+            'controller' => 'MovimientoController',
+            'method' => 'cancel'
         ],
 
         // Rutas de lecturas
@@ -254,6 +267,13 @@ return [
             'path' => '/lecturas/create',
             'controller' => 'LecturaController',
             'method' => 'create'
+        ],
+
+        // Rutas de etiquetas
+        'etiquetas' => [
+            'path' => '/etiquetas',
+            'controller' => 'EtiquetaController',
+            'method' => 'index'
         ],
     ]
 ];
