@@ -1,11 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     toggleMovimientoFields();
-    toggleAlmacenTipo('origen');
-    toggleAlmacenTipo('destino');
-
+    
+    // Para origen, verificamos el estado inicial del input hidden
+    const esGeneralOrigen = document.getElementById('origen_es_general').value === '1';
+    selectAlmacenTipo('origen', esGeneralOrigen, true);
+    
+    // Para destino, verificamos el estado inicial del input hidden
+    const esGeneralDestino = document.getElementById('destino_es_general').value === '1';
+    selectAlmacenTipo('destino', esGeneralDestino, true);
 });
 
-// Función para alternar el tipo de movimiento
 function toggleMovimientoFields() {
     const esTraslado = document.getElementById('tipo_traslado').checked;
     const origenSection = document.getElementById('origen-section');
@@ -24,13 +28,62 @@ function toggleMovimientoFields() {
 }
 
 /**
+ * Función para seleccionar el tipo de almacén (general o planta)
+ * @param {string} prefijo - Prefijo para los IDs de los elementos ('origen' o 'destino')
+ * @param {boolean} esGeneral - Indica si se seleccionó almacén general (true) o de planta (false)
+ * @param {boolean} sinActualizar - Si es true, no actualiza el almacén (usado para inicialización)
+ */
+function selectAlmacenTipo(prefijo, esGeneral, sinActualizar = false) {
+    const inputEsGeneral = document.getElementById(`${prefijo}_es_general`);
+    const btnGeneral = document.getElementById(`${prefijo}_btn_general`);
+    const btnPlanta = document.getElementById(`${prefijo}_btn_planta`);
+    const plantaContainer = document.getElementById(`${prefijo}_planta_container`);
+    
+    // Actualizar el valor del input hidden
+    inputEsGeneral.value = esGeneral ? '1' : '0';
+    
+    // Actualizar clases de botones
+    if (esGeneral) {
+        btnGeneral.classList.add('active');
+        btnGeneral.classList.remove('btn-secondary');
+        btnGeneral.classList.add('btn-primary');
+        
+        btnPlanta.classList.remove('active');
+        btnPlanta.classList.add('btn-secondary');
+        btnPlanta.classList.remove('btn-primary');
+        
+        plantaContainer.style.display = 'none';
+    } else {
+        btnPlanta.classList.add('active');
+        btnPlanta.classList.remove('btn-secondary');
+        btnPlanta.classList.add('btn-primary');
+        
+        btnGeneral.classList.remove('active');
+        btnGeneral.classList.add('btn-secondary');
+        btnGeneral.classList.remove('btn-primary');
+        
+        plantaContainer.style.display = 'block';
+    }
+    
+    // Limpiar el selector de planta si cambiamos a general
+    if (esGeneral) {
+        document.getElementById(`${prefijo}_planta`).value = '';
+    }
+    
+    // Actualizar el almacén seleccionado si es necesario
+    if (!sinActualizar) {
+        cargarPlantas(prefijo);
+    }
+}
+
+/**
  * Función genérica para cargar plantas en un selector según el hospital seleccionado
  * @param {string} prefijo - Prefijo para los IDs de los elementos ('origen' o 'destino')
  */
 function cargarPlantas(prefijo) {
     const hospitalId = document.getElementById(`${prefijo}_hospital`).value;
     const plantaSelect = document.getElementById(`${prefijo}_planta`);
-    const esGeneral = document.getElementById(`${prefijo}_es_general`).checked;
+    const esGeneral = document.getElementById(`${prefijo}_es_general`).value === '1';
 
     // Limpiar selector de plantas
     plantaSelect.innerHTML = '<option value="">Seleccione una planta</option>';
@@ -59,7 +112,7 @@ function cargarPlantas(prefijo) {
 function actualizarAlmacen(prefijo) {
     const hospitalId = document.getElementById(`${prefijo}_hospital`).value;
     const plantaId = document.getElementById(`${prefijo}_planta`).value;
-    const esGeneral = document.getElementById(`${prefijo}_es_general`).checked;
+    const esGeneral = document.getElementById(`${prefijo}_es_general`).value === '1';
 
     let almacenSeleccionado = null;
 
@@ -83,28 +136,5 @@ function actualizarAlmacen(prefijo) {
     } else {
         document.getElementById(`id_${prefijo}`).value = '';
         document.getElementById(`${prefijo}_almacen_nombre`).value = '';
-    }
-}
-
-/**
- * Función genérica para alternar entre almacén general y de planta
- * @param {string} prefijo - Prefijo para los IDs de los elementos ('origen' o 'destino')
- */
-function toggleAlmacenTipo(prefijo) {
-    const esGeneral = document.getElementById(`${prefijo}_es_general`).checked;
-    const plantaContainer = document.getElementById(`${prefijo}_planta_container`);
-
-    if (esGeneral) {
-        plantaContainer.style.display = 'none';
-        document.getElementById(`${prefijo}_planta`).value = '';
-
-        // Buscar almacén general del hospital seleccionado
-        const hospitalId = document.getElementById(`${prefijo}_hospital`).value;
-        if (hospitalId) {
-            actualizarAlmacen(prefijo);
-        }
-    } else {
-        plantaContainer.style.display = 'block';
-        cargarPlantas(prefijo);
     }
 }

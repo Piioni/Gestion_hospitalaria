@@ -71,28 +71,7 @@ class MovimientoController extends BaseController
 
     public function list(): void
     {
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 10;
-
-        // Obtener filtros desde la URL
-        $filters = [
-            'estado' => $_GET['estado'] ?? '',
-            'tipo_movimiento' => $_GET['tipo_movimiento'] ?? '',
-            'fecha_desde' => $_GET['fecha_desde'] ?? '',
-            'fecha_hasta' => $_GET['fecha_hasta'] ?? ''
-        ];
-
-        $result = $this->movimientoService->getMovimientosFiltrados($filters, $page, $limit);
-
-        $data = [
-            'movimientos' => $result['movimientos'],
-            'total' => $result['total'],
-            'paginas' => $result['paginas'],
-            'pagina_actual' => $result['pagina_actual'],
-            'filtros' => $filters
-        ];
-
-        $this->render('entity.movimientos.list_movimiento', $data);
+        // TODO: Implementar lógica para listar movimientos
     }
 
     public function create(): void
@@ -160,7 +139,7 @@ class MovimientoController extends BaseController
         $this->render('entity.movimientos.create_movimiento', $data);
     }
 
-    private function handleCreate()
+    private function handleCreate(): void
     {
         $tipoMovimiento = $_POST['tipo_movimiento'] ?? '';
         $idProducto = (int)($_POST['id_producto'] ?? 0);
@@ -198,7 +177,6 @@ class MovimientoController extends BaseController
         if (!empty($errors)) {
             $errorMsg = implode(". ", $errors);
             $this->redirect('/movimientos/create?error=' . urlencode($errorMsg));
-            return;
         }
         
         // Crear movimiento
@@ -221,53 +199,12 @@ class MovimientoController extends BaseController
 
     public function complete(): void
     {
-        $id = (int)($_GET['id'] ?? 0);
+       // TODO: Implementar lógica para completar un movimiento
 
-        if (!$id) {
-            $this->redirect('/movimientos');
-            return;
-        }
-
-        try {
-            $this->movimientoService->completarMovimiento($id);
-            $this->redirect('/movimientos');
-        } catch (\Exception $e) {
-            // Mostrar mensaje de error
-            $error = $e->getMessage();
-            $this->redirect('/movimientos?error=' . urlencode($error));
-        }
     }
 
     public function cancel(): void
     {
-        $id = (int)($_GET['id'] ?? 0);
-
-        if (!$id) {
-            $this->redirect('/movimientos');
-            return;
-        }
-
-        $movimiento = $this->movimientoService->getMovimientoById($id);
-
-        if (!$movimiento || $movimiento['estado'] !== 'PENDIENTE') {
-            $this->redirect('/movimientos');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            try {
-                $this->movimientoService->cancelarMovimiento($id);
-                $this->redirect('/movimientos');
-            } catch (\Exception $e) {
-                $error = $e->getMessage();
-            }
-        }
-
-        $data = [
-            'movimiento' => $movimiento,
-            'error' => $error ?? null
-        ];
-
-        $this->render('entity.movimientos.delete_movimiento', $data);
+        //TODO: Implementar lógica para cancelar un movimiento
     }
 }
