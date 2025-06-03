@@ -20,12 +20,6 @@
                 </ul>
             </div>
         <?php endif; ?>
-        
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Producto creado correctamente.
-            </div>
-        <?php endif; ?>
 
         <div class="form-container">
             <div class="card">
@@ -33,7 +27,7 @@
                     <h3>Información del Producto</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="" class="form">
+                    <form method="POST" class="form">
                         <div class="field-group">
                             <div class="form-group">
                                 <label for="codigo" class="form-label field-required">Código</label>
@@ -77,7 +71,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-1"></i> Crear Producto
                             </button>
-                            <a href="<?= url('productos.dashboard') ?>" class="btn btn-secondary">
+                            <a href="<?= url('productos') ?>" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Cancelar
                             </a>
                         </div>
@@ -87,5 +81,13 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($errors)): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        ToastSystem.danger('Error', 'Hay errores en el formulario que debes corregir.', null, {autoClose: true, closeDelay: 5000});
+    });
+</script>
+<?php endif; ?>
 
 <?php include __DIR__ . "/../../layouts/_footer.php"; ?>

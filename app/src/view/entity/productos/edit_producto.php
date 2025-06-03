@@ -11,22 +11,6 @@
             </div>
         </div>
 
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger">
-                <ul class="error-list">
-                    <?php foreach ($errors as $error): ?>
-                        <li><?= htmlspecialchars($error); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-        
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Producto actualizado correctamente.
-            </div>
-        <?php endif; ?>
-
         <div class="form-container">
             <div class="card">
                 <div class="card-header">
@@ -78,7 +62,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-1"></i> Guardar Cambios
                             </button>
-                            <a href="<?= url('productos.dashboard') ?>" class="btn btn-secondary">
+                            <a href="<?= url('productos') ?>" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Cancelar
                             </a>
                         </div>
@@ -88,5 +72,13 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($errors)): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        ToastSystem.danger('Error', 'Hay errores en el formulario que debes corregir.', null, {autoClose: true, closeDelay: 5000});
+    });
+</script>
+<?php endif; ?>
 
 <?php include __DIR__ . "/../../layouts/_footer.php"; ?>

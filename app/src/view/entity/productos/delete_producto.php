@@ -1,4 +1,8 @@
-<?php include __DIR__ . "/../../layouts/_header.php"; ?>
+<?php
+include __DIR__ . "/../../layouts/_header.php";
+
+// TODO: Mejorar estilo, e informar al usuario que no se puede eliminar un producto si tiene registros relacionados.
+?>
 
 <div class="page-section">
     <div class="container">
@@ -47,7 +51,7 @@
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-trash me-1"></i> Confirmar Eliminación
                             </button>
-                            <a href="<?= url('productos.dashboard') ?>" class="btn btn-secondary">
+                            <a href="<?= url('productos') ?>" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Cancelar
                             </a>
                         </div>
@@ -58,34 +62,15 @@
     </div>
 </div>
 
-<style>
-    .product-details {
-        margin-bottom: 2rem;
-    }
-    
-    .detail-item {
-        display: flex;
-        border-bottom: 1px solid #eee;
-        padding: 0.75rem 0;
-    }
-    
-    .detail-item:last-child {
-        border-bottom: none;
-    }
-    
-    .detail-label {
-        font-weight: bold;
-        width: 150px;
-        color: #555;
-    }
-    
-    .detail-value {
-        flex: 1;
-    }
-    
-    .delete-form {
-        margin-top: 1.5rem;
-    }
-</style>
+<?php if (!empty($errors)): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            ToastSystem.danger('Error', 'Ha ocurrido un error al intentar eliminar el producto.', null, {
+                autoClose: true,
+                closeDelay: 5000
+            });
+        });
+    </script>
+<?php endif; ?>
 
 <?php include __DIR__ . "/../../layouts/_footer.php"; ?>

@@ -16,7 +16,7 @@ class ProductController extends BaseController
     private AlmacenService $almacenService;
     private BotiquinService $botiquinService;
     private PlantaService $plantaService;
-    
+
     public function __construct()
     {
         $this->productoService = new ProductoService();
@@ -24,7 +24,7 @@ class ProductController extends BaseController
         $this->botiquinService = new BotiquinService();
         $this->plantaService = new PlantaService();
     }
-    
+
     public function index(): void
     {
         // Verificar permisos
@@ -33,13 +33,13 @@ class ProductController extends BaseController
         // Renderizar la vista del dashboard de productos
         $this->render('entity.productos.dashboard_producto', $data);
     }
-    
+
     public function prepareDashboardData()
     {
         // Determinar qué filtros están activos
         $filtros = [
             'codigo' => isset($_GET['codigo']) ? trim($_GET['codigo']) : null,
-            'nombre' => isset($_GET['nombre']) ? (int)$_GET['nombre'] : null,
+            'nombre' => isset($_GET['nombre']) ? trim($_GET['nombre']) : null,
         ];
 
         // Determinar si el filtro está activo
@@ -50,11 +50,11 @@ class ProductController extends BaseController
         $error = $_GET['error'] ?? null;
 
         try {
-            // Usar el méto do optimizado de filtrado
+            // Usar el método optimizado de filtrado
             $productos = $this->productoService->filtrarProductos($filtros);
 
             // Preparar datos para la vista
-            return  [
+            return [
                 'productos' => $productos,
                 'filtros' => $filtros,
                 'filtrarActivo' => $filtrarActivo,
@@ -64,87 +64,117 @@ class ProductController extends BaseController
                 'success' => $success,
                 'error' => $error
             ];
-            
+
         } catch (Exception $e) {
             header('Location: ' . url('productos.dashboard', ['error' => 'unexpected']));
             exit;
         }
     }
-    
+
     public function create(): void
     {
         // Verificar permisos
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL']);
-        
-        // Valores por defecto
+
+        // Inicializar variables
         $producto = [
             'codigo' => '',
             'nombre' => '',
             'descripcion' => '',
             'unidad_medida' => ''
         ];
-
         $errors = [];
-        $success = false;
-
-        // Procesar el formulario si es un POST
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $producto['codigo'] = filter_input(INPUT_POST, 'codigo', FILTER_SANITIZE_SPECIAL_CHARS);
-            $producto['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-            $producto['descripcion'] = filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_CHARS);
-            $producto['unidad_medida'] = filter_input(INPUT_POST, 'unidad_medida', FILTER_SANITIZE_SPECIAL_CHARS);
-            
-            try {
-                if ($this->productoService->create(
-                    $producto['codigo'],
-                    $producto['nombre'],
-                    $producto['descripcion'],
-                    $producto['unidad_medida']
-                )) {
-                    // Redirigir en caso de éxito
-                    header('Location: ' . url('productos.dashboard', ['success' => 'created']));
-                    exit;
-                }
-            } catch (InvalidArgumentException $e) {
-                $errors[] = $e->getMessage();
-            } catch (Exception $e) {
-                $errors[] = "Error al crear el producto: " . $e->getMessage();
-            }
-        }
         
+        // Si es POST, procesar el formulario
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->handleCreate($producto, $errors);
+        }
+
         // Preparar datos para la vista
         $data = [
             'producto' => $producto,
             'errors' => $errors,
-            'success' => $success,
             'title' => 'Crear Producto',
+            'scripts' => ['toasts.js'],
         ];
-        
+
         $this->render('entity.productos.create_producto', $data);
     }
-    
-    public function edit()
+
+    /**
+     * Maneja el proceso de creación de un producto
+     */
+    private function handleCreate(array &$producto, array &$errors): void
+    {
+        $producto = $this->collectProductData();
+        
+        try {
+            if ($this->productoService->create(
+                $producto['codigo'],
+                $producto['nombre'],
+                $producto['descripcion'],
+                $producto['unidad_medida']
+            )) {
+                // Redirigir al dashboard con mensaje de éxito
+                header('Location: ' . url('productos', ['success' => 'created']));
+                exit;
+            }
+        } catch (InvalidArgumentException $e) {
+            $errors[] = $e->getMessage();
+        } catch (Exception $e) {
+            $errors[] = "Error al crear el producto: " . $e->getMessage();
+        }
+    }
+
+    public function edit(): void
     {
         // Verificar permisos
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL']);
-        
+
         // Obtener el ID del producto
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        
+
         if (!$id) {
-            header('Location: ' . url('productos.dashboard', ['error' => 'id_invalid']));
+            header('Location: ' . url('productos', ['error' => 'id_invalid']));
             exit;
         }
-        
+
+        // Inicializar variables
+        $producto = [];
+        $errors = [];
+
+        // Si es POST, procesar el formulario
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->handleEdit($id, $producto, $errors);
+        } else {
+            // Cargar datos del producto existente
+            $this->loadProductData($id, $producto);
+        }
+
+        // Preparar datos para la vista
+        $data = [
+            'producto' => $producto,
+            'errors' => $errors,
+            'title' => 'Editar Producto',
+            'scripts' => ['toasts.js'],
+        ];
+
+        $this->render('entity.productos.edit_producto', $data);
+    }
+
+    /**
+     * Carga los datos de un producto existente
+     */
+    private function loadProductData(int $id, &$producto): void
+    {
         try {
             $productoObj = $this->productoService->getProductoById($id);
             
             if (!$productoObj) {
-                header('Location: ' . url('productos.dashboard', ['error' => 'producto_not_found']));
+                header('Location: ' . url('productos', ['error' => 'producto_not_found']));
                 exit;
             }
             
-            // Inicializar array con datos del producto
             $producto = [
                 'id' => $productoObj->getId(),
                 'codigo' => $productoObj->getCodigo(),
@@ -152,132 +182,126 @@ class ProductController extends BaseController
                 'descripcion' => $productoObj->getDescripcion(),
                 'unidad_medida' => $productoObj->getUnidadMedida()
             ];
-            
-            $errors = [];
-            $success = false;
-            
-            // Procesar el formulario si es un POST
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $producto['codigo'] = filter_input(INPUT_POST, 'codigo', FILTER_SANITIZE_SPECIAL_CHARS);
-                $producto['nombre'] = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
-                $producto['descripcion'] = filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_CHARS);
-                $producto['unidad_medida'] = filter_input(INPUT_POST, 'unidad_medida', FILTER_SANITIZE_SPECIAL_CHARS);
-                
-                try {
-                    if ($this->productoService->update(
-                        $id,
-                        $producto['codigo'],
-                        $producto['nombre'],
-                        $producto['descripcion'],
-                        $producto['unidad_medida']
-                    )) {
-                        // Redirigir en caso de éxito
-                        header('Location: ' . url('productos.dashboard', ['success' => 'updated']));
-                        exit;
-                    }
-                } catch (InvalidArgumentException $e) {
-                    $errors[] = $e->getMessage();
-                } catch (Exception $e) {
-                    $errors[] = "Error al actualizar el producto: " . $e->getMessage();
-                }
-            }
-            
-            // Preparar datos para la vista
-            $data = [
-                'producto' => $producto,
-                'errors' => $errors,
-                'success' => $success,
-                'title' => 'Editar Producto',
-            ];
-            
-            $this->render('entity.productos.edit_producto', $data);
-            
         } catch (Exception $e) {
-            header('Location: ' . url('productos.dashboard', ['error' => 'unexpected']));
-            exit;
-        }
-    }
-    
-    public function delete()
-    {
-        // Verificar permisos
-        AuthMiddleware::requireRole(['ADMINISTRADOR']);
-        
-        // Obtener el ID del producto
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        
-        if (!$id) {
-            header('Location: ' . url('productos.dashboard', ['error' => 'id_invalid']));
-            exit;
-        }
-        
-        try {
-            $producto = $this->productoService->getProductoById($id);
-            
-            if (!$producto) {
-                header('Location: ' . url('productos.dashboard', ['error' => 'producto_not_found']));
-                exit;
-            }
-            
-            $confirmDelete = filter_input(INPUT_POST, 'confirm_delete', FILTER_SANITIZE_SPECIAL_CHARS);
-            
-            // Si se confirma la eliminación
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && $confirmDelete === 'yes') {
-                if ($this->productoService->delete($id)) {
-                    header('Location: ' . url('productos.dashboard', ['success' => 'deleted']));
-                    exit;
-                } else {
-                    header('Location: ' . url('productos.dashboard', ['error' => 'delete_failed']));
-                    exit;
-                }
-            }
-            
-            // Preparar datos para la vista de confirmación
-            $data = [
-                'producto' => $producto,
-                'title' => 'Eliminar Producto',
-            ];
-            
-            $this->render('entity.productos.delete_producto', $data);
-            
-        } catch (Exception $e) {
-            header('Location: ' . url('productos.dashboard', ['error' => 'unexpected']));
+            header('Location: ' . url('productos', ['error' => 'unexpected']));
             exit;
         }
     }
 
-    public function view()
+    /**
+     * Maneja el proceso de edición de un producto
+     */
+    private function handleEdit(int $id, array &$producto, array &$errors): void
     {
-        // Verificar permisos
-        AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA']);
-        
-        // Obtener el ID del producto
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        
-        if (!$id) {
-            header('Location: ' . url('productos.dashboard', ['error' => 'id_invalid']));
-            exit;
-        }
+        $producto = $this->collectProductData();
+        $producto['id'] = $id;
         
         try {
-            $producto = $this->productoService->getProductoById($id);
-            
-            if (!$producto) {
-                header('Location: ' . url('productos.dashboard', ['error' => 'producto_not_found']));
+            if ($this->productoService->update(
+                $id,
+                $producto['codigo'],
+                $producto['nombre'],
+                $producto['descripcion'],
+                $producto['unidad_medida']
+            )) {
+                // Redirigir al dashboard con mensaje de éxito
+                header('Location: ' . url('productos', ['success' => 'updated']));
                 exit;
             }
-            
-            // Preparar datos para la vista
-            $data = [
-                'producto' => $producto,
-                'title' => 'Detalles del Producto',
-            ];
-            
-            $this->render('entity.productos.view_producto', $data);
-            
+        } catch (InvalidArgumentException $e) {
+            $errors[] = $e->getMessage();
         } catch (Exception $e) {
-            header('Location: ' . url('productos.dashboard', ['error' => 'unexpected']));
+            $errors[] = "Error al actualizar el producto: " . $e->getMessage();
+        }
+    }
+
+    public function delete(): void
+    {
+        // Verificar permisos
+        AuthMiddleware::requireRole(['ADMINISTRADOR']);
+
+        // Obtener el ID del producto
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id) {
+            header('Location: ' . url('productos', ['error' => 'id_invalid']));
             exit;
         }
+
+        $errors = [];
+        $producto = null;
+
+        // Si es POST, procesar la eliminación
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->handleDelete($id, $errors);
+        } else {
+            // Cargar datos del producto para mostrar en formulario de confirmación
+            $this->loadProductForDelete($id, $producto);
+        }
+
+        // Preparar datos para la vista
+        $data = [
+            'producto' => $producto,
+            'title' => 'Eliminar Producto',
+            'errors' => $errors,
+            'scripts' => ['toasts.js'],
+        ];
+
+        $this->render('entity.productos.delete_producto', $data);
+    }
+
+    /**
+     * Carga los datos del producto para la confirmación de eliminación
+     */
+    private function loadProductForDelete(int $id, &$producto): void
+    {
+        try {
+            $producto = $this->productoService->getProductoById($id);
+
+            if (!$producto) {
+                header('Location: ' . url('productos', ['error' => 'producto_not_found']));
+                exit;
+            }
+        } catch (Exception $e) {
+            header('Location: ' . url('productos', ['error' => 'unexpected']));
+            exit;
+        }
+    }
+
+    /**
+     * Maneja el proceso de eliminación de un producto
+     */
+    private function handleDelete(int $id, array &$errors): void
+    {
+        $confirmDelete = filter_input(INPUT_POST, 'confirm_delete', FILTER_SANITIZE_SPECIAL_CHARS);
+
+        if ($confirmDelete === 'yes') {
+            try {
+                if ($this->productoService->delete($id)) {
+                    header('Location: ' . url('productos', ['success' => 'deleted']));
+                } else {
+                    header('Location: ' . url('productos', ['error' => 'delete_failed']));
+                }
+                exit;
+            } catch (Exception $e) {
+                $errors[] = "Error al eliminar el producto: " . $e->getMessage();
+            }
+        } else {
+            header('Location: ' . url('productos', ['error' => 'delete_cancelled']));
+            exit;
+        }
+    }
+
+    /**
+     * Recolecta los datos del producto desde el formulario
+     */
+    private function collectProductData(): array
+    {
+        return [
+            'codigo' => filter_input(INPUT_POST, 'codigo', FILTER_SANITIZE_SPECIAL_CHARS),
+            'nombre' => filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS),
+            'descripcion' => filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_CHARS),
+            'unidad_medida' => filter_input(INPUT_POST, 'unidad_medida', FILTER_SANITIZE_SPECIAL_CHARS)
+        ];
     }
 }

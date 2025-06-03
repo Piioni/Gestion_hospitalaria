@@ -109,32 +109,46 @@
 </div>
 
 <script>
-    // Mostrar notificaciones toast según los parámetros de la URL
+    // Pasar datos de PHP a JavaScript como JSON
     document.addEventListener('DOMContentLoaded', function () {
-        <?php if ($success): ?>
-        <?php if ($success === 'deleted'): ?>
-        ToastSystem.success('Éxito', 'Producto eliminado correctamente.', null, {autoClose: true, closeDelay: 5000});
-        <?php elseif ($success === 'created'): ?>
-        ToastSystem.success('Éxito', 'Producto creado correctamente.', null, {autoClose: true, closeDelay: 5000});
-        <?php elseif ($success === 'updated'): ?>
-        ToastSystem.success('Éxito', 'Producto actualizado correctamente.', null, {autoClose: true, closeDelay: 5000});
-        <?php endif; ?>
-        <?php endif; ?>
+        const notification = {
+            success: <?= isset($success) ? json_encode($success) : 'null' ?>,
+            error: <?= isset($error) ? json_encode($error) : 'null' ?>
+        };
 
-        <?php if ($error && $error !== 'almacen_and_botiquin'): ?>
-        <?php if ($error === 'id_invalid'): ?>
-        ToastSystem.danger('Error', 'ID de producto no válido.', null, {autoClose: true, closeDelay: 5000});
-        <?php elseif ($error === 'unexpected'): ?>
-        ToastSystem.danger('Error', 'Ha ocurrido un error inesperado.', null, {autoClose: true, closeDelay: 5000});
-        <?php elseif ($error === 'producto_not_found'): ?>
-        ToastSystem.danger('Error', 'Producto no encontrado.', null, {autoClose: true, closeDelay: 5000});
-        <?php else: ?>
-        ToastSystem.danger('Error', '<?= htmlspecialchars(urldecode($error)) ?>', null, {
-            autoClose: true,
-            closeDelay: 5000
-        });
-        <?php endif; ?>
-        <?php endif; ?>
+        // Manejar notificaciones de éxito
+        if (notification.success) {
+            const messages = {
+                'deleted': 'Producto eliminado correctamente.',
+                'created': 'Producto creado correctamente.',
+                'updated': 'Producto actualizado correctamente.'
+            };
+
+            if (messages[notification.success]) {
+                ToastSystem.success('Éxito', messages[notification.success], null, {
+                    autoClose: true,
+                    closeDelay: 5000
+                });
+            }
+        }
+
+        // Manejar notificaciones de error
+        if (notification.error ) {
+            const errorMessages = {
+                'id_invalid': 'ID de producto no válido.',
+                'unexpected': 'Ha ocurrido un error inesperado.',
+                'producto_not_found': 'Producto no encontrado.'
+            };
+
+            const message = errorMessages[notification.error] || <?= isset($error) ? 'decodeURIComponent("' . urlencode(htmlspecialchars($error ?? '')) . '")' : '""' ?>;
+
+            if (message) {
+                ToastSystem.danger('Error', message, null, {
+                    autoClose: true,
+                    closeDelay: 5000
+                });
+            }
+        }
     });
 </script>
 

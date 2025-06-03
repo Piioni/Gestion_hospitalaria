@@ -26,6 +26,17 @@ class ProductoService
     {
         // Validaciones de datos
         $this->validarCampos($codigo, $nombre, $descripcion);
+        // Verificar que no sean los mismos datos
+        $productoExistente = $this->productoRepository->getById($id_producto);
+        if (!$productoExistente) {
+            throw new \InvalidArgumentException("Producto no encontrado");
+        }
+        if ($productoExistente->getCodigo() === $codigo &&
+            $productoExistente->getNombre() === $nombre &&
+            $productoExistente->getDescripcion() === $descripcion &&
+            $productoExistente->getUnidadMedida() === $unidad_medida) {
+            throw new \InvalidArgumentException("No se han realizado cambios en el producto");
+        }
         
         return $this->productoRepository->update($id_producto, $codigo, $nombre, $descripcion, $unidad_medida);
     }
@@ -51,7 +62,7 @@ class ProductoService
     }
 
     /**
-     * Valida los campos obligatorios del producto
+     * Válida los campos obligatorios del producto
      *
      * @param string $codigo
      * @param string $nombre
@@ -68,12 +79,12 @@ class ProductoService
             throw new \InvalidArgumentException("El nombre del producto es obligatorio");
         }
 
-        if (strlen($codigo) > 50) {
-            throw new \InvalidArgumentException("El código no puede exceder los 50 caracteres");
+        if (strlen($codigo) > 15) {
+            throw new \InvalidArgumentException("El código no puede exceder los 15 caracteres");
         }
 
-        if (strlen($nombre) > 100) {
-            throw new \InvalidArgumentException("El nombre no puede exceder los 100 caracteres");
+        if (strlen($nombre) > 30) {
+            throw new \InvalidArgumentException("El nombre no puede exceder los 30 caracteres");
         }
 
         if (strlen($descripcion) > 255) {
