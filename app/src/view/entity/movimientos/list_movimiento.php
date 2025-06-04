@@ -79,99 +79,88 @@ include __DIR__ . "/../../layouts/_header.php";
                     </div>
                 <?php endif; ?>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="mb-0">Resultados (<?= $total ?>)</h3>
-                    </div>
-                    <div class="card-body">
-                        <?php if (empty($movimientos)): ?>
-                            <div class="empty-stock">
-                                <p>No se encontraron movimientos con los criterios seleccionados.</p>
+                <div class="table-responsive">
+                    <?php if (empty($movimientos)): ?>
+                        <div class="empty-stock">
+                            <p>No se encontraron movimientos con los criterios seleccionados.</p>
+                        </div>
+                    <?php else: ?>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Producto</th>
+                                <th>Origen</th>
+                                <th>Destino</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($movimientos as $movimiento): ?>
+                                <tr>
+                                    <td>
+                                        <span class="badge <?= $movimiento['tipo_movimiento'] === 'TRASLADO' ? 'bajo-stock' : 'stock-ok' ?>">
+                                            <?= $movimiento['tipo_movimiento'] ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars('['. $movimiento['cantidad'] . '] '. $movimiento['nombre_producto'] ?? '-') ?>
+                                    </td>
+                                    <td><?= $movimiento['origen_nombre'] ? htmlspecialchars($movimiento['origen_nombre']) : 'N/A' ?></td>
+                                    <td><?= htmlspecialchars($movimiento['destino_nombre'] ?? '-') ?></td>
+                                    <td>
+                                        <span class="badge <?php
+                                        if ($movimiento['estado'] === 'PENDIENTE') echo 'bajo-stock';
+                                        elseif ($movimiento['estado'] === 'COMPLETADO') echo 'stock-ok';
+                                        else echo 'badge-cancelado';
+                                        ?>">
+                                            <?= $movimiento['estado'] ?>
+                                        </span>
+                                    </td>
+                                    <td><?= isset($movimiento['fecha_movimiento']) ? date('d/m/Y H:i', strtotime($movimiento['fecha_movimiento'])) : '-' ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+
+                        <?php if ($paginas > 1): ?>
+                            <div class="pagination-container text-center mt-4">
+                                <nav aria-label="Navegación de páginas">
+                                    <ul class="pagination">
+                                        <?php if ($pagina_actual > 1): ?>
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                   href="<?= url('movimientos.list') . '?' . http_build_query(array_merge($filtros, ['page' => $pagina_actual - 1] + (isset($_GET['filtrar']) ? ['filtrar' => 1] : []))) ?>"
+                                                   aria-label="Anterior">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+
+                                        <?php for ($i = max(1, $pagina_actual - 2); $i <= min($paginas, $pagina_actual + 2); $i++): ?>
+                                            <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
+                                                <a class="page-link"
+                                                   href="<?= url('movimientos.list') . '?' . http_build_query(array_merge($filtros, ['page' => $i] + (isset($_GET['filtrar']) ? ['filtrar' => 1] : []))) ?>">
+                                                    <?= $i ?>
+                                                </a>
+                                            </li>
+                                        <?php endfor; ?>
+
+                                        <?php if ($pagina_actual < $paginas): ?>
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                   href="<?= url('movimientos.list') . '?' . http_build_query(array_merge($filtros, ['page' => $pagina_actual + 1] + (isset($_GET['filtrar']) ? ['filtrar' => 1] : []))) ?>"
+                                                   aria-label="Siguiente">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </nav>
                             </div>
-                        <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tipo</th>
-                                        <th>Producto</th>
-                                        <th>Cantidad</th>
-                                        <th>Origen</th>
-                                        <th>Destino</th>
-                                        <th>Estado</th>
-                                        <th>Fecha</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php foreach ($movimientos as $movimiento): ?>
-                                        <tr>
-                                            <td><?= isset($movimiento['id_movimiento']) ? $movimiento['id_movimiento'] : '-' ?></td>
-                                            <td>
-                                                <span class="estado-badge <?= $movimiento['tipo_movimiento'] === 'TRASLADO' ? 'bajo-stock' : 'stock-ok' ?>">
-                                                    <?= $movimiento['tipo_movimiento'] ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <?= htmlspecialchars($movimiento['nombre_producto'] ?? '-') ?>
-                                            </td>
-                                            <td><?= $movimiento['cantidad'] ?></td>
-                                            <td><?= $movimiento['origen_nombre'] ? htmlspecialchars($movimiento['origen_nombre']) : 'N/A' ?></td>
-                                            <td><?= htmlspecialchars($movimiento['destino_nombre'] ?? '-') ?></td>
-                                            <td>
-                                                <span class="estado-badge <?php
-                                                if ($movimiento['estado'] === 'PENDIENTE') echo 'bajo-stock';
-                                                elseif ($movimiento['estado'] === 'COMPLETADO') echo 'stock-ok';
-                                                else echo 'badge-cancelado';
-                                                ?>">
-                                                    <?= $movimiento['estado'] ?>
-                                                </span>
-                                            </td>
-                                            <td><?= isset($movimiento['fecha_movimiento']) ? date('d/m/Y H:i', strtotime($movimiento['fecha_movimiento'])) : '-' ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <?php if ($paginas > 1): ?>
-                                <div class="pagination-container text-center mt-4">
-                                    <nav aria-label="Navegación de páginas">
-                                        <ul class="pagination">
-                                            <?php if ($pagina_actual > 1): ?>
-                                                <li class="page-item">
-                                                    <a class="page-link"
-                                                       href="<?= url('movimientos.list') . '?' . http_build_query(array_merge($filtros, ['page' => $pagina_actual - 1] + (isset($_GET['filtrar']) ? ['filtrar' => 1] : []))) ?>"
-                                                       aria-label="Anterior">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                    </a>
-                                                </li>
-                                            <?php endif; ?>
-
-                                            <?php for ($i = max(1, $pagina_actual - 2); $i <= min($paginas, $pagina_actual + 2); $i++): ?>
-                                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                                    <a class="page-link"
-                                                       href="<?= url('movimientos.list') . '?' . http_build_query(array_merge($filtros, ['page' => $i] + (isset($_GET['filtrar']) ? ['filtrar' => 1] : []))) ?>">
-                                                        <?= $i ?>
-                                                    </a>
-                                                </li>
-                                            <?php endfor; ?>
-
-                                            <?php if ($pagina_actual < $paginas): ?>
-                                                <li class="page-item">
-                                                    <a class="page-link"
-                                                       href="<?= url('movimientos.list') . '?' . http_build_query(array_merge($filtros, ['page' => $pagina_actual + 1] + (isset($_GET['filtrar']) ? ['filtrar' => 1] : []))) ?>"
-                                                       aria-label="Siguiente">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                    </a>
-                                                </li>
-                                            <?php endif; ?>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            <?php endif; ?>
                         <?php endif; ?>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -179,4 +168,3 @@ include __DIR__ . "/../../layouts/_header.php";
 
 <?php
 include __DIR__ . "/../../layouts/_footer.php";
-

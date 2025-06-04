@@ -2,6 +2,7 @@
 
 namespace controllers;
 
+use JetBrains\PhpStorm\NoReturn;
 use middleware\AuthMiddleware;
 use model\entity\Movimiento;
 use model\service\AlmacenService;
@@ -61,6 +62,7 @@ class MovimientoController extends BaseController
             'almacenService' => $this->almacenService,
             'productoService' => $this->productoService,
             'title' => 'Movimientos',
+            'scripts' => ['toasts.js'],
             'success' => $success,
             'errors' => $errors,
         ];
@@ -74,10 +76,10 @@ class MovimientoController extends BaseController
 
         // Obtener filtros de la solicitud
         $filtros = [
-            'estado' => $_GET['estado'] ?? '',
-            'tipo_movimiento' => $_GET['tipo_movimiento'] ?? '',
-            'producto' => $_GET['producto'] ?? '',
-            'destino' => $_GET['destino'] ?? '',
+            'estado' => $_GET['estado'] ?? null,
+            'tipo_movimiento' => $_GET['tipo_movimiento'] ?? null,
+            'producto' => $_GET['producto'] ?? null,
+            'destino' => $_GET['destino'] ?? null,
             'orden' => $_GET['orden'] ?? 'fecha_desc',
         ];
 
@@ -193,7 +195,7 @@ class MovimientoController extends BaseController
         $tipoMovimiento = $_POST['tipo_movimiento'] ?? '';
         $idProducto = (int)($_POST['id_producto'] ?? 0);
         $cantidad = (int)($_POST['cantidad'] ?? 0);
-        $idOrigen = (int)($_POST['id_origen'] ?? 0);
+        $idOrigen = (int)($_POST['id_origen'] ?? null);
         $idDestino = (int)($_POST['id_destino'] ?? 0);
         
         // Validaciones
@@ -240,20 +242,49 @@ class MovimientoController extends BaseController
                 'PENDIENTE',
                 $userId
             );
-            $this->redirect('/movimientos?success=Movimiento creado correctamente');
+            // Redirigir con notificación toast
+            $this->redirect('/movimientos?toast=success&toastmsg=' . urlencode('Movimiento creado correctamente'));
         } catch (\Exception $e) {
             $this->redirect('/movimientos/create?error=' . urlencode($e->getMessage()));
         }
     }
 
+    #[NoReturn]
     public function complete(): void
     {
-       // TODO: Implementar lógica para completar un movimiento
-
+        // Permitir solo por AJAX
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+            $id = (int)$_POST['id'];
+            $ok = $this->movimientoService->completarMovimiento($id);
+            header('Content-Type: application/json');
+            if ($ok) {
+                echo json_encode(['success' => true, 'msg' => 'Movimiento completado correctamente']);
+            } else {
+                echo json_encode(['success' => false, 'msg' => 'No se pudo completar el movimiento']);
+            }
+            exit;
+        }
+        // Si no es AJAX, redirigir
+        $this->redirect('/movimientos');
     }
 
+    #[NoReturn]
     public function cancel(): void
     {
-        //TODO: Implementar lógica para cancelar un movimiento
+        // Permitir solo por AJAX
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+            $id = (int)$_POST['id'];
+            $ok = $this->movimientoService->cancelarMovimiento($id);
+            header('Content-Type: application/json');
+            if ($ok) {
+                echo json_encode(['success' => true, 'msg' => 'Movimiento cancelado correctamente']);
+            } else {
+                echo json_encode(['success' => false, 'msg' => 'No se pudo cancelar el movimiento']);
+            }
+            exit;
+        }
+        // Si no es AJAX, redirigir
+        $this->redirect('/movimientos');
     }
+
 }

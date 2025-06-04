@@ -1,5 +1,6 @@
 <?php
 include __DIR__ . "/../../layouts/_header.php";
+// TODO: Arreglar nombre de producto y botiquín
 ?>
 
     <div class="page-section">

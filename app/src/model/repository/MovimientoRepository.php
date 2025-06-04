@@ -82,13 +82,58 @@ class MovimientoRepository
         }
     }
 
-    public function completar(int $id): bool
+    /**
+     * Completa un movimiento y añade el stock al almacén destino en una transacción.
+     * @param int $idMovimiento
+     * @return bool
+     */
+    public function completar(int $idMovimiento): bool
     {
+        // TODO: Si es un traslado debería verificar y eliminar el stock del almacén origen
         try {
-            $stmt = $this->pdo->prepare("UPDATE movimientos SET estado = 'COMPLETADO' WHERE id_movimiento = ?");
-            return $stmt->execute([$id]);
+            $this->pdo->beginTransaction();
+
+            // Obtener datos del movimiento
+            $stmt = $this->pdo->prepare("SELECT * FROM movimientos WHERE id_movimiento = ?");
+            $stmt->execute([$idMovimiento]);
+            $movimiento = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$movimiento) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            // Insertar stock en el almacén destino
+            $stmtStock = $this->pdo->prepare("
+                INSERT INTO stocks (id_producto, tipo_ubicacion, id_ubicacion, cantidad)
+                VALUES (?, 'ALMACEN', ?, ?)
+                ON DUPLICATE KEY UPDATE cantidad = cantidad + VALUES(cantidad)
+            ");
+            $okStock = $stmtStock->execute([
+                $movimiento['id_producto'],
+                $movimiento['id_destino'],
+                $movimiento['cantidad']
+            ]);
+
+            if (!$okStock) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            // Completar el movimiento
+            $stmtMov = $this->pdo->prepare("UPDATE movimientos SET estado = 'COMPLETADO' WHERE id_movimiento = ?");
+            $okMov = $stmtMov->execute([$idMovimiento]);
+
+            if (!$okMov) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $this->pdo->commit();
+            return true;
         } catch (\PDOException $e) {
-            error_log("Error al completar movimiento: " . $e->getMessage());
+            error_log("Error en completarYAgregarStock: " . $e->getMessage());
+            $this->pdo->rollBack();
             return false;
         }
     }
@@ -136,6 +181,7 @@ class MovimientoRepository
 
             $whereSql = count($whereClauses) > 0 ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
             $sql = "SELECT 
+                    m.id_movimiento,   
                     m.tipo_movimiento, 
                     p.nombre as nombre_producto,
                     m.cantidad,

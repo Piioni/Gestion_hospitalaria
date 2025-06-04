@@ -33,7 +33,7 @@ let ToastSystem = {
             <div class="toast-header">
                 <div class="toast-icon"><i class="fas fa-${iconClass}"></i></div>
                 <h4 class="toast-title">${title}</h4>
-                <button type="button" class="toast-close">&times;</button>
+                <button type="button" class="toast-close" aria-label="Cerrar">&times;</button>
             </div>
             <div class="toast-body">
                 ${message}
@@ -64,7 +64,7 @@ let ToastSystem = {
         }
         
         // Auto-eliminar después de un tiempo si se especifica
-        if (options.autoClose) {
+        if (options.autoClose !== false) {
             const closeDelay = options.closeDelay || 5000;
             setTimeout(() => {
                 this.hideToast(toast);
@@ -81,7 +81,9 @@ let ToastSystem = {
     hideToast: function(toast) {
         if (toast && toast.parentNode) {
             toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 300);
         }
     },
     
