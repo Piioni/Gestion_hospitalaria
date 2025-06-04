@@ -229,6 +229,26 @@ return [
             'controller' => 'ReposicionController',
             'method' => 'index'
         ],
+        'reposiciones.list' => [
+            'path' => '/reposiciones/list',
+            'controller' => 'ReposicionController',
+            'method' => 'list'
+        ],
+        'reposiciones.create' => [
+            'path' => '/reposiciones/create',
+            'controller' => 'ReposicionController',
+            'method' => 'create'
+        ],
+        'reposiciones.complete' => [
+            'path' => '/reposiciones/complete',
+            'controller' => 'ReposicionController',
+            'method' => 'complete'
+        ],
+        'reposiciones.cancel' => [
+            'path' => '/reposiciones/cancel',
+            'controller' => 'ReposicionController',
+            'method' => 'cancel'
+        ],
 
         // Rutas de movimientos
         'movimientos' => [

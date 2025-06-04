@@ -10,11 +10,13 @@ class BotiquinService
 {
     private BotiquinRepository $botiquinRepository;
     private StockRepository $stockRepository;
+    private UserLocationService $userLocationService;
 
     public function __construct()
     {
         $this->botiquinRepository = new BotiquinRepository();
         $this->stockRepository = new StockRepository();
+        $this->userLocationService = new UserLocationService();
     }
 
     public function createBotiquin($id_planta, $nombre, $capacidad): bool
@@ -103,5 +105,15 @@ class BotiquinService
     public function countProductos($id_botiquin): int
     {
         return $this->botiquinRepository->countProductos($id_botiquin);
+    }
+
+    public function getBotiquinesForUser(int $userId, string $userRole): array
+    {
+        return match ($userRole) {
+            'ADMINISTRADOR', 'GESTOR_GENERAL' => $this->getAllBotiquines(),
+            'GESTOR_HOSPITAL' => $this->userLocationService->getAssignedBotiquinesFromHospitals($userId),
+            'GESTOR_PLANTA' => $this->userLocationService->getAssignedBotiquinesFromPlantas($userId),
+            default => [],
+        };
     }
 }

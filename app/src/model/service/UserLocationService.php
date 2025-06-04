@@ -44,6 +44,17 @@ class UserLocationService
     {
         return $this->userLocationRepository->getPlantasByUserId($userId);
     }
+
+    /**
+     * Obtiene botiquines asignados a un usuario
+     *
+     * @param int $userId ID del usuario
+     * @return array Lista de botiquines asignados
+     */
+    public function getAssignedBotiquines(int $userId): array
+    {
+        return $this->userLocationRepository->getBotiquinesByUserId($userId);
+    }
     
     /**
      * Obtiene plantas de los hospitales asignados a un usuario
@@ -72,17 +83,6 @@ class UserLocationService
         }
         
         return $plantas;
-    }
-    
-    /**
-     * Obtiene botiquines asignados a un usuario
-     * 
-     * @param int $userId ID del usuario
-     * @return array Lista de botiquines asignados
-     */
-    public function getAssignedBotiquines(int $userId): array
-    {
-        return $this->userLocationRepository->getBotiquinesByUserId($userId);
     }
 
     public function getAssignedAlmacenesFromHospitals(int $userId): array
@@ -130,49 +130,68 @@ class UserLocationService
 
         return $almacenes;
     }
-    
-    /**
-     * Asigna un hospital a un usuario
-     * 
-     * @param int $userId ID del usuario
-     * @param int $hospitalId ID del hospital
-     * @return bool Resultado de la operación
-     */
+
+    public function getAssignedBotiquinesFromHospitals(int $userId): array
+    {
+        // Obtener IDs de hospitales asignados
+        $hospitales = $this->getAssignedHospitals($userId);
+        if (empty($hospitales)) {
+            return [];
+        }
+
+        // Obtener IDs de hospitales
+        $hospitalIds = array_map(function($hospital) {
+            return $hospital->getId();
+        }, $hospitales);
+
+        // Obtener botiquines de los hospitales
+        $botiquines = [];
+        foreach ($hospitalIds as $hospitalId) {
+            $botiquinesDeHospital = $this->userLocationRepository->getBotiquinesByHospitalId($hospitalId);
+            $botiquines = array_merge($botiquines, $botiquinesDeHospital);
+        }
+
+        return $botiquines;
+    }
+
+    public function getAssignedBotiquinesFromPlantas(int $userId): array
+    {
+        // Obtener plantas asignadas al usuario
+        $plantas = $this->getAssignedPlantas($userId);
+        if (empty($plantas)) {
+            return [];
+        }
+
+        // Obtener IDs de plantas
+        $plantaIds = array_map(function($planta) {
+            return $planta->getId();
+        }, $plantas);
+
+        // Obtener botiquines de las plantas
+        $botiquines = [];
+        foreach ($plantaIds as $plantaId) {
+            $botiquinesDePlanta = $this->userLocationRepository->getBotiquinesByPlantaId($plantaId);
+            $botiquines = array_merge($botiquines, $botiquinesDePlanta);
+        }
+
+        return $botiquines;
+    }
+
     public function assignHospital(int $userId, int $hospitalId): bool
     {
         return $this->userLocationRepository->addUserHospital($userId, $hospitalId);
     }
-    
-    /**
-     * Asigna una planta a un usuario
-     * 
-     * @param int $userId ID del usuario
-     * @param int $plantaId ID de la planta
-     * @return bool Resultado de la operación
-     */
+
     public function assignPlanta(int $userId, int $plantaId): bool
     {
         return $this->userLocationRepository->addUserPlanta($userId, $plantaId);
     }
-    
-    /**
-     * Asigna un botiquín a un usuario
-     * 
-     * @param int $userId ID del usuario
-     * @param int $botiquinId ID del botiquín
-     * @return bool Resultado de la operación
-     */
+
     public function assignBotiquin(int $userId, int $botiquinId): bool
     {
         return $this->userLocationRepository->addUserBotiquin($userId, $botiquinId);
     }
-    
-    /**
-     * Verifica si un usuario tiene alguna ubicación asignada
-     * 
-     * @param int $userId ID del usuario
-     * @return bool True si tiene al menos una ubicación
-     */
+
     public function hasAssignedLocations(int $userId): bool
     {
         $hospitales = $this->getAssignedHospitals($userId);
@@ -182,13 +201,6 @@ class UserLocationService
         return !empty($hospitales) || !empty($plantas) || !empty($botiquines);
     }
 
-    /**
-     * Verifica si un usuario tiene acceso a un hospital específico
-     *
-     * @param int $userId ID del usuario
-     * @param int $hospitalId ID del hospital
-     * @return bool True si el usuario tiene acceso
-     */
     public function userHasHospitalAccess(int $userId, int $hospitalId): bool
     {
         $hospitales = $this->getAssignedHospitals($userId);
@@ -200,13 +212,6 @@ class UserLocationService
         return false;
     }
 
-    /**
-     * Verifica si un usuario tiene acceso a una planta específica
-     *
-     * @param int $userId ID del usuario
-     * @param int $plantaId ID de la planta
-     * @return bool True si el usuario tiene acceso
-     */
     public function userHasPlantaAccess(int $userId, int $plantaId): bool
     {
         $plantas = $this->getAssignedPlantas($userId);
@@ -218,13 +223,6 @@ class UserLocationService
         return false;
     }
 
-    /**
-     * Verifica si un usuario tiene acceso a un botiquín específico
-     *
-     * @param int $userId ID del usuario
-     * @param int $botiquinId ID del botiquín
-     * @return bool True si el usuario tiene acceso
-     */
     public function userHasBotiquinAccess(int $userId, int $botiquinId): bool
     {
         $botiquines = $this->getAssignedBotiquines($userId);

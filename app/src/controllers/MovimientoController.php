@@ -39,17 +39,18 @@ class MovimientoController extends BaseController
 
         // Obtener movimientos pendientes según el rol y permisos
         $pendientes = [];
+        $filtros = ['estado' => 'PENDIENTE'];
 
         if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL'])) {
             // Admin y gestor general ven todos los movimientos pendientes
-            $pendientes = $this->movimientoService->find(['estado' => 'PENDIENTE']);
+            $pendientes = $this->movimientoService->find($filtros);
         } else {
             // Gestor de hospital y gestor de planta ven solo movimientos asociados a sus almacenes
             $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
             $almacenIds = $this->movimientoService->extractAlmacenIds($almacenes);
 
             if (!empty($almacenIds)) {
-                $pendientes = $this->movimientoService->find(['estado' => 'PENDIENTE'], $almacenIds);
+                $pendientes = $this->movimientoService->find($filtros, $almacenIds);
             }
         }
 
@@ -162,17 +163,17 @@ class MovimientoController extends BaseController
             return;
         }
 
-        // Obtener los almacenes para el usuario actual
+        // Obtener los datos del usuario actual
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
-        $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
 
         // Obtener los productos disponibles
         $productos = $this->productoService->getAllProducts();
 
-        // Obtener hospitales y plantas para que el usuario pueda seleccionar el almacen de origen y destino
+        // Obtener selectores de hospitales, plantas y almacenes según el rol del usuario
         $hospitales = $this->hospitalService->getHospitalsForUser($userId, $userRole);
         $plantas = $this->plantaService->getPlantasForUser($userId, $userRole);
+        $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
 
         $data = [
             'movimiento' => $movimiento,
@@ -184,7 +185,7 @@ class MovimientoController extends BaseController
             'productos' => $productos,
             'success' => $success,
             'error' => $error,
-            'scripts' => ['movimientos.js', 'toasts.js']
+            'scripts' => ['movimientos.js', 'toasts.js', 'almacen_common.js'],
         ];
 
         $this->render('entity.movimientos.create_movimiento', $data);
