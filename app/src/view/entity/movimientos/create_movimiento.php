@@ -1,6 +1,5 @@
 <?php
 include __DIR__ . "/../../layouts/_header.php";
-
 ?>
 
 <div class="page-section">

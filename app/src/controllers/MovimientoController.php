@@ -36,20 +36,19 @@ class MovimientoController extends BaseController
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
 
-        // Recuperar almacenes de usuario
-        $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
-
         // Obtener movimientos pendientes según el rol y permisos
         $pendientes = [];
 
         if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL'])) {
-            // Admin y gestor general ven todos los movimientos
-            $pendientes = $this->movimientoService->getMovimientosPendientes();
+            // Admin y gestor general ven todos los movimientos pendientes
+            $pendientes = $this->movimientoService->find(['estado' => 'PENDIENTE']);
         } else {
             // Gestor de hospital y gestor de planta ven solo movimientos asociados a sus almacenes
+            $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
             $almacenIds = $this->movimientoService->extractAlmacenIds($almacenes);
+
             if (!empty($almacenIds)) {
-                $pendientes = $this->movimientoService->getMovimientosPendientesForAlmacenes($almacenIds);
+                $pendientes = $this->movimientoService->find(['estado' => 'PENDIENTE'], $almacenIds);
             }
         }
 
@@ -71,7 +70,57 @@ class MovimientoController extends BaseController
 
     public function list(): void
     {
-        // TODO: Implementar lógica para listar movimientos
+        AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA']);
+
+        // Obtener filtros de la solicitud
+        $filtros = [
+            'estado' => $_GET['estado'] ?? '',
+            'tipo_movimiento' => $_GET['tipo_movimiento'] ?? '',
+            'producto' => $_GET['producto'] ?? '',
+            'destino' => $_GET['destino'] ?? '',
+            'orden' => $_GET['orden'] ?? 'fecha_desc',
+        ];
+
+        // Obtener información del usuario
+        $userId = $this->getCurrentUserId();
+        $userRole = $this->getCurrentUserRole();
+
+        // Obtener movimientos según el rol y permisos
+        $movimientos = [];
+
+        if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL'])) {
+            // Admin y gestor general ven todos los movimientos
+            $movimientos = $this->movimientoService->find($filtros);
+        } else {
+            // Recuperar almacenes de usuario
+            $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
+            $almacenIds = $this->movimientoService->extractAlmacenIds($almacenes);
+
+            if (!empty($almacenIds)) {
+                $movimientos = $this->movimientoService->find($filtros, $almacenIds);
+            }
+        }
+
+        // Paginación y renderizado (ajusta según tu lógica actual)
+        $total = count($movimientos);
+        $pagina_actual = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $por_pagina = 20;
+        $paginas = max(1, ceil($total / $por_pagina));
+        $movimientos_pagina = array_slice($movimientos, ($pagina_actual - 1) * $por_pagina, $por_pagina);
+
+        // Obtener productos para el filtro
+        $productos = $this->productoService->getAllProducts();
+
+        $data = [
+            'movimientos' => $movimientos_pagina,
+            'total' => $total,
+            'pagina_actual' => $pagina_actual,
+            'paginas' => $paginas,
+            'filtros' => $filtros,
+            'productos' => $productos,
+        ];
+
+        $this->render('entity.movimientos.list_movimiento', $data);
     }
 
     public function create(): void

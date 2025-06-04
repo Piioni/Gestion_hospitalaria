@@ -1,10 +1,10 @@
 <?php
 include __DIR__ . "/../../layouts/_header.php";
-$pendientes = $pendientes ?? [];
 ?>
 
 <div class="page-section">
     <div class="container">
+        <div class="movimientos-section">
         <div class="overview-section">
             <h1 class="page-title">Gestión de Movimientos</h1>
             <p class="lead-text">
@@ -147,6 +147,7 @@ $pendientes = $pendientes ?? [];
             </div>
         <?php endif; ?>
     </div>
+</div>
 </div>
 
 <?php include __DIR__ . "/../../layouts/_footer.php"; ?>

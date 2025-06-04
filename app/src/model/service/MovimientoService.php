@@ -14,11 +14,6 @@ class MovimientoService
         $this->movimientoRepository = new MovimientoRepository();
     }
 
-    public function getAllMovimientos(): array
-    {
-        return $this->movimientoRepository->findAll();
-    }
-
     public function getMovimientoById(int $id): ?Movimiento
     {
         return $this->movimientoRepository->findById($id);
@@ -47,39 +42,15 @@ class MovimientoService
         return $this->movimientoRepository->create($tipo_movimiento, $id_producto, $cantidad, $id_origen, $id_destino, $estado, $id_responsable);
     }
 
-    public function getMovimientosPendientes(): array
-    {
-        return $this->movimientoRepository->findPendientes();
-    }
-    
-    public function getMovimientosPendientesForUser(int $userId): array
-    {
-        return $this->movimientoRepository->findPendientesForUser($userId);
-    }
-
-    public function getMovimientosCompletados(): array
-    {
-        return $this->movimientoRepository->findCompletados();
-    }
-
-    public function getMovimientosCancelados(): array
-    {
-        return $this->movimientoRepository->findCancelados();
-    }
-
     /**
-     * Obtiene movimientos pendientes según los almacenes accesibles por el usuario
-     * 
-     * @param array $almacenIds IDs de almacenes a los que el usuario tiene acceso
-     * @return array Movimientos pendientes filtrados
+     * Busca movimientos según filtros y almacenes
+     * @param array|null $filtros
+     * @param array|null $almacenIds
+     * @return array
      */
-    public function getMovimientosPendientesForAlmacenes(array $almacenIds): array
+    public function find(array $filtros = null, array $almacenIds = null): array
     {
-        if (empty($almacenIds)) {
-            return [];
-        }
-        
-        return $this->movimientoRepository->findPendientesForUser($almacenIds);
+        return $this->movimientoRepository->find($filtros, $almacenIds);
     }
 
     /**

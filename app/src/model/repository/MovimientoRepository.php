@@ -29,19 +29,6 @@ class MovimientoRepository
         );
     }
 
-    public function findAll(): array
-    {
-        try {
-            $stmt = $this->pdo->query("SELECT * FROM movimientos");
-            $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createMovimientoFromData'], $movimientos);
-        } catch (\PDOException $e) {
-            // Manejo de errores, por ejemplo, registrar el error
-            error_log("Error al obtener todos los movimientos: " . $e->getMessage());
-            return [];
-        }
-    }
-
     public function findById(int $id): ?Movimiento
     {
         try {
@@ -106,81 +93,69 @@ class MovimientoRepository
         }
     }
 
-    public function findPendientes(): array
+    public function find($filtros = null, $almacenIds = null): array
     {
-        try {
-            $sql = "SELECT m.*, 
+        try{
+            $whereClauses = [];
+            $params = [];
+
+            if (isset($filtros['tipo_movimiento'])) {
+                $whereClauses[] = 'm.tipo_movimiento = ?';
+                $params[] = $filtros['tipo_movimiento'];
+            }
+
+            if (isset($filtros['id_producto'])) {
+                $whereClauses[] = 'm.id_producto = ?';
+                $params[] = $filtros['id_producto'];
+            }
+
+            if (isset($filtros['estado'])) {
+                $whereClauses[] = 'm.estado = ?';
+                $params[] = $filtros['estado'];
+            }
+            if (isset($filtros['orden'])) {
+                $orden = $filtros['orden'];
+                if ($orden === 'fecha_desc') {
+                    $orderBy = 'm.fecha_movimiento DESC';
+                } elseif ($orden === 'fecha_asc') {
+                    $orderBy = 'm.fecha_movimiento ASC';
+                } else {
+                    $orderBy = 'm.fecha_movimiento DESC'; // Valor por defecto
+                }
+            } else {
+                $orderBy = 'm.fecha_movimiento DESC'; // Valor por defecto
+
+            }
+
+            // Filtrar por almacenes relacionados con el usuario
+            if (!empty($almacenIds) && is_array($almacenIds)) {
+                $placeholders = implode(',', array_fill(0, count($almacenIds), '?'));
+                $whereClauses[] = "(m.id_origen IN ($placeholders) OR m.id_destino IN ($placeholders))";
+                $params = array_merge($params, $almacenIds, $almacenIds);
+            }
+
+            $whereSql = count($whereClauses) > 0 ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
+            $sql = "SELECT 
+                    m.tipo_movimiento, 
                     p.nombre as nombre_producto,
+                    m.cantidad,
                     o.nombre as origen_nombre,
-                    d.nombre as destino_nombre
+                    d.nombre as destino_nombre,
+                    m.fecha_movimiento,
+                    m.estado,
+                    m.id_responsable
                 FROM movimientos m
                 JOIN productos p ON m.id_producto = p.id_producto
                 LEFT JOIN almacenes o ON m.id_origen = o.id_almacen
                 JOIN almacenes d ON m.id_destino = d.id_almacen
-                WHERE m.estado = 'PENDIENTE'";
-                
-            $stmt = $this->pdo->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            error_log("Error al obtener movimientos pendientes: " . $e->getMessage());
-            return [];
-        }
-    }
+                $whereSql
+                ORDER BY $orderBy";
 
-    public function findPendientesForUser(array $almacenIds): array
-    {
-        if (empty($almacenIds)) {
-            return [];
-        }
-
-        try {
-            // Convertir array a cadena de placeholders para SQL
-            $placeholders = implode(',', array_fill(0, count($almacenIds), '?'));
-            
-            $sql = "SELECT m.*, 
-                    p.nombre as nombre_producto,
-                    o.nombre as origen_nombre,
-                    d.nombre as destino_nombre
-                FROM movimientos m
-                JOIN productos p ON m.id_producto = p.id_producto
-                LEFT JOIN almacenes o ON m.id_origen = o.id_almacen
-                JOIN almacenes d ON m.id_destino = d.id_almacen
-                WHERE m.estado = 'PENDIENTE' 
-                AND (m.id_origen IN ($placeholders) OR m.id_destino IN ($placeholders))";
-            
             $stmt = $this->pdo->prepare($sql);
-            
-            // Unir los dos arrays de parámetros
-            $params = array_merge($almacenIds, $almacenIds);
             $stmt->execute($params);
-            
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            error_log("Error al obtener movimientos pendientes para usuario: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    public function findCompletados(): array
-    {
-        try {
-            $stmt = $this->pdo->query("SELECT * FROM movimientos WHERE estado = 'COMPLETADO'");
-            $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createMovimientoFromData'], $movimientos);
-        } catch (\PDOException $e) {
-            error_log("Error al obtener movimientos completados: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    public function findCancelados(): array
-    {
-        try {
-            $stmt = $this->pdo->query("SELECT * FROM movimientos WHERE estado = 'CANCELADO'");
-            $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map([$this, 'createMovimientoFromData'], $movimientos);
-        } catch (\PDOException $e) {
-            error_log("Error al obtener movimientos cancelados: " . $e->getMessage());
+            error_log("Error al buscar movimientos por filtros: " . $e->getMessage());
             return [];
         }
 
