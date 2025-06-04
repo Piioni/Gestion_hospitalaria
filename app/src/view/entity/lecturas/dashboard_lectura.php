@@ -5,8 +5,20 @@ include __DIR__ . "/../../layouts/_header.php";
     <div class="page-section">
         <div class="container">
             <div class="lecturas-section">
+                <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
+                    <h2 class="section-title">Historial de Lecturas</h2>
+                    <div class="action-buttons">
+                        <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
+                            <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
+                        </a>
+                        <a href="<?= url('lecturas.create') ?>" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Registrar lectura
+                        </a>
+                    </div>
+                </div>
+
                 <?php if ($filtrarActivo): ?>
-                    <div class="filter-section card">
+                    <div class="filter-section card mb-4">
                         <div class="card-body">
                             <h3 class="filter-title">Filtrar lecturas</h3>
                             <form action="" method="GET" class="filter-form">
@@ -70,18 +82,6 @@ include __DIR__ . "/../../layouts/_header.php";
                         </div>
                     </div>
                 <?php endif; ?>
-
-                <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
-                    <h2 class="section-title">Historial de Lecturas</h2>
-                    <div class="action-buttons">
-                        <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
-                            <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
-                        </a>
-                        <a href="<?= url('lecturas.create') ?>" class="btn btn-primary">
-                            <i class="bi bi-plus-circle"></i> Registrar lectura
-                        </a>
-                    </div>
-                </div>
 
                 <?php if (empty($lecturas)): ?>
                     <div class="empty-state">
