@@ -144,17 +144,17 @@ class MovimientoRepository
             $whereClauses = [];
             $params = [];
 
-            if (isset($filtros['tipo_movimiento'])) {
+            if (!empty($filtros['tipo_movimiento'])) {
                 $whereClauses[] = 'm.tipo_movimiento = ?';
                 $params[] = $filtros['tipo_movimiento'];
             }
 
-            if (isset($filtros['id_producto'])) {
+            if (!empty($filtros['producto'])) {
                 $whereClauses[] = 'm.id_producto = ?';
-                $params[] = $filtros['id_producto'];
+                $params[] = $filtros['producto'];
             }
 
-            if (isset($filtros['estado'])) {
+            if (!empty($filtros['estado'])) {
                 $whereClauses[] = 'm.estado = ?';
                 $params[] = $filtros['estado'];
             }
