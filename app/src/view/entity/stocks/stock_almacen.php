@@ -4,69 +4,70 @@ include __DIR__ . "/../../layouts/_header.php";
 
 <div class="page-section">
     <div class="container">
-        <div class="overview-section">
-            <h1 class="page-title"><?= $navTitle ?></h1>
-            <p class="lead-text">
-                Control y visualización del stock de productos en los almacenes.
-            </p>
-            <div class="action-buttons">
-                <a href="<?= url('almacenes') ?>" class="btn btn-secondary">Ver Almacenes</a>
-                <a href="<?= url('stocks') ?>" class="btn btn-secondary">Dashboard de Stock</a>
-            </div>
-        </div>
-
-        <div class="filter-section card">
-            <div class="card-body">
-                <h3 class="filter-title">Filtrar almacenes</h3>
-                <form action="" method="GET" class="filter-form">
-                    <div class="filter-fields">
-                        <div class="filter-field">
-                            <label for="hospital" class="form-label">Hospital:</label>
-                            <div class="form-field">
-                                <select name="hospital" id="hospital" class="form-select">
-                                    <option value="">Todos los hospitales</option>
-                                    <?php foreach ($hospitals as $hospital): ?>
-                                        <option value="<?= $hospital->getId() ?>" <?= $filtro_hospital == $hospital->getId() ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($hospital->getNombre()) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-field">
-                            <label for="tipo" class="form-label">Tipo:</label>
-                            <div class="form-field">
-                                <select name="tipo" id="tipo" class="form-select">
-                                    <option value="">Todos los tipos</option>
-                                    <option value="GENERAL" <?= $filtro_tipo === 'GENERAL' ? 'selected' : '' ?>>General</option>
-                                    <option value="PLANTA" <?= $filtro_tipo === 'PLANTA' ? 'selected' : '' ?>>Planta</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="filter-field">
-                            <label for="nombre" class="form-label">Nombre:</label>
-                            <div class="form-field">
-                                <input type="text" name="nombre" id="nombre" class="form-input"
-                                       placeholder="Filtrar por nombre de almacén"
-                                       value="<?= isset($filtro_nombre) ? htmlspecialchars($filtro_nombre) : '' ?>">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
-                        <?php if ($filtro_hospital || $filtro_tipo || $filtro_almacen || $filtro_nombre): ?>
-                            <a href="<?= url('stocks.almacenes') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
-                        <?php endif; ?>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="almacenes-section">
-            <h2 class="section-title">Stock por almacén</h2>
+            <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
+                <h2 class="section-title">Stock de almacenes</h2>
+                <div class="action-buttons">
+                    <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
+                        <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
+                    </a>
+                    <a href="<?= url('almacenes') ?>" class="btn btn-secondary">Ver Almacenes</a>
+                    <a href="<?= url('stocks') ?>" class="btn btn-secondary">Dashboard de Stock</a>
+                </div>
+            </div>
+
+            <?php if ($filtrarActivo): ?>
+                <div class="filter-section card mb-4">
+                    <div class="card-body">
+                        <h3 class="filter-title">Filtrar almacenes</h3>
+                        <form action="" method="GET" class="filter-form">
+                            <input type="hidden" name="filtrar" value="1">
+                            <div class="filter-fields">
+                                <div class="filter-field">
+                                    <label for="hospital" class="form-label">Hospital:</label>
+                                    <div class="form-field">
+                                        <select name="hospital" id="hospital" class="form-select">
+                                            <option value="">Todos los hospitales</option>
+                                            <?php foreach ($hospitals as $hospital): ?>
+                                                <option value="<?= $hospital->getId() ?>" <?= $filtro_hospital == $hospital->getId() ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($hospital->getNombre()) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="filter-field">
+                                    <label for="tipo" class="form-label">Tipo:</label>
+                                    <div class="form-field">
+                                        <select name="tipo" id="tipo" class="form-select">
+                                            <option value="">Todos los tipos</option>
+                                            <option value="GENERAL" <?= $filtro_tipo === 'GENERAL' ? 'selected' : '' ?>>General</option>
+                                            <option value="PLANTA" <?= $filtro_tipo === 'PLANTA' ? 'selected' : '' ?>>Planta</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="filter-field">
+                                    <label for="nombre" class="form-label">Nombre:</label>
+                                    <div class="form-field">
+                                        <input type="text" name="nombre" id="nombre" class="form-input"
+                                               placeholder="Filtrar por nombre de almacén"
+                                               value="<?= isset($filtro_nombre) ? htmlspecialchars($filtro_nombre) : '' ?>">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-actions">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
+                                <?php if ($filtro_hospital || $filtro_tipo || $filtro_almacen || $filtro_nombre): ?>
+                                    <a href="<?= url('stocks.almacenes') ?>" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
+                                <?php endif; ?>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <?php if (empty($almacenes)): ?>
                 <div class="empty-state">
@@ -89,19 +90,23 @@ include __DIR__ . "/../../layouts/_header.php";
                             $planta = $plantaService->getPlantaById($almacen->getIdPlanta());
                             $plantaNombre = $planta ? $planta->getNombre() : "No encontrada";
                         }
-
-                        // Obtener los productos en stock para este almacén
-                        $productosEnStock = $stockService->getStockByAlmacenId($almacen->getId());
                         
                         // Determinar si este almacén es el seleccionado para mantenerlo expandido
-                        $isSelected = ($filtro_almacen && $filtro_almacen == $almacen->getId()) ? true : false;
+                        $isSelected = $filtro_almacen && $filtro_almacen == $almacen->getId();
+                        
+                        // Obtener productos en stock para este almacén
+                        $productosEnStock = $stockService->getStockByAlmacenId($almacen->getId());
                     ?>
                         <div class="almacen-card card">
-                            <div class="collapsible-header almacen-header <?= $isSelected ? 'active' : '' ?>"
+                            <div class="collapsible <?= $isSelected ? 'active' : '' ?>"
                                  onclick="toggleCollapsible(this, 'almacen-<?= $almacen->getId() ?>')">
-                                <h3 class="almacen-name"><?= htmlspecialchars($almacen->getNombre()) ?></h3>
-                                <span class="badge"><?= count($productosEnStock) ?> productos</span>
-                                <span class="collapsible-icon">▼</span>
+                                <div class="collapsible-left">
+                                    <h3 class="collapsible-name"><?= htmlspecialchars($almacen->getNombre()) ?></h3>
+                                </div>
+                                <div class="collapsible-right">
+                                    <span class="badge"><?= count($productosEnStock) ?> productos</span>
+                                    <span class="collapsible-icon">▼</span>
+                                </div>
                             </div>
 
                             <div id="almacen-<?= $almacen->getId() ?>" class="collapsible-content <?= $isSelected ? 'active' : '' ?>">
@@ -114,13 +119,15 @@ include __DIR__ . "/../../layouts/_header.php";
                                         <p><strong>Tipo:</strong> <?= htmlspecialchars($almacen->getTipo()) ?></p>
                                     </div>
 
+                                    <hr class="divider">
+
                                     <div class="stock-section">
-                                        <h4>Productos en Stock</h4>
+                                        <h4 class="subsection-title">Productos en Stock</h4>
                                         
                                         <?php if (empty($productosEnStock)): ?>
                                             <div class="empty-stock">
                                                 <p>No hay productos en stock para este almacén.</p>
-                                                <a href="#" class="btn btn-sm btn-primary">
+                                                <a href="<?= url('movimientos.create', ['tipo' => 'entrada', 'id_almacen' => $almacen->getId()]) ?>" class="btn btn-sm btn-primary">
                                                     <i class="bi bi-plus-circle"></i> Añadir producto
                                                 </a>
                                             </div>
@@ -132,7 +139,6 @@ include __DIR__ . "/../../layouts/_header.php";
                                                             <th>Producto</th>
                                                             <th>Stock Actual</th>
                                                             <th>Stock Mínimo</th>
-                                                            <th>Estado</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -142,21 +148,25 @@ include __DIR__ . "/../../layouts/_header.php";
                                                             $estadoClase = ($stock->getCantidad() < $stock->getStockMinimo()) ? 'bajo-stock' : 'stock-ok';
                                                             $estadoTexto = ($stock->getCantidad() < $stock->getStockMinimo()) ? 'Bajo stock' : 'OK';
                                                         ?>
-                                                            <tr class="<?= $estadoClase ?>">
+                                                            <tr>
                                                                 <td><?= $producto ? htmlspecialchars($producto->getNombre()) : 'Producto no encontrado' ?></td>
-                                                                <td><?= $stock->getCantidad() ?></td>
+                                                                <td class="<?= $estadoClase ?>"><?= $stock->getCantidad() ?></td>
                                                                 <td><?= $stock->getStockMinimo() ?></td>
-                                                                <td><span class="estado-badge <?= $estadoClase ?>"><?= $estadoTexto ?></span></td>
-                                                                <td class="acciones-stock">
-                                                                    <a href="#" class="btn btn-sm btn-warning" title="Retirar">
-                                                                        <i class="bi bi-dash-circle"></i> Retirar
-                                                                    </a>
-                                                                    <a href="#" class="btn btn-sm btn-success" title="Añadir">
-                                                                        <i class="bi bi-plus-circle"></i> Añadir
-                                                                    </a>
-                                                                    <a href="#" class="btn btn-sm btn-info" title="Trasladar">
-                                                                        <i class="bi bi-arrow-left-right"></i> Trasladar
-                                                                    </a>
+                                                                <td class="actions-column">
+                                                                    <div class="btn-container">
+                                                                        <a href="<?= url('movimientos.create', ['tipo' => 'consumo', 'id_stock' => $stock->getId(), 'tipo_ubicacion' => 'almacen']) ?>"
+                                                                           class="btn btn-sm btn-warning" title="Consumir">
+                                                                            <i class="bi bi-dash-circle"></i> Consumir
+                                                                        </a>
+                                                                        <a href="<?= url('movimientos.create', ['tipo' => 'entrada', 'id_stock' => $stock->getId(), 'tipo_ubicacion' => 'almacen']) ?>"
+                                                                           class="btn btn-sm btn-success" title="Reponer">
+                                                                            <i class="bi bi-plus-circle"></i> Reponer
+                                                                        </a>
+                                                                        <a href="<?= url('movimientos.create', ['tipo' => 'traslado', 'id_stock' => $stock->getId(), 'tipo_ubicacion' => 'almacen']) ?>"
+                                                                           class="btn btn-sm btn-info" title="Trasladar">
+                                                                            <i class="bi bi-arrow-left-right"></i> Trasladar
+                                                                        </a>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         <?php endforeach; ?>

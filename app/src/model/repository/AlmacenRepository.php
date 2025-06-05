@@ -116,19 +116,38 @@ class AlmacenRepository
         }
     }
 
-    public function getByHospitalId($id_hospital) : ?Almacen
+    public function getByHospitalId($id_hospital): array
     {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT * 
                 FROM almacenes
-                WHERE id_hospital = ? AND tipo = 'GENERAL'"
+                WHERE id_hospital = ?
+                ORDER BY tipo, nombre"
+            );
+            $stmt->execute([$id_hospital]);
+            $almacenesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'createAlmacenFromData'], $almacenesData);
+        } catch (PDOException $e) {
+            error_log("Error al obtener almacenes por ID de hospital: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getGeneralByHospitalId($id_hospital): ?Almacen
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * 
+                FROM almacenes
+                WHERE id_hospital = ? AND tipo = 'GENERAL'
+                LIMIT 1"
             );
             $stmt->execute([$id_hospital]);
             $almacenData = $stmt->fetch(PDO::FETCH_ASSOC);
             return $almacenData ? $this->createAlmacenFromData($almacenData) : null;
         } catch (PDOException $e) {
-            error_log("Error al obtener almacén por ID de hospital: " . $e->getMessage());
+            error_log("Error al obtener almacén general por ID de hospital: " . $e->getMessage());
             throw $e;
         }
     }

@@ -86,12 +86,20 @@ include __DIR__ . "/../../layouts/_header.php";
 
                             // Determinar si este botiquín es el seleccionado para mantenerlo expandido
                             $isSelected = $filtro_botiquin && $filtro_botiquin == $botiquin->getId();
+
+                            // Obtenemos los productos en stock para este botiquín usando el servicio
+                            $productosEnStock = $stockService->getStockByBotiquinId($botiquin->getId());
                             ?>
                             <div class="botiquin-card card">
-                                <div class="collapsible-header planta-header <?= $isSelected ? 'active' : '' ?>"
+                                <div class="collapsible <?= $isSelected ? 'active' : '' ?>"
                                      onclick="toggleCollapsible(this, 'botiquin-<?= $botiquin->getId() ?>')">
-                                    <h3 class="planta-name"><?= htmlspecialchars($botiquin->getNombre()) ?></h3>
-                                    <span class="collapsible-icon">▼</span>
+                                    <div class="collapsible-left">
+                                        <h3 class="collapsible-name"><?= htmlspecialchars($botiquin->getNombre()) ?></h3>
+                                    </div>
+                                    <div class="collapsible-right">
+                                        <span class="badge"><?= count($productosEnStock) ?> productos</span>
+                                        <span class="collapsible-icon">▼</span>
+                                    </div>
                                 </div>
 
                                 <div id="botiquin-<?= $botiquin->getId() ?>"
@@ -118,11 +126,7 @@ include __DIR__ . "/../../layouts/_header.php";
 
                                         <div class="botiquines-section">
                                             <h4 class="subsection-title">Productos en Stock</h4>
-                                            <?php
-                                            // Obtenemos los productos en stock para este botiquín usando el servicio
-                                            $productosEnStock = $stockService->getStockByBotiquinId($botiquin->getId());
-
-                                            if (empty($productosEnStock)): ?>
+                                            <?php if (empty($productosEnStock)): ?>
                                                 <div class="empty-plants">
                                                     <p>No hay productos en stock para este botiquín.</p>
                                                     <?php if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA'])): ?>

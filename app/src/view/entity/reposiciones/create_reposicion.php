@@ -25,7 +25,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                     <select id="id_producto" name="id_producto" class="form-select" required>
                                         <option value="">Seleccione un producto</option>
                                         <?php foreach ($productos as $producto): ?>
-                                            <option value="<?= $producto->getId() ?>">
+                                            <option value="<?= $producto->getId() ?>" <?= isset($_GET['id_producto']) && $_GET['id_producto'] == $producto->getId() ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($producto->getNombre()) ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -100,7 +100,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                                 required>
                                             <option value="">Seleccione un hospital</option>
                                             <?php foreach ($hospitales as $hospital): ?>
-                                                <option value="<?= $hospital->getId() ?>">
+                                                <option value="<?= $hospital->getId() ?>" <?= isset($id_hospital) && $id_hospital == $hospital->getId() ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($hospital->getNombre()) ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -168,6 +168,10 @@ include __DIR__ . "/../../layouts/_header.php";
                 'id_planta' => $botiquin->getIdPlanta()
             ];
         }, $botiquines)) ?>;
+        
+        // Valores preseleccionados desde GET
+        window.selectedPlantaId = <?= isset($id_planta) ? $id_planta : 'null' ?>;
+        window.selectedBotiquinId = <?= isset($id_botiquin) ? $id_botiquin : 'null' ?>;
     </script>
 
 <?php include __DIR__ . "/../../layouts/_footer.php"; ?>

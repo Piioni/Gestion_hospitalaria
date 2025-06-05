@@ -65,10 +65,6 @@ class StockBotiquinService
         return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
     }
 
-    public function getProductosStockBajo(): array
-    {
-        return $this->stockRepository->getProductosStockBajo();
-    }
 
     public function botiquinHasProducts($id_botiquin): array
     {

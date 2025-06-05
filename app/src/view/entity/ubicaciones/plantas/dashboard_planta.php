@@ -91,9 +91,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                             }
                             ?>
                             <div class="planta-card card">
-                                <div class="collapsible-header planta-header"
+                                <div class="collapsible"
                                      onclick="toggleCollapsible(this, 'planta-<?= $planta->getId() ?>')">
-                                    <h3 class="planta-name"><?= htmlspecialchars($planta->getNombre()) ?></h3>
+                                    <h3 class="collapsible-name"><?= htmlspecialchars($planta->getNombre()) ?></h3>
                                     <span class="collapsible-icon">▼</span>
                                 </div>
 

@@ -23,7 +23,6 @@ class StockAlmacenRepository
             (int)$data['id_producto'],
             (int)$data['id_almacen'],
             (int)$data['cantidad'],
-            (int)$data['cantidad_minima'],
         );
     }
 
@@ -34,7 +33,7 @@ class StockAlmacenRepository
                 SELECT * 
                 FROM stock_almacenes 
                 WHERE id_almacen = ?
-                ORDER BY cantidad < cantidad_minima DESC, id_producto ASC
+                ORDER BY cantidad DESC, id_producto ASC
             ");
             $stmt->execute([$idAlmacen]);
             $stockData = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -67,7 +66,7 @@ class StockAlmacenRepository
         try {
             $stmt = $this->pdo->prepare("
                 UPDATE stock_almacenes 
-                SET cantidad = ?, fecha_actualizacion = CURRENT_TIMESTAMP 
+                SET cantidad = ?
                 WHERE id_stock = ?
             ");
             return $stmt->execute([$nuevaCantidad, $idStock]);
@@ -77,37 +76,4 @@ class StockAlmacenRepository
         }
     }
 
-    public function addProductToStockAlmacen(int $idAlmacen, int $idProducto, int $cantidad, int $cantidadMinima): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                INSERT INTO stock_almacenes (id_producto, id_almacen, cantidad, cantidad_minima, fecha_actualizacion) 
-                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-            ");
-            return $stmt->execute([$idProducto, $idAlmacen, $cantidad, $cantidadMinima]);
-        } catch (PDOException $e) {
-            error_log("Error al añadir producto al stock de almacén: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getProductosStockBajo(): array
-    {
-        try {
-            $sql = "
-                SELECT s.*, p.nombre as nombre_producto 
-                FROM stock_almacenes s
-                JOIN productos p ON s.id_producto = p.id_producto
-                WHERE s.cantidad < s.cantidad_minima
-                ORDER BY s.cantidad ASC
-            ";
-
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error al obtener productos con stock bajo en almacén: " . $e->getMessage());
-            throw $e;
-        }
-    }
 }

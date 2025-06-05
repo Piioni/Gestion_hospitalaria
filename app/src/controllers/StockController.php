@@ -40,13 +40,10 @@ class StockController extends BaseController
     {
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA', 'GESTOR_BOTIQUIN']);
 
-        // Obtener productos con stock bajo
-        $productosStockBajo = $this->stockService->getAllProductosStockBajo();
 
         $data = [
             'title' => "Dashboard de Stock",
             'navTitle' => "Gestión de Stock",
-            'productosStockBajo' => $productosStockBajo
         ];
 
         $this->render('entity.stocks.dashboard_stock', $data);
@@ -117,8 +114,10 @@ class StockController extends BaseController
         $userRole = $this->getCurrentUserRole();
 
         // Obtener filtros desde la URL
+        $filtro_hospital = isset($_GET['id_hospital']) ? (int)$_GET['id_hospital'] : null;
         $filtro_plantas = isset($_GET['planta']) ? (int)$_GET['planta'] : null;
         $filtro_almacen = isset($_GET['id_almacen']) ? (int)$_GET['id_almacen'] : null;
+        $filtro_tipo = isset($_GET['tipo']) ? trim($_GET['tipo']) : null; // Nuevo filtro para tipo de producto
         $filtro_nombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : null;
         $filtrarActivo = isset($_GET['filtrar']) && $_GET['filtrar'] == 1;
 
@@ -136,10 +135,13 @@ class StockController extends BaseController
             'almacenes' => $almacenes,
             'plantas' => $plantas,
             'filtrarActivo' => $filtrarActivo,
+            'filtro_hospital' => $filtro_hospital,
+            'filtro_tipo' => $filtro_tipo,
             'filtro_plantas' => $filtro_plantas,
             'filtro_almacen' => $filtro_almacen,
             'filtro_nombre' => $filtro_nombre,
             'userRole' => $userRole,
+            'hospitalService' => $this->hospitalService,
             'plantaService' => $this->plantaService,
             'productoService' => $this->productoService,
             'stockService' => $this->stockAlmacenService, // Cambiado a StockAlmacenService

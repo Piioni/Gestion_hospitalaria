@@ -8,10 +8,9 @@ class StockAlmacen extends Stock
         int $id_stock, 
         int $id_producto, 
         int $id_almacen,
-        int $cantidad, 
-        int $cantidad_minima
+        int $cantidad,
     ) {
-        parent::__construct($id_stock, $id_producto, $id_almacen, $cantidad, $cantidad_minima);
+        parent::__construct($id_stock, $id_producto, $id_almacen, $cantidad);
     }
     
     public function getIdAlmacen(): int

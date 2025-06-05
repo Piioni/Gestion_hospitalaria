@@ -76,7 +76,7 @@ class AlmacenService
 
     public function getGeneralByHospitalId($id_hospital): ?Almacen
     {
-        return $this->almacenRepository->getByHospitalId($id_hospital);
+        return $this->almacenRepository->getGeneralByHospitalId($id_hospital);
     }
 
     public function getAlmacenByPlantaId($id_planta): ?Almacen
@@ -90,7 +90,7 @@ class AlmacenService
             'ADMINISTRADOR', 'GESTOR_GENERAL' => $this->almacenRepository->getAll(),
             'GESTOR_HOSPITAL' => $this->userLocationService->getAssignedAlmacenesFromHospitals($userId),
             'GESTOR_PLANTA' => $this->userLocationService->getAssignedAlmacenesFromPlantas($userId),
-            default => throw new \Exception("Rol de usuario no reconocido"),
+            default => [],
         };
 
         // Aplicar filtros si se proporcionan

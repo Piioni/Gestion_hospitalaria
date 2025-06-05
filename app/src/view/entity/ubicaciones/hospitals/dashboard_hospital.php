@@ -65,9 +65,9 @@ include __DIR__ . "/../../../layouts/_header.php";
                 <div class="hospitals-list">
                     <?php foreach ($hospitals as $hospital): ?>
                         <div class="hospital-card card">
-                            <div class="collapsible-header hospital-header"
+                            <div class="collapsible"
                                  onclick="toggleCollapsible(this, 'hospital-<?= $hospital->getId() ?>')">
-                                <h3 class="hospital-name"><?= htmlspecialchars($hospital->getNombre()) ?></h3>
+                                <h3 class="collapsible-name"><?= htmlspecialchars($hospital->getNombre()) ?></h3>
                                 <span class="collapsible-icon">▼</span>
                             </div>
 

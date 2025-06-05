@@ -13,26 +13,17 @@ class StockAlmacenService
     {
         $this->stockRepository = new StockAlmacenRepository();
     }
-    
-    /**
-     * Obtiene el stock de un almacén específico
-     */
+
     public function getStockByAlmacenId(int $idAlmacen): array
     {
         return $this->stockRepository->getStockByAlmacenId($idAlmacen);
     }
 
-    /**
-     * Obtiene un stock específico por su ID
-     */
     public function getStockById(int $idStock): ?StockAlmacen
     {
         return $this->stockRepository->getStockById($idStock);
     }
 
-    /**
-     * Consume una cantidad específica de un producto del stock
-     */
     public function consumirStock(int $idStock, int $cantidad): bool
     {
         // Validar que la cantidad sea positiva
@@ -56,9 +47,6 @@ class StockAlmacenService
         return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
     }
 
-    /**
-     * Repone una cantidad específica de un producto al stock
-     */
     public function reponerStock(int $idStock, int $cantidad): bool
     {
         // Validar que la cantidad sea positiva
@@ -77,27 +65,5 @@ class StockAlmacenService
         return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
     }
 
-    /**
-     * Añade un producto al stock de un almacén
-     */
-    public function addProductToStockAlmacen(int $idAlmacen, int $idProducto, int $cantidad, int $stockMinimo): bool
-    {
-        // Validaciones básicas
-        if ($cantidad < 0) {
-            throw new \InvalidArgumentException("La cantidad no puede ser negativa.");
-        }
-        if ($stockMinimo < 0) {
-            throw new \InvalidArgumentException("El stock mínimo no puede ser negativo.");
-        }
 
-        return $this->stockRepository->addProductToStockAlmacen($idAlmacen, $idProducto, $cantidad, $stockMinimo);
-    }
-
-    /**
-     * Obtiene productos con stock bajo en almacenes
-     */
-    public function getProductosStockBajo(): array
-    {
-        return $this->stockRepository->getProductosStockBajo();
-    }
 }
