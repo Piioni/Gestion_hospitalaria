@@ -4,19 +4,19 @@
  * @param {HTMLSelectElement} plantaSelect - Selector de planta a rellenar
  */
 function cargarPlantasPorHospital(hospitalSelect, plantaSelect) {
-    const hospitalId = hospitalSelect.value;
-    const allPlantas = window.allPlantas;
+    const id_hospital = hospitalSelect.value;
+    const plantas = window.plantas ;
     const selectedPlantaId = window.selectedPlantaId;
 
     // Limpiar el selector de plantas
     plantaSelect.innerHTML = '<option value="">Seleccione una planta</option>';
 
     // Solo cargar plantas si hay un hospital seleccionado
-    if (hospitalId) {
+    if (id_hospital) {
         // Filtrar plantas por hospital seleccionado
-        const plantasDelHospital = allPlantas.filter(
-            planta => planta.id_hospital == hospitalId
-        );
+        const plantasDelHospital = Array.isArray(plantas)
+            ? plantas.filter(planta => planta.id_hospital == id_hospital)
+            : [];
 
         // Agregar opciones de plantas al selector
         plantasDelHospital.forEach(planta => {
@@ -41,7 +41,7 @@ function cargarPlantasPorHospital(hospitalSelect, plantaSelect) {
  */
 function cargarBotiquinesPorPlanta(plantaSelect, botiquinSelect) {
     const plantaId = plantaSelect.value;
-    const allBotiquines = window.allBotiquines
+    const allBotiquines = window.botiquines
     const selectedBotiquinId = window.selectedBotiquinId;
 
     // Limpiar el selector de botiquines
@@ -61,7 +61,7 @@ function cargarBotiquinesPorPlanta(plantaSelect, botiquinSelect) {
             option.textContent = botiquin.nombre;
 
             // Preseleccionar el botiquín si corresponde
-            if (selectedBotiquinId && (botiquin.id_botiquin == window.selectedBotiquinI)) {
+            if (selectedBotiquinId && (botiquin.id_botiquin == selectedBotiquinId)) {
                 option.selected = true;
             }
 

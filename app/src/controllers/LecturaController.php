@@ -58,7 +58,7 @@ class LecturaController extends BaseController
             
             // Obtener listas para los filtros
             $hospitales = $this->hospitalService->getAllHospitals();
-            $plantas = $this->plantaService->getAllArray();
+            $plantas = $this->plantaService->getAllPlantas();
             $productos = $this->productoService->getAllProducts();
             $botiquines = $this->botiquinService->getAllBotiquines();
             $usuarios = $this->usuarioService->getAllBotiquinUsers();
@@ -111,9 +111,9 @@ class LecturaController extends BaseController
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
         $hospitales = $this->hospitalService->getHospitalsForUser($userId, $userRole);
-        $plantas = $this->plantaService->getAllArray();
+        $plantas = $this->plantaService->getAllPlantas();
         $productos = $this->productoService->getAllProducts();
-        $botiquines = $this->botiquinService->getAllArray();
+        $botiquines = $this->botiquinService->getAllBotiquines();
         
         // Procesar el formulario si es POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -129,7 +129,7 @@ class LecturaController extends BaseController
             'errors' => $errors,
             'success' => $success,
             'title' => 'Registrar Lectura',
-            'scripts' => ['lecturas.js', 'toasts.js', 'hospital_planta_botiquin.js'],
+            'scripts' => ['toasts.js', 'hospital_planta_botiquin.js', 'lecturas.js'],
         ];
         
         $this->render('entity.lecturas.create_lectura', $data);

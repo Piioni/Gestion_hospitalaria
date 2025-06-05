@@ -36,7 +36,8 @@ include __DIR__ . "/../../layouts/_header.php";
 
                                 <div class="form-group producto-selector">
                                     <label for="cantidad" class="form-label">Cantidad</label>
-                                    <input type="number" id="cantidad" name="cantidad" min="1" value="<?= $movimiento['cantidad'] ?>" class="form-input" required>
+                                    <input type="number" id="cantidad" name="cantidad" min="1"
+                                           value="<?= $movimiento['cantidad'] ?>" class="form-input" required>
                                 </div>
                             </div>
                         </div>
@@ -47,7 +48,7 @@ include __DIR__ . "/../../layouts/_header.php";
                             <div class="movement-type-options centered-options">
                                 <div class="movement-type-option">
                                     <input type="radio" id="tipo_traslado" name="tipo_movimiento" value="TRASLADO"
-                                           <?= $movimiento['tipo_movimiento'] === 'TRASLADO' ? 'checked' : '' ?>
+                                        <?= $movimiento['tipo_movimiento'] === 'TRASLADO' ? 'checked' : '' ?>
                                            onchange="toggleMovimientoFields()">
                                     <label for="tipo_traslado">
                                         <i class="bi bi-arrow-left-right"></i>
@@ -56,7 +57,7 @@ include __DIR__ . "/../../layouts/_header.php";
                                 </div>
                                 <div class="movement-type-option">
                                     <input type="radio" id="tipo_entrada" name="tipo_movimiento" value="ENTRADA"
-                                           <?= $movimiento['tipo_movimiento'] === 'ENTRADA' ? 'checked' : '' ?>
+                                        <?= $movimiento['tipo_movimiento'] === 'ENTRADA' ? 'checked' : '' ?>
                                            onchange="toggleMovimientoFields()">
                                     <label for="tipo_entrada">
                                         <i class="bi bi-box-arrow-in-down"></i>
@@ -78,15 +79,20 @@ include __DIR__ . "/../../layouts/_header.php";
                                 <label class="form-label">Tipo Almacén</label>
                                 <div class="almacen-tipo-selector btn-group">
                                     <input type="hidden" id="origen_es_general" name="origen_es_general" value="0">
-                                    <button type="button" id="origen_btn_planta" class="btn btn-secondary active" onclick="selectAlmacenTipo('origen', false)">PLANTA</button>
-                                    <button type="button" id="origen_btn_general" class="btn btn-secondary" onclick="selectAlmacenTipo('origen', true)">GENERAL</button>
+                                    <button type="button" id="origen_btn_planta" class="btn btn-secondary active"
+                                            onclick="selectAlmacenTipo('origen', false)">PLANTA
+                                    </button>
+                                    <button type="button" id="origen_btn_general" class="btn btn-secondary"
+                                            onclick="selectAlmacenTipo('origen', true)">GENERAL
+                                    </button>
                                 </div>
                             </div>
 
                             <div id="origen_selectors" class="selectors-container">
                                 <div class="form-group">
                                     <label for="origen_hospital" class="form-label">Hospital</label>
-                                    <select id="origen_hospital" name="origen_hospital" class="form-select" onchange="cargarPlantas('origen')">
+                                    <select id="origen_hospital" name="origen_hospital" class="form-select"
+                                            onchange="cargarPlantas('origen')">
                                         <option value="">Seleccione un hospital</option>
                                         <?php foreach ($hospitales as $hospital): ?>
                                             <option value="<?= $hospital->getId() ?>">
@@ -98,7 +104,8 @@ include __DIR__ . "/../../layouts/_header.php";
 
                                 <div class="form-group" id="origen_planta_container">
                                     <label for="origen_planta" class="form-label">Planta</label>
-                                    <select id="origen_planta" name="origen_planta" class="form-select" onchange="actualizarAlmacen('origen')">
+                                    <select id="origen_planta" name="origen_planta" class="form-select"
+                                            onchange="actualizarAlmacen('origen')">
                                         <option value="">Seleccione una planta</option>
                                     </select>
                                 </div>
@@ -106,7 +113,8 @@ include __DIR__ . "/../../layouts/_header.php";
                                 <div class="form-group">
                                     <label for="id_origen" class="form-label">Almacén seleccionado</label>
                                     <input type="text" id="origen_almacen_nombre" class="form-input" readonly>
-                                    <input type="hidden" id="id_origen" name="id_origen" value="<?= $movimiento['id_origen'] ?>">
+                                    <input type="hidden" id="id_origen" name="id_origen"
+                                           value="<?= $movimiento['id_origen'] ?>">
                                 </div>
                             </div>
                         </div>
@@ -119,15 +127,20 @@ include __DIR__ . "/../../layouts/_header.php";
                                 <label class="form-label">Tipo Almacén</label>
                                 <div class="almacen-tipo-selector btn-group">
                                     <input type="hidden" id="destino_es_general" name="destino_es_general" value="0">
-                                    <button type="button" id="destino_btn_planta" class="btn btn-secondary active" onclick="selectAlmacenTipo('destino', false)">PLANTA</button>
-                                    <button type="button" id="destino_btn_general" class="btn btn-secondary" onclick="selectAlmacenTipo('destino', true)">GENERAL</button>
+                                    <button type="button" id="destino_btn_planta" class="btn btn-secondary active"
+                                            onclick="selectAlmacenTipo('destino', false)">PLANTA
+                                    </button>
+                                    <button type="button" id="destino_btn_general" class="btn btn-secondary"
+                                            onclick="selectAlmacenTipo('destino', true)">GENERAL
+                                    </button>
                                 </div>
                             </div>
 
                             <div id="destino_selectors" class="selectors-container">
                                 <div class="form-group">
                                     <label for="destino_hospital" class="form-label">Hospital</label>
-                                    <select id="destino_hospital" name="destino_hospital" class="form-select" onchange="cargarPlantas('destino')">
+                                    <select id="destino_hospital" name="destino_hospital" class="form-select"
+                                            onchange="cargarPlantas('destino')">
                                         <option value="">Seleccione un hospital</option>
                                         <?php foreach ($hospitales as $hospital): ?>
                                             <option value="<?= $hospital->getId() ?>">
@@ -139,7 +152,8 @@ include __DIR__ . "/../../layouts/_header.php";
 
                                 <div class="form-group" id="destino_planta_container">
                                     <label for="destino_planta" class="form-label">Planta</label>
-                                    <select id="destino_planta" name="destino_planta" class="form-select" onchange="actualizarAlmacen('destino')">
+                                    <select id="destino_planta" name="destino_planta" class="form-select"
+                                            onchange="actualizarAlmacen('destino')">
                                         <option value="">Seleccione una planta</option>
                                     </select>
                                 </div>
@@ -147,7 +161,8 @@ include __DIR__ . "/../../layouts/_header.php";
                                 <div class="form-group">
                                     <label for="id_destino" class="form-label">Almacén seleccionado</label>
                                     <input type="text" id="destino_almacen_nombre" class="form-input" readonly>
-                                    <input type="hidden" id="id_destino" name="id_destino" value="<?= $movimiento['id_destino'] ?>">
+                                    <input type="hidden" id="id_destino" name="id_destino"
+                                           value="<?= $movimiento['id_destino'] ?>">
                                 </div>
                             </div>
                         </div>
@@ -168,8 +183,7 @@ include __DIR__ . "/../../layouts/_header.php";
 </div>
 
 <script>
-// Datos para selectores dinámicos
-const almacenes = <?= json_encode(array_map(function($a) {
+    const almacenes = <?= json_encode(array_map(function ($a) {
         return [
             'id' => $a->getId(),
             'nombre' => $a->getNombre(),
@@ -179,7 +193,7 @@ const almacenes = <?= json_encode(array_map(function($a) {
         ];
     }, $almacenes)) ?>;
 
-const plantas = <?= json_encode(array_map(function($p) {
+    const plantas = <?= json_encode(array_map(function ($p) {
         return [
             'id' => $p->getId(),
             'nombre' => $p->getNombre(),

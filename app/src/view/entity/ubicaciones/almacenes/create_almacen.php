@@ -95,16 +95,19 @@ include __DIR__ . "/../../../layouts/_header.php";
         </div>
     </div>
 
-    <!-- Pasar los datos de plantas al JavaScript global -->
     <script>
-        // Inicializar variables globales necesarias para el script
-        window.allPlantas = <?= json_encode($plantas, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        window.plantas = <?= json_encode(array_map(function ($planta) {
+            return [
+                'id_planta' => $planta->getId(),
+                'nombre' => $planta->getNombre(),
+                'id_hospital' => $planta->getIdHospital()
+            ];
+        }, $plantas)) ?>;
+
         window.selectedPlantaId = "<?= htmlspecialchars($almacen['id_planta'] ?? '') ?>";
 
-        // Para depuración - verificar que los datos se están pasando correctamente
-        console.log('Plantas cargadas:', window.allPlantas);
-
         document.addEventListener('DOMContentLoaded', function () {
+            console.log(window.plantas);
             <?php if (!empty($errors)): ?>
             // Mostrar errores en un toast de tipo danger
             ToastSystem.danger(

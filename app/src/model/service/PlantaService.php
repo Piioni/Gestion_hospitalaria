@@ -68,11 +68,6 @@ class PlantaService
         return $this->plantaRepository->getAll();
     }
 
-    public function getAllArray(): array
-    {
-        return $this->plantaRepository->getAllArray();
-    }
-
     public function getPlantasByHospitalId($hospitalId): array
     {
         if (empty($hospitalId) || !is_numeric($hospitalId)) {

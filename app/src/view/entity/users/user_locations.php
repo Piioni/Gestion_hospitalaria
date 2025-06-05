@@ -1,19 +1,5 @@
 <?php
 // TODO: Terminar de implementar pagina
-// Variables recibidas del controlador
-$title = $title ?? 'Asignar Ubicaciones';
-$navTitle = $navTitle ?? 'Asignar Ubicaciones';
-$user = $user ?? null;
-$hospitales = $hospitales ?? [];
-$plantas = $plantas ?? [];
-$botiquines = $botiquines ?? [];
-$assignedHospitals = $assignedHospitals ?? [];
-$assignedPlantas = $assignedPlantas ?? [];
-$assignedBotiquines = $assignedBotiquines ?? [];
-$locationType = $locationType ?? '';
-$success = $success ?? false;
-$error = $error ?? false;
-$scripts = $scripts ?? [];
 
 include(__DIR__ . '/../../layouts/_header.php');
 ?>

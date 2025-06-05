@@ -99,7 +99,8 @@ include __DIR__ . "/../../layouts/_header.php";
                                     <input type="number" id="cantidad" name="cantidad" class="form-input" min="1"
                                            value="<?= htmlspecialchars($lectura['cantidad']) ?>" required>
                                     <div class="field-help">
-                                        <i class="fas fa-info-circle"></i> Indique la cantidad exacta que se ha consumido
+                                        <i class="fas fa-info-circle"></i> Indique la cantidad exacta que se ha
+                                        consumido
                                     </div>
                                 </div>
                             </div>
@@ -120,12 +121,28 @@ include __DIR__ . "/../../layouts/_header.php";
     </div>
 
     <script>
-        window.allPlantas = <?= json_encode($plantas, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
-        window.allBotiquines = <?= json_encode($botiquines, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        // Datos para selectores dinámicos
+        window.plantas = <?= json_encode(array_map(function ($planta) {
+            return [
+                'id_planta' => $planta->getId(),
+                'nombre' => $planta->getNombre(),
+                'id_hospital' => $planta->getIdHospital()
+            ];
+        }, $plantas)) ?>;
+
+        window.botiquines = <?= json_encode(array_map(function ($botiquin) {
+            return [
+                'id_botiquin' => $botiquin->getId(),
+                'nombre' => $botiquin->getNombre(),
+                'id_planta' => $botiquin->getIdPlanta()
+            ];
+        }, $botiquines)) ?>;
+
         window.selectedPlantaId = "<?= htmlspecialchars($lectura['id_planta'] ?? '') ?>";
         window.selectedBotiquinId = "<?= htmlspecialchars($lectura['id_botiquin'] ?? '') ?>";
 
         document.addEventListener('DOMContentLoaded', function () {
+
             <?php if (!empty($errors)): ?>
             // Mostrar errores en un toast de tipo danger
             ToastSystem.danger(
@@ -135,40 +152,6 @@ include __DIR__ . "/../../layouts/_header.php";
                 {autoClose: false}
             );
             <?php endif; ?>
-
-            // Actualizar los mensajes de ayuda según el estado de selección
-            const hospitalSelect = document.getElementById('id_hospital');
-            const plantaSelect = document.getElementById('id_planta');
-            const botiquinSelect = document.getElementById('id_botiquin');
-
-            const plantaHelp = plantaSelect.parentElement.querySelector('.field-help');
-            const botiquinHelp = botiquinSelect.parentElement.querySelector('.field-help');
-
-            // Actualizar mensajes de ayuda cuando cambian las selecciones
-            hospitalSelect.addEventListener('change', function () {
-                if (this.value) {
-                    plantaHelp.innerHTML = '<i class="fas fa-info-circle"></i> Seleccione una planta del hospital';
-                } else {
-                    plantaHelp.innerHTML = '<i class="fas fa-info-circle"></i> Primero seleccione un hospital';
-                }
-            });
-
-            plantaSelect.addEventListener('change', function () {
-                if (this.value) {
-                    botiquinHelp.innerHTML = '<i class="fas fa-info-circle"></i> Seleccione un botiquín de la planta';
-                } else {
-                    botiquinHelp.innerHTML = '<i class="fas fa-info-circle"></i> Primero seleccione una planta';
-                }
-            });
-
-            // Establecer mensajes iniciales según valores seleccionados
-            if (hospitalSelect.value) {
-                plantaHelp.innerHTML = '<i class="fas fa-info-circle"></i> Seleccione una planta del hospital';
-            }
-
-            if (plantaSelect.value) {
-                botiquinHelp.innerHTML = '<i class="fas fa-info-circle"></i> Seleccione un botiquín de la planta';
-            }
         });
     </script>
 

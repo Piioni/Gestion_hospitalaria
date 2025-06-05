@@ -65,7 +65,7 @@ class AlmacenController extends BaseController
             'almacenService' => $this->almacenService,
             'hospitalService' => $this->hospitalService,
             'title' => 'Almacenes',
-            'scripts' => ['toasts.js', 'almacenes.js', 'hospital_planta_botiquin.js'],
+            'scripts' => ['toasts.js', 'almacenes.js',],
             'navTitle' => 'Almacenes',
             'success' => $success,
             'error' => $error,
@@ -94,7 +94,7 @@ class AlmacenController extends BaseController
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
         $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole);
-        $plantas = $this->plantaService->getAllArray();
+        $plantas = $this->plantaService->getAllPlantas();
         
         // Procesar el formulario si es POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
