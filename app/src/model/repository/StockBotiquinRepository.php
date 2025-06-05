@@ -22,8 +22,7 @@ class StockBotiquinRepository
             (int)$data['id_stock'],
             (int)$data['id_producto'],
             (int)$data['id_botiquin'],
-            (int)$data['cantidad'],
-            (int)$data['cantidad_minima'],
+            (int)$data['cantidad']
         );
     }
     
@@ -34,7 +33,7 @@ class StockBotiquinRepository
                 SELECT * 
                 FROM stock_botiquines 
                 WHERE id_botiquin = ?
-                ORDER BY cantidad < cantidad_minima DESC, id_producto ASC
+                ORDER BY cantidad DESC, id_producto ASC
             ");
             $stmt->execute([$idBotiquin]);
             $stockData = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -67,26 +66,12 @@ class StockBotiquinRepository
         try {
             $stmt = $this->pdo->prepare("
                 UPDATE stock_botiquines 
-                SET cantidad = ?, fecha_actualizacion = CURRENT_TIMESTAMP 
+                SET cantidad = ?
                 WHERE id_stock = ?
             ");
             return $stmt->execute([$nuevaCantidad, $idStock]);
         } catch (PDOException $e) {
             error_log("Error al actualizar cantidad de stock: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function addProductToStockBotiquin(int $idBotiquin, int $idProducto, int $cantidad, int $cantidadMinima): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                INSERT INTO stock_botiquines (id_producto, id_botiquin, cantidad, cantidad_minima, fecha_actualizacion) 
-                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-            ");
-            return $stmt->execute([$idProducto, $idBotiquin, $cantidad, $cantidadMinima]);
-        } catch (PDOException $e) {
-            error_log("Error al añadir producto al stock de botiquín: " . $e->getMessage());
             throw $e;
         }
     }
@@ -98,7 +83,7 @@ class StockBotiquinRepository
                 SELECT s.*, p.nombre as nombre_producto 
                 FROM stock_botiquines s
                 JOIN productos p ON s.id_producto = p.id_producto
-                WHERE s.cantidad < s.cantidad_minima
+                WHERE s.cantidad 
                 ORDER BY s.cantidad ASC
             ";
 
@@ -110,4 +95,5 @@ class StockBotiquinRepository
             throw $e;
         }
     }
+
 }

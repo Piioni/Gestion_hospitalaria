@@ -101,17 +101,22 @@ include __DIR__ . "/../../../layouts/_header.php";
 
     <!-- Pasar los datos al JavaScript -->
     <script>
-        // Inicializar variables globales necesarias para el script
-        window.allPlantas = <?= json_encode($plantas, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        window.plantas = <?= json_encode(array_map(function ($planta) {
+            return [
+                'id_planta' => $planta->getId(),
+                'nombre' => $planta->getNombre(),
+                'id_hospital' => $planta->getIdHospital()
+            ];
+        }, $plantas)) ?>;
 
-        // Para preseleccionar la planta en edición
-        window.selectedPlantaId = '<?= $almacen['id_planta'] ?? '' ?>';
+        window.selectedPlantaId = "<?= htmlspecialchars($almacen['id_planta'] ?? '') ?>";
 
         document.addEventListener('DOMContentLoaded', function () {
+            console.log(window.plantas);
             <?php if (!empty($errors)): ?>
             // Mostrar errores en un toast de tipo danger
             ToastSystem.danger(
-                'Error al actualizar el almacén',
+                'Error al crear el almacén',
                 `<?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>`,
                 null,
                 {autoClose: false}

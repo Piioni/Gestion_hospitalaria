@@ -44,32 +44,107 @@ include __DIR__ . "/../../layouts/_header.php";
                 <div class="card-body">
                     <h3 class="card-title"><i class="bi bi-exclamation-triangle"></i> Alertas de Stock</h3>
                     <p class="card-text">
-                        Visualice productos con niveles de stock por debajo del mínimo establecido.
+                        Productos con niveles de stock por debajo del mínimo establecido.
                     </p>
                     <div class="card-actions">
-                        <a href="#" class="btn btn-warning">
+                        <button type="button" class="btn btn-warning" id="toggleAlertas">
                             <i class="bi bi-bell"></i> Ver Alertas de Stock
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="actions-section">
+        <div id="alertasContainer" class="mt-4" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Productos con Stock Bajo</h3>
+                </div>
+                <div class="card-body">
+                    <?php if(empty($productosStockBajo)): ?>
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> No hay productos con stock bajo en este momento.
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Ubicación</th>
+                                        <th>Tipo</th>
+                                        <th>Stock Actual</th>
+                                        <th>Stock Mínimo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($productosStockBajo as $producto): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($producto['nombre_producto']) ?></td>
+                                            <td>
+                                                <?php if($producto['tipo_ubicacion'] === 'ALMACEN'): ?>
+                                                    <?= htmlspecialchars($producto['nombre_almacen'] ?? 'Desconocido') ?>
+                                                <?php else: ?>
+                                                    <?= htmlspecialchars($producto['nombre_botiquin'] ?? 'Desconocido') ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= $producto['tipo_ubicacion'] === 'ALMACEN' ? 'Almacén' : 'Botiquín' ?></td>
+                                            <td class="text-danger"><?= $producto['cantidad'] ?></td>
+                                            <td><?= $producto['cantidad_minima'] ?></td>
+                                            <td>
+                                                <?php if($producto['tipo_ubicacion'] === 'BOTIQUIN'): ?>
+                                                    <a href="<?= url('reposiciones.create', ['id_botiquin' => $producto['id_botiquin'], 'id_producto' => $producto['id_producto']]) ?>" class="btn btn-sm btn-success">
+                                                        <i class="bi bi-plus-circle"></i> Reponer
+                                                    </a>
+                                                <?php else: ?>
+                                                    <a href="<?= url('movimientos.create', ['tipo' => 'reposicion', 'id_stock' => $producto['id_stock'], 'tipo_ubicacion' => 'almacen']) ?>" class="btn btn-sm btn-success">
+                                                        <i class="bi bi-plus-circle"></i> Reponer
+                                                    </a>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-section mt-5">
             <h2 class="section-title">Acciones Rápidas</h2>
             <div class="action-buttons">
-                <a href="#" class="btn btn-success">
-                    <i class="bi bi-plus-circle"></i> Añadir Stock
+                <a href="<?= url('movimientos.create', ['tipo' => 'entrada']) ?>" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Registrar Entrada
                 </a>
-                <a href="#" class="btn btn-info">
-                    <i class="bi bi-arrow-left-right"></i> Realizar Movimiento
+                <a href="<?= url('movimientos.create', ['tipo' => 'consumo']) ?>" class="btn btn-warning">
+                    <i class="bi bi-dash-circle"></i> Registrar Consumo
                 </a>
-                <a href="#" class="btn btn-secondary">
-                    <i class="bi bi-printer"></i> Imprimir Informe
+                <a href="<?= url('reposiciones.create') ?>" class="btn btn-info">
+                    <i class="bi bi-arrow-left-right"></i> Solicitar Reposición
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleAlertas = document.getElementById('toggleAlertas');
+        const alertasContainer = document.getElementById('alertasContainer');
+        
+        toggleAlertas.addEventListener('click', function() {
+            if (alertasContainer.style.display === 'none') {
+                alertasContainer.style.display = 'block';
+                toggleAlertas.innerHTML = '<i class="bi bi-eye-slash"></i> Ocultar Alertas de Stock';
+            } else {
+                alertasContainer.style.display = 'none';
+                toggleAlertas.innerHTML = '<i class="bi bi-bell"></i> Ver Alertas de Stock';
+            }
+        });
+    });
+</script>
 
 <?php include __DIR__ . "/../../layouts/_footer.php"; ?>

@@ -292,7 +292,8 @@ p {
 
 /* Detalles de entidades (hospitales, plantas, etc.) */
 .hospital-details,
-.planta-details {
+.planta-details,
+.botiquin-details {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -302,7 +303,8 @@ p {
 }
 
 .hospital-info,
-.planta-info {
+.planta-info,
+.botiquin-info {
     flex: 2;
     min-width: 250px;
 }

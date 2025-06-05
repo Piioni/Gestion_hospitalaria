@@ -7,7 +7,7 @@ use model\service\BotiquinService;
 use model\service\PlantaService;
 use model\service\HospitalService;
 use model\service\AlmacenService;
-use model\service\StockService;
+use model\service\StockBotiquinService;
 use Exception;
 use InvalidArgumentException;
 
@@ -17,7 +17,7 @@ class BotiquinController extends BaseController
     private PlantaService $plantaService;
     private HospitalService $hospitalService;
     private AlmacenService $almacenService;
-    private StockService $stockService;
+    private StockBotiquinService $stockService;
 
     public function __construct()
     {
@@ -25,7 +25,7 @@ class BotiquinController extends BaseController
         $this->plantaService = new PlantaService();
         $this->hospitalService = new HospitalService();
         $this->almacenService = new AlmacenService();
-        $this->stockService = new StockService();
+        $this->stockService = new StockBotiquinService();
     }
 
     public function index(): void
@@ -264,8 +264,8 @@ class BotiquinController extends BaseController
 
         // Obtener la planta asociada y los productos del botiquín
         $planta = $this->plantaService->getPlantaById($botiquin->getIdPlanta());
-        $cantidadProductos = $this->botiquinService->getStockByBotiquinId($id_botiquin);
-        $hasProducts = $this->stockService->botiquinHasProducts($id_botiquin);
+        $stockBotiquin = $this->stockService->getStockByBotiquinId($id_botiquin);
+        $hasProducts = !empty($stockBotiquin);
 
         // Obtener todos los almacenes para que el usuario elija un destino
         $almacenes = $this->almacenService->getAllAlmacenes();
@@ -273,7 +273,7 @@ class BotiquinController extends BaseController
         return [
             'botiquin' => $botiquin,
             'planta' => $planta,
-            'cantidadProductos' => $cantidadProductos,
+            'cantidadProductos' => count($stockBotiquin),
             'hasProducts' => $hasProducts,
             'almacenes' => $almacenes,
             'error' => null,

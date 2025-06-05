@@ -115,31 +115,4 @@ class BotiquinRepository
         }
     }
 
-    public function countProductos($id_botiquin): int
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT COUNT(cantidad) 
-                FROM stocks 
-                WHERE id_ubicacion = ? AND tipo_ubicacion = 'BOTIQUIN'
-                ");
-            $stmt->execute([$id_botiquin]);
-            $count = $stmt->fetchColumn();
-            return $count ? (int)$count : 0;
-        } catch (PDOException $e) {
-            error_log("Error al contar productos en botiquín: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getAllArray(): array
-    {
-        try {
-            $stmt = $this->pdo->query("SELECT id_botiquin, id_planta, nombre FROM botiquines");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error al obtener todos los botiquines como array: " . $e->getMessage());
-            throw $e;
-        }
-    }
 }

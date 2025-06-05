@@ -9,9 +9,8 @@ class StockBotiquin extends Stock
         int $id_producto, 
         int $id_botiquin,
         int $cantidad, 
-        int $cantidad_minima
     ) {
-        parent::__construct($id_stock, $id_producto, $id_botiquin, $cantidad, $cantidad_minima);
+        parent::__construct($id_stock, $id_producto, $id_botiquin, $cantidad);
     }
     
     public function getIdBotiquin(): int

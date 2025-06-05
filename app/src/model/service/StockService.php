@@ -5,9 +5,6 @@ namespace model\service;
 use model\repository\StockAlmacenRepository;
 use model\repository\StockBotiquinRepository;
 
-/**
- * Servicio combinado para operaciones que pueden implicar ambos tipos de stock
- */
 class StockService
 {
     private StockAlmacenService $stockAlmacenService;
@@ -18,10 +15,7 @@ class StockService
         $this->stockAlmacenService = new StockAlmacenService();
         $this->stockBotiquinService = new StockBotiquinService();
     }
-    
-    /**
-     * Obtiene productos con stock bajo de ambos almacenes y botiquines
-     */
+
     public function getAllProductosStockBajo(): array
     {
         $stockBajoAlmacen = $this->stockAlmacenService->getProductosStockBajo();
@@ -45,5 +39,35 @@ class StockService
         });
         
         return $combined;
+    }
+
+    public function getStockStats(): array
+    {
+        $stats = [
+            'total_productos_almacen' => 0,
+            'total_productos_botiquin' => 0,
+        ];
+
+        $stockBajoAlmacen = $this->stockAlmacenService->getProductosStockBajo();
+        $stockBajoBotiquin = $this->stockBotiquinService->getProductosStockBajo();
+
+        $stats['productos_bajo_stock_almacen'] = count($stockBajoAlmacen);
+        $stats['productos_bajo_stock_botiquin'] = count($stockBajoBotiquin);
+
+        // Obtener estadísticas totales (esto sería mejor implementarlo en los repositorios para evitar cargar todos los datos)
+        $almacenes = (new AlmacenService())->getAllAlmacenes();
+        $botiquines = (new BotiquinService())->getAllBotiquines();
+
+        foreach ($almacenes as $almacen) {
+            $stocks = $this->stockAlmacenService->getStockByAlmacenId($almacen->getId());
+            $stats['total_productos_almacen'] += count($stocks);
+        }
+
+        foreach ($botiquines as $botiquin) {
+            $stocks = $this->stockBotiquinService->getStockByBotiquinId($botiquin->getId());
+            $stats['total_productos_botiquin'] += count($stocks);
+        }
+
+        return $stats;
     }
 }

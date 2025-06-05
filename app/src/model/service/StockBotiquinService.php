@@ -65,19 +65,6 @@ class StockBotiquinService
         return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
     }
 
-    public function addProductToStockBotiquin(int $idBotiquin, int $idProducto, int $cantidad, int $stockMinimo): bool
-    {
-        // Validaciones básicas
-        if ($cantidad < 0) {
-            throw new \InvalidArgumentException("La cantidad no puede ser negativa.");
-        }
-        if ($stockMinimo < 0) {
-            throw new \InvalidArgumentException("El stock mínimo no puede ser negativo.");
-        }
-
-        return $this->stockRepository->addProductToStockBotiquin($idBotiquin, $idProducto, $cantidad, $stockMinimo);
-    }
-
     public function getProductosStockBajo(): array
     {
         return $this->stockRepository->getProductosStockBajo();
@@ -91,4 +78,6 @@ class StockBotiquinService
 
         return $this->stockRepository->getStocksByBotiquinId($id_botiquin);
     }
+
+
 }

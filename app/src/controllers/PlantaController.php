@@ -9,12 +9,12 @@ use model\service\AlmacenService;
 use model\service\BotiquinService;
 use model\service\HospitalService;
 use model\service\PlantaService;
-use model\service\StockService;
+use model\service\StockAlmacenService;
 
 class PlantaController extends BaseController
 {
     private PlantaService $plantaService;
-    private StockService $stockService;
+    private StockAlmacenService $stockService;
     private HospitalService $hospitalService;
     private AlmacenService $almacenService;
     private BotiquinService $botiquinService;
@@ -22,7 +22,7 @@ class PlantaController extends BaseController
     public function __construct()
     {
         $this->plantaService = new PlantaService();
-        $this->stockService = new StockService();
+        $this->stockService = new StockAlmacenService();
         $this->hospitalService = new HospitalService();
         $this->almacenService = new AlmacenService();
         $this->botiquinService = new BotiquinService();

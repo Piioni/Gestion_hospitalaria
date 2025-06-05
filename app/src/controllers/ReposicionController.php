@@ -77,6 +77,28 @@ class ReposicionController extends BaseController
            return;
         }
 
+        // Si se llega aquí, es una solicitud GET para mostrar el formulario de creación
+        // Si existe un ID de botiquín en la URL, lo usamos para preseleccionar hospital y planta
+        $idBotiquin = isset($_GET['id_botiquin']) ? (int)$_GET['id_botiquin'] : null;
+        $idProducto = isset($_GET['id_producto']) ? (int)$_GET['id_producto'] : null;
+        $idHospital = null;
+        $idPlanta = null;
+        
+        if ($idBotiquin) {
+            // Validar que el botiquín existe y pertenece al usuario
+            $botiquin = $this->botiquinService->getBotiquinById($idBotiquin);
+            if (!$botiquin) {
+                $error[] = 'El botiquín especificado no existe o no está disponible.';
+            } else {
+                // Obtener planta del botiquín
+                $idPlanta = $botiquin->getIdPlanta();
+                
+                // Obtener hospital de la planta
+                $planta = $this->plantaService->getPlantaById($idPlanta);
+                $idHospital = $planta?->getIdHospital();
+            }
+        }
+
         // Filtrar hospitales, plantas y  según el rol del usuario
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
@@ -96,6 +118,10 @@ class ReposicionController extends BaseController
             'plantas' => $plantas,
             'almacenes' => $almacenes,
             'botiquines' => $botiquines,
+            'id_botiquin' => $idBotiquin,
+            'id_hospital' => $idHospital,
+            'id_planta' => $idPlanta,
+            'id_producto' => $idProducto,
             'success' => $success,
             'error' => $error,
             'scripts' => ['almacen_common.js', 'reposiciones.js', 'hospital_planta_botiquin.js', 'toasts.js'],

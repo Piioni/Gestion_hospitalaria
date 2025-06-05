@@ -6,7 +6,7 @@ use middleware\AuthMiddleware;
 use model\service\AlmacenService;
 use model\service\HospitalService;
 use model\service\PlantaService;
-use model\service\StockService;
+use model\service\StockAlmacenService;
 use Exception;
 use InvalidArgumentException;
 
@@ -15,14 +15,14 @@ class AlmacenController extends BaseController
     private AlmacenService $almacenService;
     private PlantaService $plantaService;
     private HospitalService $hospitalService;
-    private StockService $stockService;
+    private StockAlmacenService $stockService;
 
     public function __construct()
     {
         $this->almacenService = new AlmacenService();
         $this->plantaService = new PlantaService();
         $this->hospitalService = new HospitalService();
-        $this->stockService = new StockService();
+        $this->stockService = new StockAlmacenService();
     }
 
     public function index(): void
@@ -162,7 +162,7 @@ class AlmacenController extends BaseController
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
         $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole);
-        $plantas = $this->plantaService->getAllArray();
+        $plantas = $this->plantaService->getAllPlantas();
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Procesar formulario de edición
@@ -179,7 +179,7 @@ class AlmacenController extends BaseController
             'hospitals' => $hospitals,
             'plantas' => $plantas,
             'title' => 'Editar Almacén',
-            'scripts' => ['almacenes.js', 'toasts.js']
+            'scripts' => ['almacenes.js', 'toasts.js', 'hospital_planta_botiquin.js'],
         ];
         
         $this->render('entity.almacenes.edit_almacen', $data);
