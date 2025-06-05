@@ -12,16 +12,39 @@ include __DIR__ . "/../../layouts/_header.php";
                 </p>
             </div>
 
-            <div class="cards-container">
-                <div class="card dashboard-card">
+            <?php if (isset($_GET['error'])): ?>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <div>
+                        <strong>Error:</strong> <?= htmlspecialchars($_GET['error']) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="cards-container movement-cards">
+                <div class="card dashboard-card movement-card">
                     <div class="card-body">
                         <h3 class="card-title"><i class="bi bi-arrow-repeat"></i> Nueva Reposición</h3>
                         <p class="card-text">
-                            Solicite una nueva reposición de stock a un botiquín.
+                            Solicite una nueva reposición de stock desde un almacén a un botiquín.
                         </p>
                         <div class="card-actions">
                             <a href="<?= url('reposiciones.create') ?>" class="btn btn-primary">
                                 <i class="bi bi-plus-circle"></i> Solicitar Reposición
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card movement-card">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="bi bi-clock-history"></i> Historial de Reposiciones</h3>
+                        <p class="card-text">
+                            Consulte el historial completo de reposiciones con filtros avanzados.
+                        </p>
+                        <div class="card-actions">
+                            <a href="<?= url('reposiciones.list') ?>" class="btn btn-info">
+                                <i class="bi bi-search"></i> Ver Historial
                             </a>
                         </div>
                     </div>
@@ -94,6 +117,12 @@ include __DIR__ . "/../../layouts/_header.php";
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-4 text-center">
+                    <a href="<?= url('reposiciones.list') ?>" class="btn btn-info">
+                        <i class="bi bi-clock-history"></i> Ver Historial Completo
+                    </a>
+                </div>
             <?php endif; ?>
         </div>
     </div>
@@ -103,8 +132,38 @@ include __DIR__ . "/../../layouts/_header.php";
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        mostrarToastPorGet();
         inicializarEventosDashboardReposiciones();
     });
+
+    // --- Toast por GET ---
+    function mostrarToastPorGet() {
+        <?php if (isset($_GET['toast']) && isset($_GET['toastmsg'])): ?>
+        const tipo = "<?= htmlspecialchars($_GET['toast']) ?>";
+        const msg = "<?= htmlspecialchars($_GET['toastmsg']) ?>";
+        switch (tipo) {
+            case 'success':
+                ToastSystem.success('Éxito', msg, null, {autoClose: true});
+                break;
+            case 'error':
+                ToastSystem.danger('Error', msg, null, {autoClose: true});
+                break;
+            case 'info':
+                ToastSystem.info('Información', msg, null, {autoClose: true});
+                break;
+            case 'warning':
+                ToastSystem.warning('Advertencia', msg, null, {autoClose: true});
+                break;
+        }
+        // Limpiar la URL para evitar mostrar el toast al recargar
+        if (window.history.replaceState) {
+            const url = new URL(window.location);
+            url.searchParams.delete('toast');
+            url.searchParams.delete('toastmsg');
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+        }
+        <?php endif; ?>
+    }
 
     function inicializarEventosDashboardReposiciones() {
         document.querySelectorAll('.btn-confirmar-repo').forEach(function (btn) {

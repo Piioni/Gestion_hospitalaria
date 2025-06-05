@@ -103,6 +103,60 @@ class ReposicionController extends BaseController
         ]);
     }
 
+    public function list(): void
+    {
+        AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA', 'USUARIO_BOTIQUIN']);
+
+        // Obtener filtros de la solicitud
+        $filtros = [
+            'estado' => $_GET['estado'] ?? null,
+            'producto' => $_GET['producto'] ?? null,
+            'orden' => $_GET['orden'] ?? 'fecha_desc',
+        ];
+
+        // Obtener información del usuario
+        $userId = $this->getCurrentUserId();
+        $userRole = $this->getCurrentUserRole();
+
+        // Obtener reposiciones según el rol y permisos
+        $reposiciones = [];
+
+        if (in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL'])) {
+            // Admin y gestor general ven todas las reposiciones
+            $reposiciones = $this->reposicionService->find($filtros);
+        } else {
+            // Recuperar botiquines asociados al usuario
+            $botiquines = $this->botiquinService->getBotiquinesForUser($userId, $userRole);
+            $botiquinIds = array_map(fn($b) => $b->getId(), $botiquines);
+
+            if (!empty($botiquinIds)) {
+                $filtros['id_botiquin'] = $botiquinIds;
+                $reposiciones = $this->reposicionService->find($filtros);
+            }
+        }
+
+        // Paginación
+        $total = count($reposiciones);
+        $pagina_actual = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $por_pagina = 20;
+        $paginas = max(1, ceil($total / $por_pagina));
+        $reposiciones_pagina = array_slice($reposiciones, ($pagina_actual - 1) * $por_pagina, $por_pagina);
+
+        // Obtener productos para el filtro
+        $productos = $this->productoService->getAllProducts();
+
+        $data = [
+            'reposiciones' => $reposiciones_pagina,
+            'total' => $total,
+            'pagina_actual' => $pagina_actual,
+            'paginas' => $paginas,
+            'filtros' => $filtros,
+            'productos' => $productos,
+        ];
+
+        $this->render('entity.reposiciones.list_reposicion', $data);
+    }
+
     #[NoReturn]
     public function complete(): void
     {
