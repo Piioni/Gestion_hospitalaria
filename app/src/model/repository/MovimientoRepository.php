@@ -89,6 +89,7 @@ class MovimientoRepository
      */
     public function completar(int $idMovimiento): bool
     {
+        // TODO: STOCK
         // TODO: Si es un traslado debería verificar y eliminar el stock del almacén origen
         try {
             $this->pdo->beginTransaction();

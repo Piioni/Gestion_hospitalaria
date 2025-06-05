@@ -2,135 +2,48 @@
 
 namespace model\service;
 
-use model\entity\Stock;
-use model\repository\StockRepository;
+use model\repository\StockAlmacenRepository;
+use model\repository\StockBotiquinRepository;
 
+/**
+ * Servicio combinado para operaciones que pueden implicar ambos tipos de stock
+ */
 class StockService
 {
-    private StockRepository $stockRepository;
+    private StockAlmacenService $stockAlmacenService;
+    private StockBotiquinService $stockBotiquinService;
     
     public function __construct()
     {
-        $this->stockRepository = new StockRepository();
+        $this->stockAlmacenService = new StockAlmacenService();
+        $this->stockBotiquinService = new StockBotiquinService();
     }
     
     /**
-     * Obtiene el stock de un botiquín específico
+     * Obtiene productos con stock bajo de ambos almacenes y botiquines
      */
-    public function getStockByBotiquinId(int $idBotiquin): array
+    public function getAllProductosStockBajo(): array
     {
-        return $this->stockRepository->getStocksByBotiquinId($idBotiquin);
-    }
-
-    /**
-     * Obtiene el stock de un almacén específico
-     */
-    public function getStockByAlmacenId(int $idAlmacen): array
-    {
-        return $this->stockRepository->getStockByAlmacenId($idAlmacen);
-    }
-
-    /**
-     * Obtiene un stock específico por su ID
-     */
-    public function getStockById(int $idStock): ?Stock
-    {
-        return $this->stockRepository->getStockById($idStock);
-    }
-
-    /**
-     * Consume una cantidad específica de un producto del stock
-     */
-    public function consumirStock(int $idStock, int $cantidad): bool
-    {
-        // Validar que la cantidad sea positiva
-        if ($cantidad <= 0) {
-            throw new \InvalidArgumentException("La cantidad a consumir debe ser mayor que cero.");
+        $stockBajoAlmacen = $this->stockAlmacenService->getProductosStockBajo();
+        $stockBajoBotiquin = $this->stockBotiquinService->getProductosStockBajo();
+        
+        // Agregamos un campo para distinguir el tipo
+        foreach ($stockBajoAlmacen as &$item) {
+            $item['tipo_ubicacion'] = 'ALMACEN';
         }
-
-        // Obtener el stock actual
-        $stock = $this->stockRepository->getStockById($idStock);
-        if (!$stock) {
-            throw new \InvalidArgumentException("No se encontró el stock con el ID especificado.");
+        
+        foreach ($stockBajoBotiquin as &$item) {
+            $item['tipo_ubicacion'] = 'BOTIQUIN';
         }
-
-        // Validar que hay suficiente stock
-        if ($stock->getCantidad() < $cantidad) {
-            throw new \InvalidArgumentException("No hay suficiente stock para consumir la cantidad especificada.");
-        }
-
-        // Actualizar la cantidad
-        $nuevaCantidad = $stock->getCantidad() - $cantidad;
-        return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
-    }
-
-    /**
-     * Repone una cantidad específica de un producto al stock
-     */
-    public function reponerStock(int $idStock, int $cantidad): bool
-    {
-        // Validar que la cantidad sea positiva
-        if ($cantidad <= 0) {
-            throw new \InvalidArgumentException("La cantidad a reponer debe ser mayor que cero.");
-        }
-
-        // Obtener el stock actual
-        $stock = $this->stockRepository->getStockById($idStock);
-        if (!$stock) {
-            throw new \InvalidArgumentException("No se encontró el stock con el ID especificado.");
-        }
-
-        // Actualizar la cantidad
-        $nuevaCantidad = $stock->getCantidad() + $cantidad;
-        return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
-    }
-
-    /**
-     * Añade un producto al stock de un botiquín
-     */
-    public function addProductToStockBotiquin(int $idBotiquin, int $idProducto, int $cantidad, int $stockMinimo): bool
-    {
-        // Validaciones básicas
-        if ($cantidad < 0) {
-            throw new \InvalidArgumentException("La cantidad no puede ser negativa.");
-        }
-        if ($stockMinimo < 0) {
-            throw new \InvalidArgumentException("El stock mínimo no puede ser negativo.");
-        }
-
-        return $this->stockRepository->addProductToStockBotiquin($idBotiquin, $idProducto, $cantidad, $stockMinimo);
-    }
-
-    /**
-     * Añade un producto al stock de un almacén
-     */
-    public function addProductToStockAlmacen(int $idAlmacen, int $idProducto, int $cantidad, int $stockMinimo): bool
-    {
-        // Validaciones básicas
-        if ($cantidad < 0) {
-            throw new \InvalidArgumentException("La cantidad no puede ser negativa.");
-        }
-        if ($stockMinimo < 0) {
-            throw new \InvalidArgumentException("El stock mínimo no puede ser negativo.");
-        }
-
-        return $this->stockRepository->addProductToStockAlmacen($idAlmacen, $idProducto, $cantidad, $stockMinimo);
-    }
-
-    /**
-     * Obtiene productos con stock bajo, opcionalmente filtrados por tipo de ubicación
-     */
-    public function getProductosStockBajo(string $tipoUbicacion = null): array
-    {
-        return $this->stockRepository->getProductosStockBajo($tipoUbicacion);
-    }
-
-    public function botiquinHasProducts($id_botiquin): array
-    {
-        if (empty($id_botiquin) || !is_numeric($id_botiquin)) {
-            throw new \InvalidArgumentException("El ID del botiquín es inválido.");
-        }
-
-        return $this->stockRepository->getStocksByBotiquinId($id_botiquin);
+        
+        // Combinamos los resultados
+        $combined = array_merge($stockBajoAlmacen, $stockBajoBotiquin);
+        
+        // Ordenamos por cantidad ascendente
+        usort($combined, function($a, $b) {
+            return $a['cantidad'] <=> $b['cantidad'];
+        });
+        
+        return $combined;
     }
 }

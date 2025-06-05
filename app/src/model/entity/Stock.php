@@ -2,32 +2,29 @@
 
 namespace model\entity;
 
-class Stock
+/**
+ * Clase base abstracta para Stock
+ */
+abstract class Stock
 {
-    private int $id_stock;
-    private int $id_producto;
-    private string $tipo_ubicacion; // 'ALMACEN' o 'BOTIQUIN'
-    private int $id_ubicacion;
-    private int $cantidad;
-    private int $cantidad_minima;
-    private string $fecha_actualizacion;
+    protected int $id_stock;
+    protected int $id_ubicacion;
+    protected int $id_producto;
+    protected int $cantidad;
+    protected int $cantidad_minima;
 
     public function __construct(
         int $id_stock, 
         int $id_producto, 
-        string $tipo_ubicacion, 
-        int $id_ubicacion, 
+        int $id_ubicacion,
         int $cantidad, 
-        int $cantidad_minima, 
-        string $fecha_actualizacion
+        int $cantidad_minima
     ) {
         $this->id_stock = $id_stock;
         $this->id_producto = $id_producto;
-        $this->tipo_ubicacion = $tipo_ubicacion;
         $this->id_ubicacion = $id_ubicacion;
         $this->cantidad = $cantidad;
         $this->cantidad_minima = $cantidad_minima;
-        $this->fecha_actualizacion = $fecha_actualizacion;
     }
 
     public function getId(): int
@@ -48,16 +45,6 @@ class Stock
     public function setIdProducto(int $id_producto): void
     {
         $this->id_producto = $id_producto;
-    }
-
-    public function getTipoUbicacion(): string
-    {
-        return $this->tipo_ubicacion;
-    }
-
-    public function setTipoUbicacion(string $tipo_ubicacion): void
-    {
-        $this->tipo_ubicacion = $tipo_ubicacion;
     }
 
     public function getIdUbicacion(): int
@@ -89,14 +76,6 @@ class Stock
     {
         $this->cantidad_minima = $cantidad_minima;
     }
-
-    public function getFechaActualizacion(): string
-    {
-        return $this->fecha_actualizacion;
-    }
-
-    public function setFechaActualizacion(string $fecha_actualizacion): void
-    {
-        $this->fecha_actualizacion = $fecha_actualizacion;
-    }
+    
+    abstract public function getTipoUbicacion(): string;
 }

@@ -4,18 +4,18 @@ namespace model\service;
 
 use model\entity\Botiquin;
 use model\repository\BotiquinRepository;
-use model\repository\StockRepository;
+use model\repository\StockAlmacenRepository;
 
 class BotiquinService
 {
     private BotiquinRepository $botiquinRepository;
-    private StockRepository $stockRepository;
+    private StockAlmacenRepository $stockRepository;
     private UserLocationService $userLocationService;
 
     public function __construct()
     {
         $this->botiquinRepository = new BotiquinRepository();
-        $this->stockRepository = new StockRepository();
+        $this->stockRepository = new StockAlmacenRepository();
         $this->userLocationService = new UserLocationService();
     }
 

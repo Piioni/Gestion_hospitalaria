@@ -89,6 +89,7 @@ class ReposicionRepository
 
     public function completar(int $id): bool
     {
+        // TODO: STOCK
         try {
             $this->pdo->beginTransaction();
 
