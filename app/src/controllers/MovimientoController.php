@@ -185,7 +185,7 @@ class MovimientoController extends BaseController
             'productos' => $productos,
             'success' => $success,
             'error' => $error,
-            'scripts' => ['movimientos.js', 'toasts.js', 'almacen_common.js'],
+            'scripts' => ['almacen_common.js', 'movimientos.js', 'toasts.js', 'hospital_planta_botiquin.js'],
         ];
 
         $this->render('entity.movimientos.create_movimiento', $data);

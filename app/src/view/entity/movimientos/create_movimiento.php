@@ -183,23 +183,24 @@ include __DIR__ . "/../../layouts/_header.php";
 </div>
 
 <script>
-    const almacenes = <?= json_encode(array_map(function ($a) {
+    // Datos para selectores dinámicos - usando estructura compatible con reposiciones
+    window.plantas = <?= json_encode(array_map(function ($p) {
         return [
-            'id' => $a->getId(),
-            'nombre' => $a->getNombre(),
-            'tipo' => $a->getTipo(),
-            'id_hospital' => $a->getIdHospital(),
-            'id_planta' => $a->getIdPlanta()
-        ];
-    }, $almacenes)) ?>;
-
-    const plantas = <?= json_encode(array_map(function ($p) {
-        return [
-            'id' => $p->getId(),
+            'id_planta' => $p->getId(),
             'nombre' => $p->getNombre(),
             'id_hospital' => $p->getIdHospital()
         ];
     }, $plantas)) ?>;
+
+    window.almacenes = <?= json_encode(array_map(function ($a) {
+        return [
+            'id_almacen' => $a->getId(),
+            'nombre' => $a->getNombre(),
+            'tipo' => $a->getTipo(),
+            'id_planta' => $a->getIdPlanta(),
+            'id_hospital' => $a->getIdHospital()
+        ];
+    }, $almacenes)) ?>;
 
 </script>
 

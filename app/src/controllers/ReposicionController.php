@@ -98,7 +98,7 @@ class ReposicionController extends BaseController
             'botiquines' => $botiquines,
             'success' => $success,
             'error' => $error,
-            'scripts' => ['hospital_planta_botiquin.js', 'toasts.js', 'reposiciones.js'],
+            'scripts' => ['almacen_common.js', 'reposiciones.js', 'hospital_planta_botiquin.js', 'toasts.js'],
             'title' => 'Crear Reposición',
         ]);
     }
