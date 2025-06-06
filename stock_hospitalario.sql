@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: mysql
--- Tiempo de generación: 02-06-2025 a las 19:17:18
+-- Tiempo de generación: 06-06-2025 a las 19:08:46
 -- Versión del servidor: 8.0.42
 -- Versión de PHP: 8.2.27
 
@@ -106,6 +106,13 @@ CREATE TABLE `lecturas` (
   `id_usuario` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `lecturas`
+--
+
+INSERT INTO `lecturas` (`id_lectura`, `id_botiquin`, `id_producto`, `cantidad`, `fecha_lectura`, `id_usuario`) VALUES
+(1, 1, 1, 2, '2025-06-04 13:38:07', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -114,10 +121,11 @@ CREATE TABLE `lecturas` (
 
 CREATE TABLE `movimientos` (
   `id_movimiento` int NOT NULL,
-  `tipo_movimiento` enum('TRANSLADO','ENTRADA') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `id_producto` int NOT NULL,
-  `cantidad` int NOT NULL,
+  `tipo_movimiento` enum('TRASLADO','ENTRADA','DEVOLUCION') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `id_producto` int DEFAULT NULL,
+  `cantidad` int DEFAULT NULL,
   `id_origen` int DEFAULT NULL,
+  `id_botiquin_origen` int DEFAULT NULL,
   `id_destino` int NOT NULL,
   `fecha_movimiento` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `estado` enum('PENDIENTE','COMPLETADO','CANCELADO') NOT NULL,
@@ -165,6 +173,14 @@ CREATE TABLE `productos` (
   `unidad_medida` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`id_producto`, `codigo`, `nombre`, `descripcion`, `unidad_medida`) VALUES
+(1, 'PAR20178', 'Paracetamol', 'Medicamento sencillo para dolores comunes ', 'gr'),
+(3, 'IBU702', 'Ibuprofeno', 'Medicamento ligeralmente fuerte para dolores comunes.', 'gr');
+
 -- --------------------------------------------------------
 
 --
@@ -207,16 +223,35 @@ INSERT INTO `roles` (`id_rol`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `stocks`
+-- Estructura de tabla para la tabla `stock_almacenes`
 --
 
-CREATE TABLE `stocks` (
+CREATE TABLE `stock_almacenes` (
   `id_stock` int NOT NULL,
+  `id_almacen` int NOT NULL,
   `id_producto` int NOT NULL,
-  `tipo_ubicacion` enum('ALMACEN','BOTIQUIN') NOT NULL,
-  `id_ubicacion` int NOT NULL,
-  `cantidad` int NOT NULL,
-  `cantidad_minima` int NOT NULL
+  `cantidad` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `stock_almacenes`
+--
+
+INSERT INTO `stock_almacenes` (`id_stock`, `id_almacen`, `id_producto`, `cantidad`) VALUES
+(2, 5, 3, 100),
+(3, 8, 1, 82);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `stock_botiquines`
+--
+
+CREATE TABLE `stock_botiquines` (
+  `id_stock` int NOT NULL,
+  `id_botiquin` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -325,7 +360,8 @@ ALTER TABLE `movimientos`
   ADD PRIMARY KEY (`id_movimiento`),
   ADD KEY `fk_movimientos-id_producto` (`id_producto`),
   ADD KEY `fk_movimientos-id_almacen_destino` (`id_destino`),
-  ADD KEY `fk_movimientos-id_almacen_origen` (`id_origen`);
+  ADD KEY `fk_movimientos-id_almacen_origen` (`id_origen`),
+  ADD KEY `fk_id_botiquin` (`id_botiquin_origen`);
 
 --
 -- Indices de la tabla `plantas`
@@ -355,6 +391,20 @@ ALTER TABLE `reposiciones`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id_rol`);
+
+--
+-- Indices de la tabla `stock_almacenes`
+--
+ALTER TABLE `stock_almacenes`
+  ADD PRIMARY KEY (`id_stock`),
+  ADD KEY `fk_stock_almacen_id` (`id_almacen`);
+
+--
+-- Indices de la tabla `stock_botiquines`
+--
+ALTER TABLE `stock_botiquines`
+  ADD PRIMARY KEY (`id_stock`),
+  ADD KEY `fk_stock_botiquin_id` (`id_botiquin`);
 
 --
 -- Indices de la tabla `users`
@@ -409,13 +459,13 @@ ALTER TABLE `hospitales`
 -- AUTO_INCREMENT de la tabla `lecturas`
 --
 ALTER TABLE `lecturas`
-  MODIFY `id_lectura` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_lectura` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `movimientos`
 --
 ALTER TABLE `movimientos`
-  MODIFY `id_movimiento` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_movimiento` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `plantas`
@@ -427,7 +477,7 @@ ALTER TABLE `plantas`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_producto` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_producto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `reposiciones`
@@ -440,6 +490,18 @@ ALTER TABLE `reposiciones`
 --
 ALTER TABLE `roles`
   MODIFY `id_rol` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `stock_almacenes`
+--
+ALTER TABLE `stock_almacenes`
+  MODIFY `id_stock` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `stock_botiquines`
+--
+ALTER TABLE `stock_botiquines`
+  MODIFY `id_stock` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -475,6 +537,7 @@ ALTER TABLE `lecturas`
 -- Filtros para la tabla `movimientos`
 --
 ALTER TABLE `movimientos`
+  ADD CONSTRAINT `fk_id_botiquin` FOREIGN KEY (`id_botiquin_origen`) REFERENCES `botiquines` (`id_botiquin`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_movimientos-id_almacen_destino` FOREIGN KEY (`id_destino`) REFERENCES `almacenes` (`id_almacen`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_movimientos-id_almacen_origen` FOREIGN KEY (`id_origen`) REFERENCES `almacenes` (`id_almacen`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_movimientos-id_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON UPDATE CASCADE;
@@ -493,6 +556,18 @@ ALTER TABLE `reposiciones`
   ADD CONSTRAINT `fk_reposiciones-id_botiquin` FOREIGN KEY (`id_botiquin`) REFERENCES `botiquines` (`id_botiquin`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_reposiciones-id_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_reposiciones-id_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `users` (`id_usuario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `stock_almacenes`
+--
+ALTER TABLE `stock_almacenes`
+  ADD CONSTRAINT `fk_stock_almacen_id` FOREIGN KEY (`id_almacen`) REFERENCES `almacenes` (`id_almacen`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Filtros para la tabla `stock_botiquines`
+--
+ALTER TABLE `stock_botiquines`
+  ADD CONSTRAINT `fk_stock_botiquin_id` FOREIGN KEY (`id_botiquin`) REFERENCES `botiquines` (`id_botiquin`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Filtros para la tabla `user_botiquines`
