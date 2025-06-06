@@ -377,13 +377,29 @@
 }
 
 .action-buttons-row .btn {
-    min-width: 200px;
+    min-width: 120px;
     margin: 0.5rem;
+}
+
+/* Ajuste para botones en páginas de eliminación */
+.form-actions .action-buttons-row {
+    gap: 1.5rem;
+}
+
+.form-actions .action-buttons-row .btn {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    min-width: 140px;
 }
 
 .hero-buttons {
     gap: 1rem;
     margin-top: 2rem;
+}
+
+/* Clases para alinear botones en diferentes contextos */
+.d-inline {
+    display: inline-block;
 }
 
 /* Responsive para botones */
@@ -400,5 +416,30 @@
     
     .btn-sm {
         padding: 0.35rem 0.75rem;
+    }
+    
+    /* Mantener los botones de acción en fila incluso en móviles */
+    .action-buttons-row {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .action-buttons-row .btn {
+        flex: 1;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .action-buttons-row {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .action-buttons-row .btn {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
 }

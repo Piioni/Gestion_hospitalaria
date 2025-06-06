@@ -164,12 +164,10 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                            class="btn btn-sm btn-secondary">
                                                                             <i class="bi bi-pencil"></i> Editar
                                                                         </a>
-                                                                        <!-- TODO: FIX ERROR -->
-                                                                        <a href="<?= url('plantas', ['id' => $planta->getId()]) ?>"
+                                                                        <a href="<?= url('botiquines', ['planta' => $planta->getId()]) ?>"
                                                                            class="btn btn-sm btn-info">
                                                                             <i class="bi bi-box-seam"></i> Ver stock
                                                                         </a>
-                                                                        
                                                                         <?php if ($canCreateDelete): ?>
                                                                         <a href="<?= url('plantas.delete', ['id_planta' => $planta->getId()]) ?>"
                                                                            class="btn btn-sm btn-danger">

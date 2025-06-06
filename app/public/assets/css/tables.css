@@ -13,6 +13,13 @@
     position: relative;
 }
 
+/* Para centrar tablas en páginas de eliminación */
+.table-responsive.d-flex.justify-content-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Base de tabla */
 .table {
     width: 100%;
@@ -103,6 +110,10 @@
 .actions-column {
     white-space: nowrap;
     text-align: right;
+}
+
+.actions-column.text-center {
+    text-align: center;
 }
 
 .actions-column .btn-container {
@@ -293,6 +304,10 @@
         flex-wrap: wrap;
         gap: 0.35rem;
         justify-content: flex-start;
+    }
+    
+    .actions-column.text-center .btn-container {
+        justify-content: center;
     }
     
     .table .btn {
