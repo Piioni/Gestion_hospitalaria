@@ -19,6 +19,11 @@ class StockBotiquinService
         return $this->stockRepository->getStocksByBotiquinId($idBotiquin);
     }
 
+    public function getTotalStockByBotiquinId(int $idBotiquin): int
+    {
+        return $this->stockRepository->getTotalStockByBotiquinId($idBotiquin);
+    }
+
     public function getStockById(int $idStock): ?StockBotiquin
     {
         return $this->stockRepository->getStockById($idStock);

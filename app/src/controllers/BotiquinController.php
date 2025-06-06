@@ -46,7 +46,8 @@ class BotiquinController extends BaseController
         $filtroNombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : null;
 
         $plantas = $this->plantaService->getAllPlantas();
-        $botiquines = $this->filterBotiquines($filtro_plantas, $id_botiquin, $filtroNombre);
+        // TODO: Modificar la forma en la que se filtran los botiquines (Hospital - planta) 
+        $botiquines = $this->botiquinService->filterBotiquines($filtro_plantas, $id_botiquin, $filtroNombre);
 
         return [
             'botiquines' => $botiquines,
@@ -60,36 +61,11 @@ class BotiquinController extends BaseController
             'title' => "Sistema de Gestión Hospitalaria",
             'navTitle' => "Gestión de Botiquines",
             'scripts' => "toasts.js",
+            'stockBotiquinService' => $this->stockService,
             'plantaService' => $this->plantaService,
             'hospitalService' => $this->hospitalService,
             'botiquinService' => $this->botiquinService
         ];
-    }
-
-    private function filterBotiquines($filtro_plantas, $id_botiquin, $filtroNombre): array
-    {
-        // Filtrar los botiquines por planta o por ID específico
-        if ($id_botiquin) {
-            // Si se proporciona un ID específico de botiquín
-            $botiquin = $this->botiquinService->getBotiquinById($id_botiquin);
-            return $botiquin ? [$botiquin] : [];
-        } elseif ($filtro_plantas && $filtroNombre) {
-            // Filtrar por planta y nombre
-            return array_filter($this->botiquinService->getBotiquinesByPlantaId($filtro_plantas), function ($b) use ($filtroNombre) {
-                return stripos($b->getNombre(), $filtroNombre) !== false;
-            });
-        } elseif ($filtro_plantas) {
-            // Filtrar por planta
-            return $this->botiquinService->getBotiquinesByPlantaId($filtro_plantas);
-        } elseif ($filtroNombre) {
-            // Filtrar por nombre
-            return array_filter($this->botiquinService->getAllBotiquines(), function ($b) use ($filtroNombre) {
-                return stripos($b->getNombre(), $filtroNombre) !== false;
-            });
-        } else {
-            // Sin filtros, mostrar todos
-            return $this->botiquinService->getAllBotiquines();
-        }
     }
 
     public function create(): void

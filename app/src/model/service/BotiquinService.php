@@ -71,73 +71,7 @@ class BotiquinService
             throw new InvalidArgumentException("Este botiquín tiene productos. Debe seleccionar un almacén destino.");
         }
 
-        // Si hay un almacén destino, transferir los productos
-        if ($hasProducts && $idAlmacenDestino) {
-            $this->transferirProductosAAlmacen($id_botiquin, $idAlmacenDestino);
-        }
-
         return $this->botiquinRepository->delete($id_botiquin);
-    }
-
-    /**
-     * Transfiere los productos de un botiquín a un almacén
-     */
-    private function transferirProductosAAlmacen($id_botiquin, $id_almacen): bool
-    {
-        try {
-            // 1. Obtener todos los productos del botiquín
-            $stockItems = $this->stockBotiquinService->getStockByBotiquinId($id_botiquin);
-
-            if (empty($stockItems)) {
-                return true; // No hay productos para transferir
-            }
-
-            // 2. Por cada producto, verificar si existe en el almacén y agregarlo/actualizarlo
-            foreach ($stockItems as $stockItem) {
-                $id_producto = $stockItem->getIdProducto();
-                $cantidad = $stockItem->getCantidad();
-                $cantidad_minima = $stockItem->getStockMinimo();
-
-                // Buscar si el producto ya existe en el almacén destino
-                $stocksAlmacen = $this->stockAlmacenService->getStockByAlmacenId($id_almacen);
-                $existeEnAlmacen = false;
-
-                foreach ($stocksAlmacen as $stockAlmacen) {
-                    if ($stockAlmacen->getIdProducto() == $id_producto) {
-                        // Actualizar el stock existente
-                        $nuevaCantidad = $stockAlmacen->getCantidad() + $cantidad;
-                        $this->stockAlmacenService->reponerStock($stockAlmacen->getId(), $cantidad);
-                        $existeEnAlmacen = true;
-                        break;
-                    }
-                }
-
-                // Si no existe en el almacén, crear un nuevo registro
-                if (!$existeEnAlmacen) {
-                    $this->stockAlmacenService->addProductToStockAlmacen(
-                        $id_almacen,
-                        $id_producto,
-                        $cantidad,
-                        $cantidad_minima
-                    );
-                }
-            }
-
-            return true;
-        } catch (Exception $e) {
-            error_log("Error al transferir productos: " . $e->getMessage());
-            throw new Exception("No se pudieron transferir los productos al almacén: " . $e->getMessage());
-        }
-    }
-
-    public function getStockByBotiquinId(int $id_botiquin): array
-    {
-        return $this->stockBotiquinService->getStockByBotiquinId($id_botiquin);
-    }
-
-    public function countProductos(int $id_botiquin): int
-    {
-        return count($this->stockBotiquinService->getStockByBotiquinId($id_botiquin));
     }
 
     public function getAllBotiquines(): array
@@ -163,5 +97,31 @@ class BotiquinService
             'GESTOR_PLANTA' => $this->userLocationService->getAssignedBotiquinesFromPlantas($userId),
             default => [],
         };
+    }
+
+    public function filterBotiquines($filtro_plantas, $id_botiquin, $filtroNombre): array
+    {
+        // Filtrar los botiquines por planta o por ID específico
+        if ($id_botiquin) {
+            // Si se proporciona un ID específico de botiquín
+            $botiquin = $this->getBotiquinById($id_botiquin);
+            return $botiquin ? [$botiquin] : [];
+        } elseif ($filtro_plantas && $filtroNombre) {
+            // Filtrar por planta y nombre
+            return array_filter($this->getBotiquinesByPlantaId($filtro_plantas), function ($b) use ($filtroNombre) {
+                return stripos($b->getNombre(), $filtroNombre) !== false;
+            });
+        } elseif ($filtro_plantas) {
+            // Filtrar por planta
+            return $this->getBotiquinesByPlantaId($filtro_plantas);
+        } elseif ($filtroNombre) {
+            // Filtrar por nombre
+            return array_filter($this->getAllBotiquines(), function ($b) use ($filtroNombre) {
+                return stripos($b->getNombre(), $filtroNombre) !== false;
+            });
+        } else {
+            // Sin filtros, mostrar todos
+            return $this->getAllBotiquines();
+        }
     }
 }

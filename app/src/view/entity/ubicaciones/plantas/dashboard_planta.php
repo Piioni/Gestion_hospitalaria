@@ -172,9 +172,12 @@ include __DIR__ . "/../../../layouts/_header.php";
                                                                     <td>
                                                                         <?php
                                                                         try {
-//                                                                            TODO: Mostrar el stock de productos en el botiquin.
-//                                                                            $stock
-//                                                                            echo htmlspecialchars($stock) . ' productos.';
+                                                                            $stock = $stockBotiquinService->getTotalStockByBotiquinId($botiquin->getId());
+                                                                            if ($stock) {
+                                                                                echo htmlspecialchars($stock->getCantidad()) . ' unidades';
+                                                                            } else {
+                                                                                echo 'No hay stock disponible';
+                                                                            }
                                                                         } catch (Exception $e) {
                                                                             echo 'Error al cargar el stock';
                                                                         }

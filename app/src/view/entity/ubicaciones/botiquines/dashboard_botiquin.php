@@ -113,7 +113,7 @@ include __DIR__ . "/../../../layouts/_header.php";
                                     <td>
                                         <?php
                                         // Obtener el stock del botiquín
-                                        $stock = $botiquinService->getStockByBotiquinId($botiquin->getId());
+                                        $stock = $stockBotiquinService->getTotalStockByBotiquinId($botiquin->getId());
                                         if ($stock) {
                                             echo htmlspecialchars($stock, ENT_QUOTES) . " productos";
                                         } else {

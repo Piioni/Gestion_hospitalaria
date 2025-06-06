@@ -10,11 +10,13 @@ use model\service\BotiquinService;
 use model\service\HospitalService;
 use model\service\PlantaService;
 use model\service\StockAlmacenService;
+use model\service\StockBotiquinService;
 
 class PlantaController extends BaseController
 {
     private PlantaService $plantaService;
     private StockAlmacenService $stockService;
+    private StockBotiquinService $stockBotiquinService;
     private HospitalService $hospitalService;
     private AlmacenService $almacenService;
     private BotiquinService $botiquinService;
@@ -23,6 +25,7 @@ class PlantaController extends BaseController
     {
         $this->plantaService = new PlantaService();
         $this->stockService = new StockAlmacenService();
+        $this->stockBotiquinService = new StockBotiquinService();
         $this->hospitalService = new HospitalService();
         $this->almacenService = new AlmacenService();
         $this->botiquinService = new BotiquinService();
@@ -71,6 +74,7 @@ class PlantaController extends BaseController
             'filtrarActivo' => $filtrarActivo,
             'success' => $_GET['success'] ?? null,
             'error' => $_GET['error'] ?? null,
+            'stockBotiquinService' => $this->stockBotiquinService,
             'hospitalService' => $this->hospitalService,
             'plantaService' => $this->plantaService,
             'botiquinService' => $this->botiquinService,

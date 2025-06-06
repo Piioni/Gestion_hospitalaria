@@ -44,6 +44,23 @@ class StockBotiquinRepository
         }
     }
 
+    public function getTotalStockByBotiquinId(int $idBotiquin): int
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT SUM(cantidad) as total 
+                FROM stock_botiquines 
+                WHERE id_botiquin = ?
+            ");
+            $stmt->execute([$idBotiquin]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (PDOException $e) {
+            error_log("Error al obtener total de stock por botiquín: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getStockById(int $idStock): ?StockBotiquin
     {
         try {
