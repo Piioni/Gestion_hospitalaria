@@ -71,74 +71,6 @@ class MovimientoRepository
         }
     }
 
-    public function cancelar(int $id): bool
-    {
-        try {
-            $stmt = $this->pdo->prepare("UPDATE movimientos SET estado = 'CANCELADO' WHERE id_movimiento = ?");
-            return $stmt->execute([$id]);
-        } catch (\PDOException $e) {
-            error_log("Error al cancelar movimiento: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Completa un movimiento y añade el stock al almacén destino en una transacción.
-     * @param int $idMovimiento
-     * @return bool
-     */
-    public function completar(int $idMovimiento): bool
-    {
-        // TODO: STOCK
-        // TODO: Si es un traslado debería verificar y eliminar el stock del almacén origen
-        try {
-            $this->pdo->beginTransaction();
-
-            // Obtener datos del movimiento
-            $stmt = $this->pdo->prepare("SELECT * FROM movimientos WHERE id_movimiento = ?");
-            $stmt->execute([$idMovimiento]);
-            $movimiento = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$movimiento) {
-                $this->pdo->rollBack();
-                return false;
-            }
-
-            // Insertar stock en el almacén destino
-            $stmtStock = $this->pdo->prepare("
-                INSERT INTO stocks (id_producto, tipo_ubicacion, id_ubicacion, cantidad)
-                VALUES (?, 'ALMACEN', ?, ?)
-                ON DUPLICATE KEY UPDATE cantidad = cantidad + VALUES(cantidad)
-            ");
-            $okStock = $stmtStock->execute([
-                $movimiento['id_producto'],
-                $movimiento['id_destino'],
-                $movimiento['cantidad']
-            ]);
-
-            if (!$okStock) {
-                $this->pdo->rollBack();
-                return false;
-            }
-
-            // Completar el movimiento
-            $stmtMov = $this->pdo->prepare("UPDATE movimientos SET estado = 'COMPLETADO' WHERE id_movimiento = ?");
-            $okMov = $stmtMov->execute([$idMovimiento]);
-
-            if (!$okMov) {
-                $this->pdo->rollBack();
-                return false;
-            }
-
-            $this->pdo->commit();
-            return true;
-        } catch (\PDOException $e) {
-            error_log("Error en completarYAgregarStock: " . $e->getMessage());
-            $this->pdo->rollBack();
-            return false;
-        }
-    }
-
     public function find($filtros = null, $almacenIds = null): array
     {
         try{
@@ -206,6 +138,48 @@ class MovimientoRepository
             return [];
         }
 
+    }
+
+    /**
+     * Actualiza el estado de un movimiento a COMPLETADO
+     * @param int $idMovimiento
+     * @return bool
+     */
+    public function completarMovimiento(int $idMovimiento): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE movimientos SET estado = 'COMPLETADO' WHERE id_movimiento = ?");
+            return $stmt->execute([$idMovimiento]);
+        } catch (\PDOException $e) {
+            error_log("Error al completar movimiento: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function cancelar(int $id): bool
+    {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE movimientos SET estado = 'CANCELADO' WHERE id_movimiento = ?");
+            return $stmt->execute([$id]);
+        } catch (\PDOException $e) {
+            error_log("Error al cancelar movimiento: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function beginTransaction(): void
+    {
+        $this->pdo->beginTransaction();
+    }
+
+    public function commit(): void
+    {
+        $this->pdo->commit();
+    }
+
+    public function rollBack(): void
+    {
+        $this->pdo->rollBack();
     }
 
 }

@@ -5,7 +5,7 @@
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
-<div class="page-section">
+<div class="page-section mt-5">
     <div class="container">
         <div class="page-header">
             <div class="page-header-content">

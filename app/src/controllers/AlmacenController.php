@@ -15,14 +15,14 @@ class AlmacenController extends BaseController
     private AlmacenService $almacenService;
     private PlantaService $plantaService;
     private HospitalService $hospitalService;
-    private StockAlmacenService $stockService;
+    private StockAlmacenService $stockAlmacenService;
 
     public function __construct()
     {
         $this->almacenService = new AlmacenService();
         $this->plantaService = new PlantaService();
         $this->hospitalService = new HospitalService();
-        $this->stockService = new StockAlmacenService();
+        $this->stockAlmacenService = new StockAlmacenService();
     }
 
     public function index(): void
@@ -50,7 +50,7 @@ class AlmacenController extends BaseController
 
         // Obtener hospitales
         $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole);
-        
+
         $canCreateDelete = in_array($userRole, ['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
 
         $data = [
@@ -74,11 +74,11 @@ class AlmacenController extends BaseController
 
         $this->render('entity.almacenes.dashboard_almacen', $data);
     }
-    
+
     public function create(): void
     {
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
-        
+
         // Inicializar variables
         $almacen = [
             'nombre' => $_GET['nombre'] ?? '',
@@ -86,21 +86,21 @@ class AlmacenController extends BaseController
             'id_hospital' => $_GET['id_hospital'] ?? '',
             'id_planta' => $_GET['id_planta'] ?? '',
         ];
-        
+
         $errors = [];
         $success = false;
-        
+
         // Obtener la lista de hospitales y plantas para el formulario
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
         $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole);
         $plantas = $this->plantaService->getAllPlantas();
-        
+
         // Procesar el formulario si es POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleCreate($almacen, $errors, $success);
         }
-        
+
         $data = [
             'almacen' => $almacen,
             'errors' => $errors,
@@ -110,10 +110,10 @@ class AlmacenController extends BaseController
             'title' => 'Crear Almacén',
             'scripts' => ['almacenes.js', 'toasts.js', 'hospital_planta_botiquin.js'],
         ];
-        
+
         $this->render('entity.almacenes.create_almacen', $data);
     }
-    
+
     private function handleCreate(array &$almacen, array &$errors, bool &$success): void
     {
         // Sanitizar datos de entrada
@@ -142,28 +142,28 @@ class AlmacenController extends BaseController
             $errors[] = "Error al crear el almacén: " . $e->getMessage();
         }
     }
-    
+
     public function edit(): void
     {
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
-        
+
         $id_almacen = $_GET['id_almacen'] ?? null;
-        
+
         if (!$this->validateAlmacenId($id_almacen)) {
             header("Location: " . url('almacenes', ['error' => 'no_id']));
             exit;
         }
-        
+
         $errors = [];
         $success = false;
         $almacen = [];
-        
+
         // Obtener listas para el formulario
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
         $hospitals = $this->hospitalService->getHospitalsForUser($userId, $userRole);
         $plantas = $this->plantaService->getAllPlantas();
-        
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Procesar formulario de edición
             $this->handleEdit($almacen, $errors, $success);
@@ -171,7 +171,7 @@ class AlmacenController extends BaseController
             // Cargar datos del almacén existente
             $this->loadAlmacenData($id_almacen, $almacen, $errors);
         }
-        
+
         $data = [
             'almacen' => $almacen,
             'errors' => $errors,
@@ -181,25 +181,25 @@ class AlmacenController extends BaseController
             'title' => 'Editar Almacén',
             'scripts' => ['almacenes.js', 'toasts.js', 'hospital_planta_botiquin.js'],
         ];
-        
+
         $this->render('entity.almacenes.edit_almacen', $data);
     }
-    
+
     private function validateAlmacenId($id): bool
     {
         return !empty($id) && is_numeric($id);
     }
-    
+
     private function loadAlmacenData($id_almacen, array &$almacen, array &$errors): void
     {
         try {
             $almacenObj = $this->almacenService->getAlmacenById($id_almacen);
-            
+
             if (!$almacenObj) {
                 header("Location: " . url('almacenes', ['error' => 'not_found']));
                 exit;
             }
-            
+
             $almacen['id'] = $almacenObj->getId();
             $almacen['nombre'] = $almacenObj->getNombre();
             $almacen['tipo'] = $almacenObj->getTipo();
@@ -209,7 +209,7 @@ class AlmacenController extends BaseController
             $errors[] = "Error al cargar el almacén: " . $e->getMessage();
         }
     }
-    
+
     private function handleEdit(array &$almacen, array &$errors, bool &$success): void
     {
         // Procesar formulario de edición
@@ -238,62 +238,67 @@ class AlmacenController extends BaseController
             $errors[] = "Error al actualizar el almacén: " . $e->getMessage();
         }
     }
-    
+
     public function delete(): void
     {
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL']);
-        
+
         $id_almacen = $_GET['id_almacen'] ?? null;
         $confirm = isset($_GET['confirm']);
-        
+
         if (!$this->validateAlmacenId($id_almacen)) {
             header("Location: " . url('almacenes', ['error' => 'id_invalid']));
             exit;
         }
-        
+
         try {
             // Obtener datos del almacén
             $data = $this->prepareDeleteData($id_almacen);
-            
+
             // Si se solicita confirmar la eliminación
             if ($confirm) {
                 $this->handleDelete($id_almacen, $data);
             }
-            
+
             $this->render('entity.almacenes.delete_almacen', $data);
-            
+
         } catch (Exception $e) {
             header("Location: " . url('almacenes', ['error' => 'unexpected']));
             exit;
         }
     }
-    
+
     private function prepareDeleteData($id_almacen): array
     {
-        //TODO: Validar que el almacen no tenga stock asociado
         $almacen = $this->almacenService->getAlmacenById($id_almacen);
-        
+
         if (!$almacen) {
             header("Location: " . url('almacenes', ['error' => 'not_found']));
             exit;
         }
-        
+
         $hospital = $this->hospitalService->getHospitalById($almacen->getIdHospital());
-        
+
         $planta = null;
         if ($almacen->getIdPlanta()) {
             $planta = $this->plantaService->getPlantaById($almacen->getIdPlanta());
         }
-        
+
         // Verificar stock asociado
-        $tieneStock = $this->stockService->almacenHasStock($id_almacen);
-        
+        $tieneStock = $this->stockAlmacenService->hasStock($id_almacen);
+        if ($tieneStock) {
+            $error = "Este almacén tiene productos en stock. Primero debes de trasladar los productos.";
+        } else {
+            $error = null;
+        }
+
         return [
             'almacen' => $almacen,
             'hospital' => $hospital,
             'planta' => $planta,
             'tieneStock' => $tieneStock,
-            'error' => null,
+            'numProductos' => $tieneStock ? $this->stockAlmacenService->getCantidadTotalEnAlmacen($id_almacen) : 0,
+            'error' => $error,
             'title' => 'Confirmar Eliminación de Almacén',
             'scripts' => 'toasts.js'
         ];

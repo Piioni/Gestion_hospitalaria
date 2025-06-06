@@ -19,6 +19,11 @@ class StockAlmacenService
         return $this->stockRepository->getStockByAlmacenId($idAlmacen);
     }
 
+    public function getCantidadTotalEnAlmacen(int $idAlmacen): int
+    {
+        return $this->stockRepository->getCantidadTotalEnAlmacen($idAlmacen);
+    }
+
     public function getStockById(int $idStock): ?StockAlmacen
     {
         return $this->stockRepository->getStockById($idStock);
@@ -65,5 +70,44 @@ class StockAlmacenService
         return $this->stockRepository->updateStockCantidad($idStock, $nuevaCantidad);
     }
 
-
+    public function hasStock(int $idAlmacen): bool
+    {
+        return $this->stockRepository->hasStock($idAlmacen);
+    }
+    
+    /**
+     * Verifica si hay suficiente stock de un producto en un almacén
+     * @param int $idAlmacen ID del almacén
+     * @param int $idProducto ID del producto
+     * @param int $cantidad Cantidad requerida
+     * @return bool True si hay suficiente stock, false en caso contrario
+     */
+    public function verificarStockSuficiente(int $idAlmacen, int $idProducto, int $cantidad): bool
+    {
+        return $this->stockRepository->verificarStockSuficiente($idAlmacen, $idProducto, $cantidad);
+    }
+    
+    /**
+     * Reduce la cantidad de un producto en un almacén
+     * @param int $idAlmacen ID del almacén
+     * @param int $idProducto ID del producto
+     * @param int $cantidad Cantidad a reducir
+     * @return bool True si la operación fue exitosa
+     */
+    public function reducirStock(int $idAlmacen, int $idProducto, int $cantidad): bool
+    {
+        return $this->stockRepository->reducirStock($idAlmacen, $idProducto, $cantidad);
+    }
+    
+    /**
+     * Incrementa o crea stock de un producto en un almacén
+     * @param int $idAlmacen ID del almacén
+     * @param int $idProducto ID del producto
+     * @param int $cantidad Cantidad a incrementar
+     * @return bool True si la operación fue exitosa
+     */
+    public function incrementarStock(int $idAlmacen, int $idProducto, int $cantidad): bool
+    {
+        return $this->stockRepository->incrementarStock($idAlmacen, $idProducto, $cantidad);
+    }
 }

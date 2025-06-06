@@ -50,7 +50,7 @@ class ProductController extends BaseController
         $error = $_GET['error'] ?? null;
 
         try {
-            // Usar el método optimizado de filtrado
+            // Usar el méto do optimizado de filtrado
             $productos = $this->productoService->filtrarProductos($filtros);
 
             // Preparar datos para la vista
