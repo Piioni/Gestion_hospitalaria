@@ -6,12 +6,11 @@ namespace model\entity;
 class Movimiento
 {
     private int $id_movimiento;
-    private string $tipo_movimiento; // "TRANSLADO" o "ENTRADA"
+    private string $tipo_movimiento; // "TRASLADO" , "ENTRADA" , "DEVOLUCION"
     private int $id_producto;
     private int $cantidad;
-    // Él, id de origen puede ser nulo si es una entrada
-    // o si es un traslado solo son entre almacenes
-    private ?int $id_origen;
+    private ?int $id_origen; // Él, id de origen puede ser nulo si es una entrada
+    private ?int $id_botiquin_origen = null; // Si es un traslado entre botiquines
     private int $id_destino;
     private string $fecha_movimiento;
     private string $estado; // "PENDIENTE", "COMPLETADO", "CANCELADO"
@@ -23,17 +22,19 @@ class Movimiento
      * @param int $id_producto
      * @param int $cantidad
      * @param int|null $id_origen
+     * @param int |null $id_botiquin_origen
      * @param int $id_destino
      * @param string $estado
      * @param string $id_responsable
      */
-    public function __construct(int $id_movimiento, string $tipo_movimiento, int $id_producto, int $cantidad, ?int $id_origen, int $id_destino, string $estado, string $id_responsable)
+    public function __construct(int $id_movimiento, string $tipo_movimiento, int $id_producto, int $cantidad, ?int $id_origen, ?int $id_botiquin_origen, int $id_destino, string $estado, string $id_responsable)
     {
         $this->id_movimiento = $id_movimiento;
         $this->tipo_movimiento = $tipo_movimiento;
         $this->id_producto = $id_producto;
         $this->cantidad = $cantidad;
         $this->id_origen = $id_origen;
+        $this->id_botiquin_origen = $id_botiquin_origen;
         $this->id_destino = $id_destino;
         $this->estado = $estado;
         $this->id_responsable = $id_responsable;
@@ -87,6 +88,16 @@ class Movimiento
     public function setIdOrigen(?int $id_origen): void
     {
         $this->id_origen = $id_origen;
+    }
+
+    public function getIdBotiquinOrigen(): ?int
+    {
+        return $this->id_botiquin_origen;
+    }
+
+    public function setIdBotiquinOrigen(?int $id_botiquin_origen): void
+    {
+        $this->id_botiquin_origen = $id_botiquin_origen;
     }
 
     public function getIdDestino(): int

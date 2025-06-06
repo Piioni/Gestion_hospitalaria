@@ -71,6 +71,11 @@ class StockBotiquinService
     }
 
 
+    public function devolver(){
+
+    }
+
+
     public function botiquinHasProducts($id_botiquin): array
     {
         if (empty($id_botiquin) || !is_numeric($id_botiquin)) {

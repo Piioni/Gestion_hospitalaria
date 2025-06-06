@@ -6,6 +6,7 @@ use JetBrains\PhpStorm\NoReturn;
 use middleware\AuthMiddleware;
 use model\entity\Movimiento;
 use model\service\AlmacenService;
+use model\service\BotiquinService;
 use model\service\HospitalService;
 use model\service\MovimientoService;
 use model\service\PlantaService;
@@ -18,6 +19,7 @@ class MovimientoController extends BaseController
     private ProductoService $productoService;
     private HospitalService $hospitalService;
     private PlantaService $plantaService;
+    private BotiquinService $botiquinService;
 
     public function __construct()
     {
@@ -26,6 +28,7 @@ class MovimientoController extends BaseController
         $this->productoService = new ProductoService();
         $this->hospitalService = new HospitalService();
         $this->plantaService = new PlantaService();
+        $this->botiquinService = new BotiquinService();
     }
 
     public function index(): void
@@ -131,23 +134,27 @@ class MovimientoController extends BaseController
         // Verificar si el usuario tiene permisos para crear movimientos
         AuthMiddleware::requireRole(['ADMINISTRADOR', 'GESTOR_GENERAL', 'GESTOR_HOSPITAL', 'GESTOR_PLANTA']);
 
-        $tipoMovimiento = $_GET['tipo'] ?? 'TRASLADO';
+        // Inicializar datos del formulario desde parámetros GET de manera simplificada
+        $tipo = $_GET['tipo'] ?? 'TRASLADO';
         
-        // Valores predeterminados para el movimiento
+        // Configuración inicial del movimiento
         $movimiento = [
-            'tipo_movimiento' => $tipoMovimiento,
+            'tipo_movimiento' => $tipo,
             'id_producto' => $_GET['id_producto'] ?? '',
             'cantidad' => $_GET['cantidad'] ?? 1,
             'id_origen' => $_GET['id_origen'] ?? '',
             'id_destino' => $_GET['id_destino'] ?? '',
+            'id_botiquin_origen' => $_GET['id_botiquin_origen'] ?? '',
+            'botiquin_hospital' => $_GET['botiquin_hospital'] ?? '',
         ];
         
-        // Valores preseleccionados para configuración de almacenes
+        // Simplificar la configuración de tipos de almacén
         $tiposAlmacen = [
             'origen' => $_GET['origen_tipo'] ?? 'planta',
             'destino' => $_GET['destino_tipo'] ?? 'planta'
         ];
         
+        // Agrupar los datos de selección en una estructura clara
         $seleccionados = [
             'origen_hospital' => $_GET['origen_hospital'] ?? '',
             'origen_planta' => $_GET['origen_planta'] ?? '',
@@ -155,36 +162,28 @@ class MovimientoController extends BaseController
             'destino_planta' => $_GET['destino_planta'] ?? '',
         ];
 
-        $success = false;
-        $error = $_GET['error'] ?? null;
-
+        // Manejar envío del formulario
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleCreate();
             return;
         }
 
-        // Obtener los datos del usuario actual
+        // Obtener datos de usuario y entidades necesarias
         $userId = $this->getCurrentUserId();
         $userRole = $this->getCurrentUserRole();
 
-        // Obtener los productos disponibles
-        $productos = $this->productoService->getAllProducts();
-
-        // Obtener selectores de hospitales, plantas y almacenes según el rol del usuario
-        $hospitales = $this->hospitalService->getHospitalsForUser($userId, $userRole);
-        $plantas = $this->plantaService->getPlantasForUser($userId, $userRole);
-        $almacenes = $this->almacenService->getAlmacenesForUser($userId, $userRole);
-
+        // Cargar los datos necesarios para los selectores
         $data = [
             'movimiento' => $movimiento,
             'tiposAlmacen' => $tiposAlmacen,
             'seleccionados' => $seleccionados,
-            'hospitales' => $hospitales,
-            'plantas' => $plantas,
-            'almacenes' => $almacenes,
-            'productos' => $productos,
-            'success' => $success,
-            'error' => $error,
+            'hospitales' => $this->hospitalService->getHospitalsForUser($userId, $userRole),
+            'plantas' => $this->plantaService->getPlantasForUser($userId, $userRole),
+            'almacenes' => $this->almacenService->getAlmacenesForUser($userId, $userRole),
+            'productos' => $this->productoService->getAllProducts(),
+            'botiquines' => $this->botiquinService->getBotiquinesForUser($userId, $userRole),
+            'error' => $_GET['error'] ?? null,
+            'success' => isset($_GET['success']),
             'scripts' => ['almacen_common.js', 'movimientos.js', 'toasts.js', 'hospital_planta_botiquin.js'],
         ];
 
@@ -194,43 +193,60 @@ class MovimientoController extends BaseController
     private function handleCreate(): void
     {
         $tipoMovimiento = $_POST['tipo_movimiento'] ?? '';
-        $idProducto = (int)($_POST['id_producto'] ?? 0);
-        $cantidad = (int)($_POST['cantidad'] ?? 0);
-        $idOrigen = (int)($_POST['id_origen'] ?? null);
+        $idBotiquinOrigen = (int)($_POST['botiquin_origen'] ?? null);
         $idDestino = (int)($_POST['id_destino'] ?? 0);
         
+        // Para devoluciones, no necesitamos producto ni cantidad específicos
+        $esDevolucion = ($tipoMovimiento === 'DEVOLUCION');
+        
+        // Si no es devolución, obtenemos producto y cantidad normales
+        if (!$esDevolucion) {
+            $idProducto = (int)($_POST['id_producto'] ?? 0);
+            $cantidad = (int)($_POST['cantidad'] ?? 0);
+            $idOrigen = (int)($_POST['id_origen'] ?? null);
+        } else {
+            // Para devoluciones, estos valores serán NULL
+            $idProducto = null;
+            $cantidad = null;
+            $idOrigen = null;
+        }
+
         // Validaciones
         $errors = [];
-        
+
         if (empty($tipoMovimiento)) {
             $errors[] = "Debe seleccionar un tipo de movimiento";
         }
-        
-        if ($idProducto <= 0) {
+
+        if (!$esDevolucion && $idProducto <= 0) {
             $errors[] = "Debe seleccionar un producto válido";
         }
-        
-        if ($cantidad <= 0) {
+
+        if (!$esDevolucion && $cantidad <= 0) {
             $errors[] = "La cantidad debe ser mayor a cero";
         }
-        
+
         if ($tipoMovimiento === 'TRASLADO' && $idOrigen <= 0) {
             $errors[] = "Debe seleccionar un almacén de origen válido";
         }
-        
+
+        if ($tipoMovimiento === 'DEVOLUCION' && $idBotiquinOrigen <= 0) {
+            $errors[] = "Debe seleccionar un botiquín de origen válido";
+        }
+
         if ($idDestino <= 0) {
             $errors[] = "Debe seleccionar un almacén de destino válido";
         }
-        
+
         if ($tipoMovimiento === 'TRASLADO' && $idOrigen === $idDestino) {
             $errors[] = "El almacén de origen y destino no pueden ser el mismo";
         }
-        
+
         if (!empty($errors)) {
             $errorMsg = implode(". ", $errors);
-            $this->redirect('/movimientos/create?error=' . urlencode($errorMsg));
+            $this->redirect('/movimientos/create?error=' . urlencode($errorMsg) . '&tipo=' . urlencode($tipoMovimiento));
         }
-        
+
         // Crear movimiento
         try {
             $userId = $this->getCurrentUserId();
@@ -241,12 +257,16 @@ class MovimientoController extends BaseController
                 $tipoMovimiento === 'TRASLADO' ? $idOrigen : null,
                 $idDestino,
                 'PENDIENTE',
-                $userId
+                $userId,
+                $tipoMovimiento === 'DEVOLUCION' ? $idBotiquinOrigen : null
             );
-            // Redirigir con notificación toast
-            $this->redirect('/movimientos?toast=success&toastmsg=' . urlencode('Movimiento creado correctamente'));
+            
+            // Redirigir al dashboard con mensaje de éxito
+            $successMsg = 'Movimiento de tipo ' . $tipoMovimiento . ' creado correctamente';
+            $this->redirect('/movimientos?toast=success&toastmsg=' . urlencode($successMsg));
         } catch (\Exception $e) {
-            $this->redirect('/movimientos/create?error=' . urlencode($e->getMessage()));
+            // Preservar el tipo de movimiento al mostrar el error
+            $this->redirect('/movimientos/create?error=' . urlencode($e->getMessage()) . '&tipo=' . urlencode($tipoMovimiento));
         }
     }
 

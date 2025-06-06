@@ -23,6 +23,7 @@ class MovimientoRepository
             $data['id_producto'],
             $data['cantidad'],
             $data['id_origen'] ?? null,
+            $data['id_botiquin_origen'] ?? null,
             $data['id_destino'],
             $data['estado'],
             $data['id_responsable']
@@ -43,26 +44,28 @@ class MovimientoRepository
         }
     }
 
-    public function create($tipo_movimiento, $id_producto, $cantidad, $id_origen, $id_destino, $estado, $id_responsable): bool
+    public function create($tipo_movimiento, $id_producto, $cantidad, $id_origen, $id_destino, $estado, $id_responsable, $id_botiquin_origen = null): bool
     {
         try {
             $stmt = $this->pdo->prepare("INSERT INTO movimientos (
-                         tipo_movimiento,
-                         id_producto,
-                         cantidad,
-                         id_origen,
-                         id_destino,
-                         estado,
-                         id_responsable) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                     tipo_movimiento,
+                     id_producto,
+                     cantidad,
+                     id_origen,
+                     id_destino,
+                     estado,
+                     id_responsable,
+                     id_botiquin_origen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
             return $stmt->execute([
                 $tipo_movimiento,
-                $id_producto,
-                $cantidad,
+                $id_producto, // Puede ser NULL para devoluciones
+                $cantidad,    // Puede ser NULL para devoluciones
                 $id_origen,
                 $id_destino,
                 $estado,
-                $id_responsable
+                $id_responsable,
+                $id_botiquin_origen
             ]);
 
         } catch (\PDOException $e) {

@@ -12,15 +12,6 @@ include __DIR__ . "/../../layouts/_header.php";
                 </p>
             </div>
 
-            <?php if (isset($_GET['error'])): ?>
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <div>
-                        <strong>Error:</strong> <?= htmlspecialchars($_GET['error']) ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
             <div class="cards-container movement-cards">
                 <div class="card dashboard-card movement-card">
                     <div class="card-body">
@@ -59,6 +50,20 @@ include __DIR__ . "/../../layouts/_header.php";
                         <div class="card-actions">
                             <a href="<?= url('movimientos.list') ?>" class="btn btn-info">
                                 <i class="bi bi-search"></i> Ver Historial
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card movement-card">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="bi bi-arrow-return-left"></i> Devolución de Botiquín</h3>
+                        <p class="card-text">
+                            Devuelva todos los productos de un botiquín a un almacén del sistema.
+                        </p>
+                        <div class="card-actions">
+                            <a href="<?= url('movimientos.create') ?>?tipo=DEVOLUCION" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-left"></i> Registrar Devolución
                             </a>
                         </div>
                     </div>
@@ -150,6 +155,7 @@ include __DIR__ . "/../../layouts/_header.php";
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Mostrar toast por parámetros GET
         mostrarToastPorGet();
         inicializarEventosDashboardMovimientos();
     });
@@ -159,20 +165,22 @@ include __DIR__ . "/../../layouts/_header.php";
         <?php if (isset($_GET['toast']) && isset($_GET['toastmsg'])): ?>
         const tipo = "<?= htmlspecialchars($_GET['toast']) ?>";
         const msg = "<?= htmlspecialchars($_GET['toastmsg']) ?>";
+        
         switch (tipo) {
             case 'success':
-                ToastSystem.success('Éxito', msg, null, {autoClose: true});
+                ToastSystem.success('Éxito', msg, null, {autoClose: true, closeDelay: 5000});
                 break;
             case 'error':
-                ToastSystem.danger('Error', msg, null, {autoClose: true});
+                ToastSystem.danger('Error', msg, null, {autoClose: true, closeDelay: 5000});
                 break;
             case 'info':
-                ToastSystem.info('Información', msg, null, {autoClose: true});
+                ToastSystem.info('Información', msg, null, {autoClose: true, closeDelay: 5000});
                 break;
             case 'warning':
-                ToastSystem.warning('Advertencia', msg, null, {autoClose: true});
+                ToastSystem.warning('Advertencia', msg, null, {autoClose: true, closeDelay: 5000});
                 break;
         }
+        
         // Limpiar la URL para evitar mostrar el toast al recargar
         if (window.history.replaceState) {
             const url = new URL(window.location);
