@@ -2,18 +2,6 @@
 
 Comprehensive management system for controlling the stock of healthcare products in hospitals, floors and first aid kits.
 
-## 📋 Index
-
-- [Introduction](#introduction)
-- [Main Features](#main-features)
-- [Technologies Used](#technologies-used)
-- [Installation and Deployment](#installation-and-deployment)
-- [Hierarchical Structure](#hierarchical-structure)
-- [Workflow](#workflow)
-- [Screenshots](#screenshots)
-- [Project Structure](#project-structure)
-- [License](#license)
-
 ## 📝 Introduction
 
 Hospital Stock Management is a web system designed to optimize the management of healthcare products in hospital environments. It allows inventory control and product movements between different locations (hospitals, floors, warehouses, and first aid kits), facilitating real-time tracking of available stock and improving efficiency in medical resource management.
