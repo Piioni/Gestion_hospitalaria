@@ -5,8 +5,20 @@ include __DIR__ . "/../../../layouts/_header.php";
     <div class="page-section">
         <div class="container">
             <div class="almacenes-section">
+                <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
+                    <h2 class="section-title">Almacenes registrados</h2>
+                    <div class="action-buttons">
+                        <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
+                            <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
+                        </a>
+                        <a href="<?= url('almacenes.create') ?>" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Crear almacén
+                        </a>
+                    </div>
+                </div>
+
                 <?php if ($filtrarActivo): ?>
-                    <div class="filter-section card">
+                    <div class="filter-section card mb-4">
                         <div class="card-body">
                             <h3 class="filter-title">Filtrar almacenes</h3>
                             <form action="" method="GET" class="filter-form">
@@ -52,18 +64,6 @@ include __DIR__ . "/../../../layouts/_header.php";
                         </div>
                     </div>
                 <?php endif; ?>
-
-                <div class="container-title <?= !$filtrarActivo ? 'mt-3' : '' ?>">
-                    <h2 class="section-title">Almacenes registrados</h2>
-                    <div class="action-buttons">
-                        <a href="?<?= $filtrarActivo ? '' : 'filtrar=1' ?>" class="btn btn-secondary">
-                            <i class="bi bi-funnel"></i> <?= $filtrarActivo ? 'Ocultar filtros' : 'Filtrar' ?>
-                        </a>
-                        <a href="<?= url('almacenes.create') ?>" class="btn btn-primary">
-                            <i class="bi bi-plus-circle"></i> Crear almacén
-                        </a>
-                    </div>
-                </div>
 
                 <?php if (empty($almacenes)): ?>
                     <div class="empty-state">

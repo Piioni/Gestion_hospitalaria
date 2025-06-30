@@ -9,4 +9,4 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $auth = new AuthService();
 $auth->logout();
-// La redirección ya está incluida en el método logout del AuthService
+// La redirección ya está incluida en el méto do logout del AuthService

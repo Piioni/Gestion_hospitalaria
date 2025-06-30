@@ -20,10 +20,7 @@ class UserLocationRepository {
         $this->almacenRepository = new AlmacenRepository();
         $this->botiquinRepository = new BotiquinRepository();
     }
-    
-    /**
-     * Elimina todas las ubicaciones asignadas a un usuario
-     */
+
     public function deleteAllUserLocations($userId): void
     {
         try {
@@ -54,10 +51,7 @@ class UserLocationRepository {
             throw $e;
         }
     }
-    
-    /**
-     * Asigna un hospital a un usuario
-     */
+
     public function addUserHospital($userId, $hospitalId): bool
     {
         try {
@@ -68,10 +62,7 @@ class UserLocationRepository {
             throw $e;
         }
     }
-    
-    /**
-     * Asigna una planta a un usuario
-     */
+
     public function addUserPlanta($userId, $plantaId): bool
     {
         try {
@@ -82,10 +73,7 @@ class UserLocationRepository {
             throw $e;
         }
     }
-    
-    /**
-     * Asigna un botiquín a un usuario
-     */
+
     public function addUserBotiquin($userId, $botiquinId): bool
     {
         try {
@@ -101,11 +89,6 @@ class UserLocationRepository {
         }
     }
 
-    /**
-     * Obtiene los hospitales asociados a un usuario específico
-     * @param $userId
-     * @return array Lista de objetos Hospital
-     */
     public function getHospitalsByUserId($userId): array
     {
         try {
@@ -125,11 +108,6 @@ class UserLocationRepository {
         }
     }
 
-    /**
-     * Obtiene todas las plantas asignadas a un usuario
-     * @param $userId
-     * @return array Lista de objetos Planta
-     */
     public function getPlantasByUserId($userId): array
     {
         try {
@@ -148,10 +126,7 @@ class UserLocationRepository {
             throw $e;
         }
     }
-    
-    /**
-     * Obtiene todos los botiquines asignados a un usuario
-     */
+
     public function getBotiquinesByUserId($userId): array
     {
         try {
@@ -199,6 +174,40 @@ class UserLocationRepository {
             return array_map([$this->almacenRepository, 'createAlmacenFromData'], $almacenesData);
         } catch (PDOException $e) {
             error_log("Error en getAlmacenesByPlantaId: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getBotiquinesByHospitalId(mixed $hospitalId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT b.* FROM botiquines b
+                JOIN hospitales h ON b.id_hospital = h.id_hospital
+                WHERE h.id_hospital = ? AND b.activo = 1
+            ");
+            $stmt->execute([$hospitalId]);
+            $botiquinesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->botiquinRepository, 'createBotiquinFromData'], $botiquinesData);
+        } catch (PDOException $e) {
+            error_log("Error en getBotiquinesByHospitalId: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getBotiquinesByPlantaId(mixed $plantaId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT b.* FROM botiquines b
+                JOIN plantas p ON b.id_planta = p.id_planta
+                WHERE p.id_planta = ? AND b.activo = 1
+            ");
+            $stmt->execute([$plantaId]);
+            $botiquinesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this->botiquinRepository, 'createBotiquinFromData'], $botiquinesData);
+        } catch (PDOException $e) {
+            error_log("Error en getBotiquinesByPlantaId: " . $e->getMessage());
             throw $e;
         }
     }

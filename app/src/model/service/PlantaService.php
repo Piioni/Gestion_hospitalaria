@@ -68,12 +68,6 @@ class PlantaService
         return $this->plantaRepository->getAll();
     }
 
-    // meto do para obtener todas las plantas como un array asociativo para dárselo a javascript
-    public function getAllArray(): array
-    {
-        return $this->plantaRepository->getAllArray();
-    }
-
     public function getPlantasByHospitalId($hospitalId): array
     {
         if (empty($hospitalId) || !is_numeric($hospitalId)) {
@@ -98,7 +92,7 @@ class PlantaService
      * 
      * @param int $userId ID del usuario
      * @param string $userRole Rol del usuario
-     * @param $filtroHospital hospital para filtrar
+     * @param $filtroHospital
      * @param string|null $filtroNombre Nombre para filtrar
      * @return array Lista de plantas filtradas
      */
@@ -120,23 +114,12 @@ class PlantaService
      */
     private function getPlantsBasedOnUserRole(int $userId, string $userRole): array
     {
-        switch ($userRole) {
-            case 'ADMINISTRADOR':
-            case 'GESTOR_GENERAL':
-                // Acceso a todas las plantas
-                return $this->getAllPlantas();
-
-            case 'GESTOR_HOSPITAL':
-                // Plantas de los hospitales asignados al usuario
-                return $this->userLocationService->getPlantsFromAssignedHospitals($userId);
-
-            case 'GESTOR_PLANTA':
-                // Solo plantas específicamente asignadas
-                return $this->userLocationService->getAssignedPlantas($userId);
-
-            default:
-                return [];
-        }
+        return match ($userRole) {
+            'ADMINISTRADOR', 'GESTOR_GENERAL' => $this->getAllPlantas(),
+            'GESTOR_HOSPITAL' => $this->userLocationService->getPlantsFromAssignedHospitals($userId),
+            'GESTOR_PLANTA' => $this->userLocationService->getAssignedPlantas($userId),
+            default => [],
+        };
     }
     
     /**

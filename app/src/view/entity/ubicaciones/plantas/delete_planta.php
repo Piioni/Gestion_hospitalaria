@@ -5,7 +5,7 @@
 include __DIR__ . "/../../../layouts/_header.php";
 ?>
 
-<div class="page-section">
+<div class="page-section mt-5">
     <div class="container">
         <div class="page-header">
             <div class="page-header-content">
@@ -15,6 +15,44 @@ include __DIR__ . "/../../../layouts/_header.php";
                     del hospital
                     <strong><?= htmlspecialchars($hospital->getNombre()) ?></strong>?
                 </p>
+
+                <?php if (!empty($botiquines)): ?>
+                    <div class="card mt-4">
+                        <div class="card-content">
+                            <div class="table-responsive mt-4">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($botiquines as $botiquin): ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($botiquin->getId()) ?></td>
+                                                <td><?= htmlspecialchars($botiquin->getNombre()) ?></td>
+                                                <td class="actions-column">
+                                                    <div class="btn-container">
+                                                        <a href="<?= url('botiquines.delete', ['id_botiquin' => $botiquin->getId()]) ?>" 
+                                                           class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-trash"></i> Eliminar botiquín
+                                                        </a>
+                                                        <a href="<?= url('botiquines.edit', ['id_botiquin' => $botiquin->getId()]) ?>" 
+                                                           class="btn btn-sm btn-secondary">
+                                                            <i class="bi bi-pencil"></i> Editar
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <form method="POST" action="<?= url('plantas.delete', ['id_planta' => $planta->getId()]) ?>">
                     <div class="text-center mt-5">
@@ -39,29 +77,8 @@ include __DIR__ . "/../../../layouts/_header.php";
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Toast de advertencia
-        ToastSystem.warning(
-            'Advertencia',
-            'Esta acción desactivará la planta, por lo que no podrá ser utilizada. Esta acción solo es reversible por un Administrador.',
-            null,
-            {autoClose: true, closeDelay: 7000}
-        );
-
-        <?php if ($hasAlmacen): ?>
-        // Toast para el almacén
-        ToastSystem.danger(
-            'No se puede eliminar la planta',
-            'Tiene un almacén asociado. Primero debes eliminar el almacén asociado a esta planta.',
-            `<a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>" 
-               class="btn btn-primary">
-                Eliminar almacén "<?= htmlspecialchars($almacen->getNombre()) ?>"
-            </a>`,
-            {autoClose: false}
-        );
-        <?php endif; ?>
-
         <?php if (!empty($botiquines)): ?>
-        // Toast para los botiquines
+        // Mostrar solo el toast de peligro si hay botiquines relacionados
         ToastSystem.danger(
             'No se puede eliminar la planta',
             'Tiene <?= count($botiquines) ?> botiquín(es) asociado(s). Primero debes eliminar todos los botiquines asociados a esta planta.',
@@ -71,10 +88,29 @@ include __DIR__ . "/../../../layouts/_header.php";
             </a>`,
             {autoClose: false}
         );
+        <?php elseif ($hasAlmacen): ?>
+        // Mostrar solo el toast de peligro si hay un almacén asociado
+        ToastSystem.danger(
+            'No se puede eliminar la planta',
+            'Tiene un almacén asociado. Primero debes eliminar el almacén asociado a esta planta.',
+            `<a href="<?= url('almacenes.delete', ['id_almacen' => $almacen->getId()]) ?>" 
+               class="btn btn-primary">
+                Eliminar almacén "<?= htmlspecialchars($almacen->getNombre()) ?>"
+            </a>`,
+            {autoClose: false}
+        );
+        <?php else: ?>
+        // Mostrar solo el toast de advertencia si no hay botiquines ni almacén
+        ToastSystem.warning(
+            'Advertencia',
+            'Esta acción desactivará la planta, por lo que no podrá ser utilizada. Esta acción solo es reversible por un Administrador.',
+            null,
+            {autoClose: true, closeDelay: 7000}
+        );
         <?php endif; ?>
 
         <?php if (isset($error)): ?>
-        // Toast para errores de procesamiento
+        // Toast para errores de procesamiento (sin cambios)
         ToastSystem.danger('Error', '<?= htmlspecialchars($error) ?>', null, {autoClose: false});
         <?php endif; ?>
     });

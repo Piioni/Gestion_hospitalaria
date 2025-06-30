@@ -4,17 +4,25 @@ namespace model\service;
 
 use model\entity\Botiquin;
 use model\repository\BotiquinRepository;
-use model\repository\StockRepository;
+use model\service\StockBotiquinService;
+use model\service\StockAlmacenService;
+use model\entity\StockBotiquin;
+use InvalidArgumentException;
+use Exception;
 
 class BotiquinService
 {
     private BotiquinRepository $botiquinRepository;
-    private StockRepository $stockRepository;
+    private UserLocationService $userLocationService;
+    private StockBotiquinService $stockBotiquinService;
+    private StockAlmacenService $stockAlmacenService;
 
     public function __construct()
     {
         $this->botiquinRepository = new BotiquinRepository();
-        $this->stockRepository = new StockRepository();
+        $this->userLocationService = new UserLocationService();
+        $this->stockBotiquinService = new StockBotiquinService();
+        $this->stockAlmacenService = new StockAlmacenService();
     }
 
     public function createBotiquin($id_planta, $nombre, $capacidad): bool
@@ -51,28 +59,19 @@ class BotiquinService
     public function deleteBotiquin($id_botiquin, $idAlmacenDestino = null): bool
     {
         if (empty($id_botiquin) || !is_numeric($id_botiquin)) {
-            throw new \InvalidArgumentException("El ID del botiquín es inválido.");
+            throw new InvalidArgumentException("El ID del botiquín es inválido.");
         }
+
+        // Verificar si el botiquín tiene productos
+        $stockBotiquin = $this->stockBotiquinService->getStockByBotiquinId($id_botiquin);
+        $hasProducts = !empty($stockBotiquin);
 
         // Si hay productos y no se proporcionó un almacén destino, validar
-        if ($this->countProductos($id_botiquin) > 0 && empty($idAlmacenDestino)) {
-            throw new \InvalidArgumentException("Este botiquín tiene productos. Debe seleccionar un almacén destino.");
-        }
-
-        // Si hay un almacén destino, transferir los productos
-        if ($idAlmacenDestino) {
-            // Implementar lógica de transferencia
-            $this->transferirProductosAAlmacen($id_botiquin, $idAlmacenDestino);
+        if ($hasProducts && empty($idAlmacenDestino)) {
+            throw new InvalidArgumentException("Este botiquín tiene productos. Debe seleccionar un almacén destino.");
         }
 
         return $this->botiquinRepository->delete($id_botiquin);
-    }
-
-    private function transferirProductosAAlmacen($idBotiquin, $idAlmacen): bool
-    {
-        // Implementar la lógica de transferencia de productos
-        // Esta es una función simplificada, se debe implementar según la lógica de negocio
-        return $this->stockRepository->transferBotiquinStockToAlmacen($idBotiquin, $idAlmacen);
     }
 
     public function getAllBotiquines(): array
@@ -90,13 +89,39 @@ class BotiquinService
         return $this->botiquinRepository->getBotiquinById($id_botiquin);
     }
 
-    public function getStockByBotiquinId($id_botiquin): int
+    public function getBotiquinesForUser(int $userId, string $userRole): array
     {
-        return $this->countProductos($id_botiquin);
+        return match ($userRole) {
+            'ADMINISTRADOR', 'GESTOR_GENERAL' => $this->getAllBotiquines(),
+            'GESTOR_HOSPITAL' => $this->userLocationService->getAssignedBotiquinesFromHospitals($userId),
+            'GESTOR_PLANTA' => $this->userLocationService->getAssignedBotiquinesFromPlantas($userId),
+            default => [],
+        };
     }
 
-    public function countProductos($id_botiquin): int
+    public function filterBotiquines($filtro_plantas, $id_botiquin, $filtroNombre): array
     {
-        return $this->botiquinRepository->countProductos($id_botiquin);
+        // Filtrar los botiquines por planta o por ID específico
+        if ($id_botiquin) {
+            // Si se proporciona un ID específico de botiquín
+            $botiquin = $this->getBotiquinById($id_botiquin);
+            return $botiquin ? [$botiquin] : [];
+        } elseif ($filtro_plantas && $filtroNombre) {
+            // Filtrar por planta y nombre
+            return array_filter($this->getBotiquinesByPlantaId($filtro_plantas), function ($b) use ($filtroNombre) {
+                return stripos($b->getNombre(), $filtroNombre) !== false;
+            });
+        } elseif ($filtro_plantas) {
+            // Filtrar por planta
+            return $this->getBotiquinesByPlantaId($filtro_plantas);
+        } elseif ($filtroNombre) {
+            // Filtrar por nombre
+            return array_filter($this->getAllBotiquines(), function ($b) use ($filtroNombre) {
+                return stripos($b->getNombre(), $filtroNombre) !== false;
+            });
+        } else {
+            // Sin filtros, mostrar todos
+            return $this->getAllBotiquines();
+        }
     }
 }

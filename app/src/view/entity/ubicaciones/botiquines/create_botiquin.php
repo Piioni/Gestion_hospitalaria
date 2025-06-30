@@ -13,47 +13,56 @@ include __DIR__ . "/../../../layouts/_header.php";
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h3>Información del Botiquín</h3>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="" class="form" id="createBotiquinForm">
-                    <div class="form-group">
-                        <label for="id_planta" class="form-label">Planta</label>
-                        <div class="form-field">
-                            <select name="id_planta" id="id_planta" class="form-select" required>
-                                <option value="">Seleccione una planta</option>
-                                <?php foreach ($plantas as $planta): ?>
-                                    <option value="<?= htmlspecialchars($planta->getId()); ?>"
-                                        <?= $botiquin['id_planta'] == $planta->getId() ? 'selected' : ''; ?>>
-                                        <?= htmlspecialchars($planta->getNombre()); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+        <div class="form-container">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Información del Botiquín</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="" class="form" id="createBotiquinForm">
+                        <div class="form-group">
+                            <label for="id_planta" class="form-label field-required">Planta</label>
+                            <div class="form-field">
+                                <select name="id_planta" id="id_planta" class="form-select" required>
+                                    <option value="">Seleccione una planta</option>
+                                    <?php foreach ($plantas as $planta): ?>
+                                        <option value="<?= htmlspecialchars($planta->getId()); ?>"
+                                            <?= $botiquin['id_planta'] == $planta->getId() ? 'selected' : ''; ?>>
+                                            <?= htmlspecialchars($planta->getNombre()); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="nombre" class="form-label">Nombre del Botiquín</label>
-                        <div class="form-field">
-                            <input type="text" name="nombre" id="nombre" class="form-input"
-                                value="<?= htmlspecialchars($botiquin['nombre']); ?>" 
-                                placeholder="Ingrese el nombre del botiquín" required>
+                        <div class="form-group">
+                            <label for="nombre" class="form-label field-required">Nombre del Botiquín</label>
+                            <div class="form-field">
+                                <input type="text" name="nombre" id="nombre" class="form-input"
+                                    value="<?= htmlspecialchars($botiquin['nombre']); ?>" 
+                                    placeholder="Ingrese el nombre del botiquín" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="capacidad" class="form-label">Capacidad</label>
-                        <div class="form-field">
-                            <input type="number" name="capacidad" id="capacidad" class="form-input"
-                                value="<?= htmlspecialchars($botiquin['capacidad']); ?>" 
-                                placeholder="Ingrese la capacidad del botiquín" required>
+                        <div class="form-group">
+                            <label for="capacidad" class="form-label field-required">Capacidad</label>
+                            <div class="form-field">
+                                <input type="number" name="capacidad" id="capacidad" class="form-input"
+                                    value="<?= htmlspecialchars($botiquin['capacidad']); ?>" 
+                                    placeholder="Ingrese la capacidad del botiquín" required>
+                                <div class="field-help">
+                                    <i class="fas fa-info-circle"></i> Número máximo de productos distintos que puede almacenar
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Crear Botiquín</button>
-                        <a href="<?= url('botiquines') ?>" class="btn btn-secondary">Cancelar</a>
-                    </div>
-                </form>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Crear Botiquín
+                            </button>
+                            <a href="<?= url('botiquines') ?>" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -92,8 +92,6 @@ class HospitalController extends BaseController
 
     public function delete(): void
     {
-        //TODO: Implementar el mostrar plantas relacionadas al hospital
-
         $hospitalId = $_GET['id_hospital'] ?? null;
 
         if (!$hospitalId || !is_numeric($hospitalId)) {
@@ -106,9 +104,19 @@ class HospitalController extends BaseController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleDelete((int)$hospitalId);
         } else {
+            // Obtener datos del hospital
             $hospital = $this->hospitalService->getHospitalById((int)$hospitalId);
+            
+            // Obtener plantas relacionadas con el hospital
+            $relatedPlants = $this->hospitalService->checkHospitalRelations((int)$hospitalId)['relatedPlants'];
+            
             // Usando la notación de punto para referenciar la vista
-            $this->render('entity.hospitals.delete_hospital', ['hospital' => $hospital]);
+            $this->render('entity.hospitals.delete_hospital', [
+                'hospital' => $hospital,
+                'relatedPlants' => $relatedPlants,
+                'scripts' => 'toasts.js',
+                'title' => 'Confirmar Eliminación'
+            ]);
         }
     }
 
@@ -154,7 +162,8 @@ class HospitalController extends BaseController
     private function handleDelete(int $hospitalId): void
     {
         try {
-            $this->hospitalService->deleteHospital($hospitalId);
+            $force = isset($_POST['force']) && $_POST['force'] == 1;
+            $this->hospitalService->deleteHospital($hospitalId, $force);
             $this->redirect('/hospitals', ['success' => 'deleted']);
 
         } catch (Exception $e) {

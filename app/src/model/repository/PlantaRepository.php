@@ -86,22 +86,6 @@ class PlantaRepository
         }
     }
 
-    public function getAllArray(): array
-    {
-        try {
-            $stmt = $this->pdo->query("
-                SELECT * 
-                FROM plantas
-                WHERE activo = 1
-                ORDER BY nombre
-                ");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error al obtener todas las plantas: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
     public function getById($id): ?Planta
     {
         try {

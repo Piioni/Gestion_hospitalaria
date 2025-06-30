@@ -65,4 +65,9 @@ class UserService
                 return false;
         }
     }
+
+    public function getAllBotiquinUsers(): array
+    {
+        return $this->userRepository->getAllBotiquinUsers();
+    }
 }

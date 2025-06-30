@@ -23,18 +23,6 @@ class UserRepository
         $user->setEmail($userData['email']);
         $user->setPassword($userData['password']);
         $user->setRol($userData['id_rol']);
-
-        // Configurar campos opcionales si existen
-        if (isset($userData['id_hospital'])) {
-            $user->setHospitalId($userData['id_hospital']);
-        }
-        if (isset($userData['id_planta'])) {
-            $user->setPlantaId($userData['id_planta']);
-        }
-        if (isset($userData['id_botiquin'])) {
-            $user->setBotiquinId($userData['id_botiquin']);
-        }
-
         return $user;
     }
 
@@ -81,5 +69,32 @@ class UserRepository
         $stmt->execute([$email]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         return $userData ? $this->createUserFromData($userData) : null;
+    }
+
+    public function getAllBotiquinUsers(): array
+    {
+        try{
+            $stmt = $this->pdo->prepare("
+                SELECT DISTINCT id_usuario
+                FROM lecturas
+                ");
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $users = [];
+            foreach ($result as $userData) {
+                $user = $this->getUserById($userData['id_usuario']);
+                if ($user) {
+                    $users[] = [
+                        'id_usuario' => $user->getId(),
+                        'nombre' => $user->getNombre()
+                    ];
+                }
+            }
+            // Reindexar el array
+            return array_values($users);
+        } catch (\PDOException $e) {
+            error_log("Error al obtener usuarios de botiquín: " . $e->getMessage());
+            throw $e;
+        }
     }
 }

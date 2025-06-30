@@ -17,6 +17,10 @@ return [
             'almacenes' => 'entity/ubicaciones/almacenes',
             'productos' => 'entity/productos',
             'stocks' => 'entity/stocks',
+            'reposiciones' => 'entity/reposiciones',
+            'movimientos' => 'entity/movimientos',
+            'lecturas' => 'entity/lecturas',
+            'etiquetas' => 'entity/etiquetas',
         ]
     ],
     
@@ -31,6 +35,23 @@ return [
             'path' => '/login',
             'controller' => 'AuthController',
             'method' => 'login'
+        ],
+
+        // Rutas de autenticación
+        'logout' => [
+            'path' => '/logout',
+            'controller' => 'AuthController',
+            'method' => 'logout'
+        ],
+        'register' => [
+            'path' => '/register',
+            'controller' => 'AuthController',
+            'method' => 'register'
+        ],
+        'password.change' => [
+            'path' => '/password/change',
+            'controller' => 'AuthController',
+            'method' => 'changePassword'
         ],
 
         // Rutas de usuario
@@ -58,23 +79,6 @@ return [
             'path' => '/users/locations',
             'controller' => 'UserController',
             'method' => 'locations'
-        ],
-
-        // Rutas de autenticación
-        'logout' => [
-            'path' => '/logout',
-            'controller' => 'AuthController',
-            'method' => 'logout'
-        ],
-        'register' => [
-            'path' => '/register',
-            'controller' => 'AuthController',
-            'method' => 'register'
-        ],
-        'password.change' => [
-            'path' => '/password/change',
-            'controller' => 'AuthController',
-            'method' => 'changePassword'
         ],
 
         // Rutas de hospitales
@@ -168,22 +172,22 @@ return [
         // Rutas de productos
         'productos' => [
             'path' => '/productos',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'index'
         ],
         'productos.create' => [
             'path' => '/productos/create',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'create'
         ],
         'productos.edit' => [
             'path' => '/productos/edit',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'edit'
         ],
         'productos.delete' => [
             'path' => '/productos/delete',
-            'controller' => 'ProductoController',
+            'controller' => 'ProductController',
             'method' => 'delete'
         ],
 
@@ -225,6 +229,26 @@ return [
             'controller' => 'ReposicionController',
             'method' => 'index'
         ],
+        'reposiciones.list' => [
+            'path' => '/reposiciones/list',
+            'controller' => 'ReposicionController',
+            'method' => 'list'
+        ],
+        'reposiciones.create' => [
+            'path' => '/reposiciones/create',
+            'controller' => 'ReposicionController',
+            'method' => 'create'
+        ],
+        'reposiciones.complete' => [
+            'path' => '/reposiciones/complete',
+            'controller' => 'ReposicionController',
+            'method' => 'complete'
+        ],
+        'reposiciones.cancel' => [
+            'path' => '/reposiciones/cancel',
+            'controller' => 'ReposicionController',
+            'method' => 'cancel'
+        ],
 
         // Rutas de movimientos
         'movimientos' => [
@@ -232,18 +256,43 @@ return [
             'controller' => 'MovimientoController',
             'method' => 'index'
         ],
-
-        // Rutas de etiquetas
-        'etiquetas' => [
-            'path' => '/etiquetas',
-            'controller' => 'EtiquetaController',
-            'method' => 'index'
+        'movimientos.list' => [
+            'path' => '/movimientos/list',
+            'controller' => 'MovimientoController',
+            'method' => 'list'
+        ],
+        'movimientos.create' => [
+            'path' => '/movimientos/create',
+            'controller' => 'MovimientoController',
+            'method' => 'create'
+        ],
+        'movimientos.complete' => [
+            'path' => '/movimientos/complete',
+            'controller' => 'MovimientoController',
+            'method' => 'complete'
+        ],
+        'movimientos.cancel' => [
+            'path' => '/movimientos/cancel',
+            'controller' => 'MovimientoController',
+            'method' => 'cancel'
         ],
 
         // Rutas de lecturas
         'lecturas' => [
             'path' => '/lecturas',
             'controller' => 'LecturaController',
+            'method' => 'index'
+        ],
+        'lecturas.create' => [
+            'path' => '/lecturas/create',
+            'controller' => 'LecturaController',
+            'method' => 'create'
+        ],
+
+        // Rutas de etiquetas
+        'etiquetas' => [
+            'path' => '/etiquetas',
+            'controller' => 'EtiquetaController',
             'method' => 'index'
         ],
     ]
