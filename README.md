@@ -34,8 +34,8 @@ Hospital Stock Management is a web system designed to optimize the management of
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/user/hospital-stock.git
-   cd hospital-stock
+   git clone https://github.com/Piioni/Gestion_hospitalaria.git
+   cd Gestion_hospitalaria
    ```
 
 2. **Start the containers with Docker Compose**:
@@ -45,7 +45,7 @@ Hospital Stock Management is a web system designed to optimize the management of
 
 3. **Import the database**:
     - Access PHPMyAdmin at `http://localhost:8080`
-    - Username: `root`, Password: `password`
+    - Username: `root`, Password: `rootpassword`
     - Create a new database called `stock_hospitalario`
     - Import the file `database/stock_hospitalario.sql`
 
